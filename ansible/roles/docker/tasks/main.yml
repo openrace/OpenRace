@@ -53,7 +53,7 @@
     upgrade: dist
   become: true
 
-- name: Install Docker and K8s binaries
+- name: Install Docker
   apt:
     name: "{{ item }}"
     state: present
