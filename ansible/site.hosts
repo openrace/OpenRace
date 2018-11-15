@@ -1,0 +1,6 @@
+[local]
+localhost ansible_connection=local
+
+[local:vars]
+ansible_sudo=yes
+

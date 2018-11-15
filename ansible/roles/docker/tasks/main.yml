@@ -1,0 +1,54 @@
+---
+# based on http://m-button.blogspot.com/2018/02/deploying-docker-and-kubernetes-on.html
+
+- name: Add encryption key for the Docker repository
+  apt_key:
+    url: "{{ item }}"
+    state: present
+  with_items:
+    - https://download.docker.com/linux/raspbian/gpg
+
+- name: Clean Docker repository files to be idempotent
+  file:
+    name: "{{ item }}"
+    state: absent
+  with_items:
+    - /etc/apt/sources.list.d/docker.list
+
+- name: Recreate Docker repository files
+  file:
+    name: "{{ item }}"
+    state: touch
+  with_items:
+    - /etc/apt/sources.list.d/docker.list
+
+- name: Add Docker repository to the list of repositories
+  lineinfile:
+    path: /etc/apt/sources.list.d/{{ item.category }}.list
+    line: "{{ item.url }}"
+  with_items:
+    - { url: 'deb [arch=armhf] https://download.docker.com/linux/raspbian stretch stable', category: 'docker'     }
+
+- name: Install packages to allow apt to use HTTPS repositories
+  apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - apt-transport-https
+    - ca-certificates
+    - software-properties-common
+
+- name: Update list of available repositories
+  apt:
+    update_cache: yes
+
+- name: Update all packages to the latest version
+  apt:
+    upgrade: dist
+
+- name: Install Docker and K8s binaries
+  apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - docker-ce

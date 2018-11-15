@@ -1,0 +1,7 @@
+---
+
+hostapd:
+  ssid: OpenRace
+  pass: PASSWORD
+
+
