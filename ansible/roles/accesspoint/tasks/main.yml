@@ -47,7 +47,7 @@
 - name: configure hostapd
   template:
     src: hostapd.j2
-    dest: /etc/hostapd.conf
+    dest: /etc/hostapd/hostapd.conf
     owner: root
     group: root
     mode: 0644
