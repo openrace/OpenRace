@@ -23,7 +23,7 @@
 - name: configure dnsmasq
   copy:
     src: dnsmasq.conf
-    dst: /etc/dnsmasq.conf
+    dest: /etc/dnsmasq.conf
     owner: root
     group: root
     mode: 0644
@@ -45,7 +45,7 @@
 - name: configure hostapd
   template:
     src: hostapd.j2
-    dst: /etc/hostapd.conf
+    dest: /etc/hostapd.conf
     owner: root
     group: root
     mode: 0644
