@@ -17,7 +17,8 @@
 - name: enabling dnsmasq
   service:
    name: dnsmasq
-   state: enabled
+   state: started
+   enabled: yes
   become: true
 
 - name: configure dnsmasq
@@ -39,7 +40,8 @@
 - name: enabling hostapd
   service:
    name: hostapd
-   state: enabled
+   state: started
+   enabled: yes
   become: true
 
 - name: configure hostapd
