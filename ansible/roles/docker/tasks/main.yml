@@ -28,7 +28,7 @@
 - name: Add Docker repository to the list of repositories
   lineinfile:
     dest: /etc/apt/sources.list.d/{{ item.category }}.list
-    line: "'{{ item.url }}'"
+    line: "{{ item.url }}"
   with_items:
     - { url: 'deb [arch=armhf] https://download.docker.com/linux/raspbian stretch stable', category: 'docker' }
   become: true
