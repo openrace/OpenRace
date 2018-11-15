@@ -2,7 +2,7 @@
 - name: configure dhcpcd
   copy:
     src: dhcpcd.conf
-    dst: /etc/dhcpcd.conf
+    dest: /etc/dhcpcd.conf
     owner: root
     group: root
     mode: 0644
