@@ -27,10 +27,8 @@
 
 - name: Add Docker repository to the list of repositories
   lineinfile:
-    path: /etc/apt/sources.list.d/{{ item.category }}.list
-    line: "{{ item.url }}"
-  with_items:
-    - { url: 'deb [arch=armhf] https://download.docker.com/linux/raspbian stretch stable', category: 'docker'     }
+    path: /etc/apt/sources.list.d/docker.list
+    line: "deb [arch=armhf] https://download.docker.com/linux/raspbian stretch stable"
   become: true
 
 - name: Install packages to allow apt to use HTTPS repositories
