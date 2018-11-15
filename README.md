@@ -27,11 +27,29 @@ It makes use of the following external Projects:
 | d1ws2812mqtt RGB LEDs |
  -----------------------
 ```
-# Setup
+
+# Automated setup with ansible
+Install requirements:
+```bash
+sudo apt install git ansible
+```
+Clone the repository:
+```bash
+git clone https://github.com/oxivanisher/OpenRace.git
+```
+Change to the ansible directory
+```bash
+cd OpenRace/ansible/
+```
+Run the playbook:
+```bash
+./run.sh
+```
+After entering your password for SUDO, the installation continues.
+
+# Manual Setup
 
 The basis for this project is a  RaspberryPi 3 B+ with a updated [Raspbian](http://www.raspbian.org/).
-
-**Notice:** All this should be handled with the help of Ansible and Docker-Compose in the future.
 
 ## Install docker on RaspberryPi
 *Based on [freecodecamp.org](https://medium.freecodecamp.org/the-easy-way-to-set-up-docker-on-a-raspberry-pi-7d24ced073ef)*

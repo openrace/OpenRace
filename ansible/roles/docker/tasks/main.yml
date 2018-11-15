@@ -7,6 +7,7 @@
     state: present
   with_items:
     - https://download.docker.com/linux/raspbian/gpg
+  become: true
 
 - name: Clean Docker repository files to be idempotent
   file:
@@ -14,6 +15,7 @@
     state: absent
   with_items:
     - /etc/apt/sources.list.d/docker.list
+  become: true
 
 - name: Recreate Docker repository files
   file:
@@ -21,6 +23,7 @@
     state: touch
   with_items:
     - /etc/apt/sources.list.d/docker.list
+  become: true
 
 - name: Add Docker repository to the list of repositories
   lineinfile:
@@ -28,6 +31,7 @@
     line: "{{ item.url }}"
   with_items:
     - { url: 'deb [arch=armhf] https://download.docker.com/linux/raspbian stretch stable', category: 'docker'     }
+  become: true
 
 - name: Install packages to allow apt to use HTTPS repositories
   apt:
@@ -37,14 +41,17 @@
     - apt-transport-https
     - ca-certificates
     - software-properties-common
+  become: true
 
 - name: Update list of available repositories
   apt:
     update_cache: yes
+  become: true
 
 - name: Update all packages to the latest version
   apt:
     upgrade: dist
+  become: true
 
 - name: Install Docker and K8s binaries
   apt:
@@ -52,3 +59,4 @@
     state: present
   with_items:
     - docker-ce
+  become: true

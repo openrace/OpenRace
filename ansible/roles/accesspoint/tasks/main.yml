@@ -6,16 +6,19 @@
     owner: root
     group: root
     mode: 0644
+  become: true
 
 - name: installing dnsmasq
   package:
     name: dnsmasq
     state: present
+  become: true
 
 - name: enabling dnsmasq
   service:
    name: dnsmasq
    state: enabled
+  become: true
 
 - name: configure dnsmasq
   copy:
@@ -25,16 +28,19 @@
     group: root
     mode: 0644
   notify: restart dnsmasq
+  become: true
 
 - name: installing hostapd
   package:
     name: hostapd
     state: present
+  become: true
 
 - name: enabling hostapd
   service:
    name: hostapd
    state: enabled
+  become: true
 
 - name: configure hostapd
   template:
@@ -44,6 +50,7 @@
     group: root
     mode: 0644
   notify: restart hostapd
+  become: true
 
 - name: confiure hostapd daemon
   lineinfile:
@@ -51,4 +58,5 @@
     regexp: '^#DAEMON_CONF='
     line: 'DAEMON_CONF="/etc/hostapd/hostapd.conf"'
   notify: restart hostapd
+  become: true
 
