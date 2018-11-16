@@ -1,0 +1,20 @@
+---
+
+- name: installing python3 pip
+  package:
+    name: python3-pip
+    status: present
+  become: true
+
+- name: adding user pi to group dialout (for the serial connection)
+  user:
+    name: pi
+    groups: dialout
+    append: yes
+  become: true
+
+- name: installing virtual environment and dependencies
+  pip:
+    requirements: /home/pi/OpenRace/requirements.txt
+    virtualenv: /home/pi/OpenRace/venv
+    virtualenv_python: python3
