@@ -3,5 +3,4 @@
 hostapd:
   ssid: OpenRace
   pass: PASSWORD
-
-
+  country_code: CH
