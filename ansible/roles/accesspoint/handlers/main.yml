@@ -4,8 +4,10 @@
   service:
     name: dnsmasq
     state: restarted
+  become: true
 
 - name: restart hostapd
   service:
     name: hostapd
     state: restarted
+  become: true
