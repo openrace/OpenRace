@@ -3,7 +3,7 @@
 - name: installing python3 pip
   package:
     name: python3-pip
-    status: present
+    state: present
   become: true
 
 - name: adding user pi to group dialout (for the serial connection)
