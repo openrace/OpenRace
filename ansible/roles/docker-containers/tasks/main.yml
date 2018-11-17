@@ -16,7 +16,7 @@
     state: directory
     owner: pi
     group: pi
-    mode: 0775
+    mode: 0777
   become: true
 
 - name: Create mqtt data directory
@@ -25,7 +25,7 @@
     state: directory
     owner: pi
     group: pi
-    mode: 0775
+    mode: 0777
   become: true
 
 - name: Create mqtt log directory
@@ -34,7 +34,7 @@
     state: directory
     owner: pi
     group: pi
-    mode: 0775
+    mode: 0777
   become: true
 
 - name: Run MQTT container
