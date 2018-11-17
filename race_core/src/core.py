@@ -5,7 +5,15 @@ import protocols
 import handlers
 import logging
 import time
+import os
 
+myPath = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../')
+logPath = os.path.join(myPath, 'log/race_core.log')
+logging.basicConfig(
+    filename=logPath,
+    format='%(asctime)s %(levelname)-7s %(message)s',
+    datefmt='%Y-%d-%m %H:%M:%S',
+    level=logging.DEBUG)
 
 if __name__ == "__main__":
     logging.info("starting up")
