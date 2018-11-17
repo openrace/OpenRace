@@ -54,7 +54,7 @@
   notify: restart hostapd
   become: true
 
-- name: confiure hostapd daemon
+- name: configure hostapd daemon
   lineinfile:
     dest: /etc/default/hostapd
     regexp: '^#DAEMON_CONF='
