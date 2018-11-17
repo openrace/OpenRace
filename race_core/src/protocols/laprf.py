@@ -86,9 +86,11 @@ class Emitter():
         self.listeners = []
 
     def connect(self, listener):
+        logging.debug("connecting listener")
         self.listeners.append(listener)
 
     def emit(self, *args, **kwargs):
+        logging.debug("emitting...")
         for l in self.listeners:
             l(*args, **kwargs)
 
