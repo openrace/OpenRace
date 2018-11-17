@@ -36,4 +36,5 @@ class SerialInterfaceHandler:
                 self.buf.extend(data)
 
     def send_data(self, data):
+        logging.debug("sending data <%s>" % data)
         self.serial.write(data)

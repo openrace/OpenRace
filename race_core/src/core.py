@@ -25,11 +25,11 @@ if __name__ == "__main__":
 
     # hacking begins
 
-    # requesting version
+    logging.info("requesting version")
     cih.send_data(laprf.request_version())
 
     while True:
-        # read data loop
+        logging.info("read data loop")
         laprf.receive_data(cih.readline())
 
         # just so we can kill it
