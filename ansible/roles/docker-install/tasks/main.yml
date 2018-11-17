@@ -59,6 +59,7 @@
     state: present
   with_items:
     - docker-ce
+  notify: restart docker
   become: true
 
 - name: Add user pi to the docker group
@@ -66,4 +67,7 @@
     name: pi
     groups: docker
     append: yes
+  notify: restart docker
   become: true
+
+
