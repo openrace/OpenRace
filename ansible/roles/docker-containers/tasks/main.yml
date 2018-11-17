@@ -1,4 +1,9 @@
 ---
+- name: install dependency
+  pip:
+    name: docker-py
+  become: true
+
 - name: Create mqtt config directory
   file:
     path: /srv/mqtt/config/
