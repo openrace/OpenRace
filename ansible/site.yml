@@ -2,8 +2,7 @@
 # basic system updates, packages and settings
 - hosts: all
   roles:
-    - { role: docker-install } # install docker
-    - { role: accesspoint }    # setup system as access point
-    - { role: python }         # setup python things
-
-
+    - { role: docker-install }    # install docker
+    - { role: accesspoint }       # setup system as access point
+    - { role: python }            # setup python things
+    - { role: docker-containers } # setup docker containers
