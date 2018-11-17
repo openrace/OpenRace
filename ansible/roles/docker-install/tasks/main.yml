@@ -66,3 +66,4 @@
     name: pi
     groups: docker
     append: yes
+  become: true
