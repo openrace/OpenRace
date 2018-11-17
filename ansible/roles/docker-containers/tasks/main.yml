@@ -1,0 +1,38 @@
+---
+- name: Create mqtt config directory
+  file:
+    path: /srv/mqtt/config/
+    state: directory
+    owner: pi
+    group: pi
+    mode: 0775
+
+- name: Create mqtt data directory
+  file:
+    path: /srv/mqtt/data/
+    state: directory
+    owner: pi
+    group: pi
+    mode: 0775
+
+- name: Create mqtt log directory
+  file:
+    path: /srv/mqtt/log/
+    state: directory
+    owner: pi
+    group: pi
+    mode: 0775
+
+- name: Run MQTT container
+  docker_container:
+    name: 'mqtt'
+    image: 'pascaldevink/rpi-mosquitto'
+    state: 'started'
+    user: 'pi'
+    ports:
+     - "1883:1883"
+     - "9001:9001"
+    volumes:
+     - "/srv/mqtt/config:/mqtt/config:ro"
+     - "/srv/mqtt/log:/mqtt/log:rw"
+     - "/srv/mqtt/data:/mqtt/data:rw"
