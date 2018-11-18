@@ -1,7 +1,7 @@
 ---
 - name: configure dhcpcd
-  copy:
-    src: dhcpcd.conf
+  template:
+    src: dhcpcd.j2
     dest: /etc/dhcpcd.conf
     owner: root
     group: root
@@ -22,8 +22,8 @@
   become: true
 
 - name: configure dnsmasq
-  copy:
-    src: dnsmasq.conf
+  template:
+    src: dnsmasq.j2
     dest: /etc/dnsmasq.conf
     owner: root
     group: root
