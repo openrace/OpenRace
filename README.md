@@ -218,3 +218,7 @@ You have to give the Bluetooth device to the container: [Source](https://stackov
 * **Q:** Why do you use docker?
 
   **A:** The aim of this project is, to provide a simple solution to everyone wanting to organize FPV (fun) races. Docker makes it easy for everyone to use this project.
+
+* **Q:** Where can I see all DHCP leases?
+
+  **A:** `cat /var/lib/misc/dnsmasq.leases`
