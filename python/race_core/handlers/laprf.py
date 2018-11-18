@@ -95,19 +95,9 @@ class Emitter:
             l(*args, **kwargs)
 
 
-def return_tester(*args, **kwargs):
-    logging.info("return tester called")
-
-    for arg in args:
-        logging.info(arg)
-
-    for key, value in kwargs.items():
-        logging.info("%s == %s" % (key, value))
-
-
 class lapRFprotocol:
 
-    def __init__(self, communication_interface=None):
+    def __init__(self, communication_interface=None, return_callback=None):
         emitter = Emitter()
         self.status_packet = emitter
         self.rf_settings_packet = emitter
@@ -117,7 +107,7 @@ class lapRFprotocol:
         self.version_packet = emitter
         self.time_sync_packet = emitter
 
-        emitter.connect(return_tester)
+        emitter.connect(return_callback)
 
         self.crc16_table = []
         self.init_crc16_table()

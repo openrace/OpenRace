@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 # vim: set filencoding=utf-8
 
-import protocols
-import handlers
 import logging
 import time
 import os
+
+from handlers.racetracker import LapRFRaceTracker
 
 myPath = os.path.dirname(os.path.realpath(__file__))
 logPath = os.path.join(myPath, 'log/race_core.log')
@@ -16,30 +16,26 @@ logging.basicConfig(
     level=logging.DEBUG)
 
 
+def return_tester(*args, **kwargs):
+    logging.info("return tester called")
+
+    for arg in args:
+        logging.info(arg)
+
+    for key, value in kwargs.items():
+        logging.info("%s == %s" % (key, value))
+
 
 if __name__ == "__main__":
     logging.info("starting up")
-    cih = handlers.serialinterface.SerialInterfaceHandler('/dev/ttyACM0')
-    laprf = protocols.laprf.lapRFprotocol(cih)
 
-    # hacking begins
-
-    logging.info("requesting version")
-    cih.send_data(laprf.request_version())
+    tracker = LapRFRaceTracker('/dev/ttyACM0', return_tester)
+    # tracker.register_callback()
+    tracker.version()
 
     while True:
         logging.info("read data loop")
-        laprf.receive_data(cih.readline())
+        tracker.recieve_data()
 
         # just so we can kill it
         time.sleep(0.01)
-
-
-    # laprf.receive_data
-    # laprf.request_save_settings
-    # laprf.request_shutdown
-    # laprf.request_start_race
-    # laprf.request_stop_race
-    # laprf.request_data
-    # laprf.request_version
-    # laprf.request_time
