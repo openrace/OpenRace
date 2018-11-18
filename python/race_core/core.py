@@ -15,20 +15,12 @@ logging.basicConfig(
     datefmt='%Y-%d-%m %H:%M:%S',
     level=logging.DEBUG)
 
-def return_tester(*args, **kwargs):
-    for arg in args:
-        logging.info(arg)
 
-    for key, value in kwargs.items():
-        logging.info("%s == %s" % (key, value))
 
 if __name__ == "__main__":
     logging.info("starting up")
     cih = handlers.serialinterface.SerialInterfaceHandler('/dev/ttyACM0')
     laprf = protocols.laprf.lapRFprotocol(cih)
-
-    emi = protocols.laprf.Emitter()
-    emi.connect(return_tester)
 
     # hacking begins
 

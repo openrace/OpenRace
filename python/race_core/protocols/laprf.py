@@ -81,7 +81,7 @@ TOR_constants = {
 }
 
 
-class Emitter():
+class Emitter:
     def __init__(self):
         self.listeners = []
 
@@ -95,12 +95,21 @@ class Emitter():
             l(*args, **kwargs)
 
 
+def return_tester(*args, **kwargs):
+    for arg in args:
+        logging.info(arg)
+
+    for key, value in kwargs.items():
+        logging.info("%s == %s" % (key, value))
+
+
 class lapRFprotocol:
 
     def __init__(self, communication_interface=None):
         self.status_packet = Emitter()
         self.rf_settings_packet = Emitter()
         self.passing_packet = Emitter()
+        self.passing_packet.connect(return_tester)
 
         self.factory_name_signal = Emitter()
         self.version_packet = Emitter()
