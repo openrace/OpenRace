@@ -108,14 +108,16 @@ def return_tester(*args, **kwargs):
 class lapRFprotocol:
 
     def __init__(self, communication_interface=None):
-        self.status_packet = Emitter()
-        self.rf_settings_packet = Emitter()
-        self.passing_packet = Emitter()
-        self.passing_packet.connect(return_tester)
+        emitter = Emitter()
+        self.status_packet = emitter
+        self.rf_settings_packet = emitter
+        self.passing_packet = emitter
 
-        self.factory_name_signal = Emitter()
-        self.version_packet = Emitter()
-        self.time_sync_packet = Emitter()
+        self.factory_name_signal = emitter
+        self.version_packet = emitter
+        self.time_sync_packet = emitter
+
+        emitter.connect(return_tester)
 
         self.crc16_table = []
         self.init_crc16_table()
