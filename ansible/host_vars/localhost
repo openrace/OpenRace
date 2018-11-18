@@ -4,3 +4,7 @@ hostapd:
   ssid: OpenRace
   pass: PASSWORD
   country_code: CH
+
+mqtt:
+  user: openrace
+  pass: PASSWORD
