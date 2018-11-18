@@ -96,6 +96,8 @@ class Emitter:
 
 
 def return_tester(*args, **kwargs):
+    logging.info("return tester called")
+
     for arg in args:
         logging.info(arg)
 
