@@ -38,12 +38,12 @@
   become: true
 
 - name: putting custom mqtt config in place
-  file:
+  copy:
     src: mqtt-auth.conf
     dest: /srv/mqtt/config/mqtt-auth.conf
 
 - name: create empty mqtt users file
-  file:
+  copy:
     src: mqtt-users.txt
     dest: /srv/mqtt/data/mqtt-users.txt
   changed_when: false

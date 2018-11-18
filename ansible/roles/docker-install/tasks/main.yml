@@ -16,6 +16,7 @@
   with_items:
     - /etc/apt/sources.list.d/docker.list
   become: true
+  changed_when: false
 
 - name: Recreate Docker repository files
   file:
@@ -24,6 +25,7 @@
   with_items:
     - /etc/apt/sources.list.d/docker.list
   become: true
+  changed_when: false
 
 - name: Add Docker repository to the list of repositories
   lineinfile:
@@ -32,6 +34,7 @@
   with_items:
     - { url: 'deb [arch=armhf] https://download.docker.com/linux/raspbian stretch stable', category: 'docker' }
   become: true
+  changed_when: false
 
 - name: Install packages to allow apt to use HTTPS repositories
   apt:
@@ -47,6 +50,7 @@
   apt:
     update_cache: yes
   become: true
+  changed_when: false
 
 - name: Update all packages to the latest version
   apt:
@@ -69,5 +73,3 @@
     append: yes
   notify: restart docker
   become: true
-
-
