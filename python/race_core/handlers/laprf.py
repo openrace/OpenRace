@@ -6,8 +6,10 @@ import time
 import tempfile
 import logging
 
+from ..common import Emitter
 
-class FOR_values():
+
+class FOR_values:
     def __init__(self, tof, length, data_type):
         self.tof = tof
         self.length = length
@@ -15,99 +17,81 @@ class FOR_values():
 
 
 FOR_constants = {
-    'PILOT_ID': FOR_values(0x01, 0x01, 'B'),
-    'RTC_TIME': FOR_values(0x02, 0x08, 'q'),
-    'STATUS_FLAGS': FOR_values(0x03, 0x02, 'H'),
-    'DECODER_ID': FOR_values(0x20, 0x04, 'i'),
-    'DETECTION_NUMBER': FOR_values(0x21, 0x04, 'i'),
-    'DETECTION_PEAK_HEIGHT': FOR_values(0x22, 0x02, 'H'),
-    'DETECTION_FLAGS': FOR_values(0x23, 0x02, 'H'),
-    'STATUS_NOISE': FOR_values(0x20, 0x02, 'H'),
-    'STATUS_INPUT_VOLTAGE': FOR_values(0x21, 0x02, 'H'),
-    'STATUS_RSSI': FOR_values(0x22, 0x04, 'f'),
-    'STATUS_GATE_STATE': FOR_values(0x23, 0x01, 'B'),
-    'STATUS_COUNT': FOR_values(0x24, 0x04, 'i'),
-    'RSSI_MIN': FOR_values(0x20, 0x04, 'f'),
-    'RSSI_MAX': FOR_values(0x21, 0x04, 'f'),
-    'RSSI_MEAN': FOR_values(0x22, 0x04, 'f'),
-    'RSSI_COUNT': FOR_values(0x23, 0x04, 'i'),
-    'RSSI_ENABLE': FOR_values(0x24, 0x01, 'B'),
-    'RSSI_INTERVAL': FOR_values(0x25, 0x01, 'B'),
-    'RSSI_SDEV': FOR_values(0x26, 0x04, 'f'),
-    'DETECTION_COUNT_CURRENT': FOR_values(0x20, 0x04, 'i'),
-    'DETECTION_COUNT_FROM': FOR_values(0x21, 0x04, 'i'),
-    'DETECTION_COUNT_UNTIL': FOR_values(0x22, 0x04, 'i'),
-    'RF_ENABLE': FOR_values(0x20, 0x02, 'H'),
-    'RF_CHANNEL': FOR_values(0x21, 0x02, 'H'),
-    'RF_BAND': FOR_values(0x22, 0x02, 'H'),
-    'RF_THRESHOLD': FOR_values(0x23, 0x04, 'f'),
-    'RF_GAIN': FOR_values(0x24, 0x02, 'H'),
-    'RF_FREQUENCY': FOR_values(0x25, 0x02, 'H'),
-    'TIME_RTC_TIME': FOR_values(0x20, 0x08, 'q'),
-    'CTRL_REQ_RACE': FOR_values(0x20, 0x01, 'B'),
-    'CTRL_REQ_CAL': FOR_values(0x21, 0x01, 'B'),
-    'CTRL_REQ_DATA': FOR_values(0x22, 0x04, 'i'),
-    'CTRL_REQ_STATIC_CAL': FOR_values(0x23, 0x01, 'B'),
-    'DATA_DUMP': FOR_values(0x20, 0x00, 's'),
-    'DATA_DUMP_LAST_PACKET': FOR_values(0x21, 0x00, 's'),
-    'CALIBRATION_LOG_HEIGHT': FOR_values(0x20, 0x04, 'f'),
-    'CALIBRATION_LOG_NUM_PEAK': FOR_values(0x21, 0x02, 'H'),
-    'CALIBRATION_LOG_BASE': FOR_values(0x22, 0x02, 'H'),
-    'SETTINGS_NAME': FOR_values(0x20, 0x0A, '10s'),
-    'SETTINGS_STATUS_UPDATE_PERIOD': FOR_values(0x22, 0x02, 'H'),
-    'SETTINGS_RSSI_SAMPLE_PERIOD': FOR_values(0x23, 0x04, 'i'),
-    'SETTINGS_FACTORY_NAME': FOR_values(0x24, 0x0A, '10s'),
-    'SETTINGS_SAVE_SETTINGS': FOR_values(0x25, 0x01, 'B'),
-    'SETTINGS_MIN_LAP_TIME': FOR_values(0x26, 0x04, 'i'),
-    'SETTINGS_ENABLED_MODULES': FOR_values(0x27, 0x01, 'B'),
-    'DESC_SYSTEM_VERSION': FOR_values(0x20, 0x04, 'i'),
-    'DESC_PROTOCOL_VERSION': FOR_values(0x21, 0x01, 'B'),
-    'NETWORK_PING': FOR_values(0x20, 0x04, 'i'),
+    "PILOT_ID": FOR_values(0x01, 0x01, "B"),
+    "RTC_TIME": FOR_values(0x02, 0x08, "q"),
+    "STATUS_FLAGS": FOR_values(0x03, 0x02, "H"),
+    "DECODER_ID": FOR_values(0x20, 0x04, "i"),
+    "DETECTION_NUMBER": FOR_values(0x21, 0x04, "i"),
+    "DETECTION_PEAK_HEIGHT": FOR_values(0x22, 0x02, "H"),
+    "DETECTION_FLAGS": FOR_values(0x23, 0x02, "H"),
+    "STATUS_NOISE": FOR_values(0x20, 0x02, "H"),
+    "STATUS_INPUT_VOLTAGE": FOR_values(0x21, 0x02, "H"),
+    "STATUS_RSSI": FOR_values(0x22, 0x04, "f"),
+    "STATUS_GATE_STATE": FOR_values(0x23, 0x01, "B"),
+    "STATUS_COUNT": FOR_values(0x24, 0x04, "i"),
+    "RSSI_MIN": FOR_values(0x20, 0x04, "f"),
+    "RSSI_MAX": FOR_values(0x21, 0x04, "f"),
+    "RSSI_MEAN": FOR_values(0x22, 0x04, "f"),
+    "RSSI_COUNT": FOR_values(0x23, 0x04, "i"),
+    "RSSI_ENABLE": FOR_values(0x24, 0x01, "B"),
+    "RSSI_INTERVAL": FOR_values(0x25, 0x01, "B"),
+    "RSSI_SDEV": FOR_values(0x26, 0x04, "f"),
+    "DETECTION_COUNT_CURRENT": FOR_values(0x20, 0x04, "i"),
+    "DETECTION_COUNT_FROM": FOR_values(0x21, 0x04, "i"),
+    "DETECTION_COUNT_UNTIL": FOR_values(0x22, 0x04, "i"),
+    "RF_ENABLE": FOR_values(0x20, 0x02, "H"),
+    "RF_CHANNEL": FOR_values(0x21, 0x02, "H"),
+    "RF_BAND": FOR_values(0x22, 0x02, "H"),
+    "RF_THRESHOLD": FOR_values(0x23, 0x04, "f"),
+    "RF_GAIN": FOR_values(0x24, 0x02, "H"),
+    "RF_FREQUENCY": FOR_values(0x25, 0x02, "H"),
+    "TIME_RTC_TIME": FOR_values(0x20, 0x08, "q"),
+    "CTRL_REQ_RACE": FOR_values(0x20, 0x01, "B"),
+    "CTRL_REQ_CAL": FOR_values(0x21, 0x01, "B"),
+    "CTRL_REQ_DATA": FOR_values(0x22, 0x04, "i"),
+    "CTRL_REQ_STATIC_CAL": FOR_values(0x23, 0x01, "B"),
+    "DATA_DUMP": FOR_values(0x20, 0x00, "s"),
+    "DATA_DUMP_LAST_PACKET": FOR_values(0x21, 0x00, "s"),
+    "CALIBRATION_LOG_HEIGHT": FOR_values(0x20, 0x04, "f"),
+    "CALIBRATION_LOG_NUM_PEAK": FOR_values(0x21, 0x02, "H"),
+    "CALIBRATION_LOG_BASE": FOR_values(0x22, 0x02, "H"),
+    "SETTINGS_NAME": FOR_values(0x20, 0x0A, "10s"),
+    "SETTINGS_STATUS_UPDATE_PERIOD": FOR_values(0x22, 0x02, "H"),
+    "SETTINGS_RSSI_SAMPLE_PERIOD": FOR_values(0x23, 0x04, "i"),
+    "SETTINGS_FACTORY_NAME": FOR_values(0x24, 0x0A, "10s"),
+    "SETTINGS_SAVE_SETTINGS": FOR_values(0x25, 0x01, "B"),
+    "SETTINGS_MIN_LAP_TIME": FOR_values(0x26, 0x04, "i"),
+    "SETTINGS_ENABLED_MODULES": FOR_values(0x27, 0x01, "B"),
+    "DESC_SYSTEM_VERSION": FOR_values(0x20, 0x04, "i"),
+    "DESC_PROTOCOL_VERSION": FOR_values(0x21, 0x01, "B"),
+    "NETWORK_PING": FOR_values(0x20, 0x04, "i"),
 }
 
 TOR_constants = {
-    'RSSI': 0xDA01,
-    'RF_SETTINGS': 0xDA02,
-    'STATE_CTRL': 0xDA04,
-    'DATA': 0xDA05,
-    'CALIBRATION_LOG': 0xDA06,
-    'SETTINGS': 0xDA07,
-    'DESC': 0xDA08,
-    'DETECTION': 0xDA09,
-    'STATUS': 0xDA0A,
-    'RESEND': 0xDA0B,
-    'TIME': 0xDA0C,
-    'NETWORK': 0xDA0D
+    "RSSI": 0xDA01,
+    "RF_SETTINGS": 0xDA02,
+    "STATE_CTRL": 0xDA04,
+    "DATA": 0xDA05,
+    "CALIBRATION_LOG": 0xDA06,
+    "SETTINGS": 0xDA07,
+    "DESC": 0xDA08,
+    "DETECTION": 0xDA09,
+    "STATUS": 0xDA0A,
+    "RESEND": 0xDA0B,
+    "TIME": 0xDA0C,
+    "NETWORK": 0xDA0D,
 }
 
 
-class Emitter:
-    def __init__(self):
-        self.listeners = []
-
-    def connect(self, listener):
-        logging.debug("connecting listener")
-        self.listeners.append(listener)
-
-    def emit(self, *args, **kwargs):
-        logging.debug("emitting...")
-        for l in self.listeners:
-            l(*args, **kwargs)
-
-
 class lapRFprotocol:
+    def __init__(self, communication_interface=None):
+        self.status_packet = Emitter()
+        self.rf_settings_packet = Emitter()
+        self.passing_packet = Emitter()
 
-    def __init__(self, communication_interface=None, return_callback=None):
-        emitter = Emitter()
-        self.status_packet = emitter
-        self.rf_settings_packet = emitter
-        self.passing_packet = emitter
-
-        self.factory_name_signal = emitter
-        self.version_packet = emitter
-        self.time_sync_packet = emitter
-
-        emitter.connect(return_callback)
+        self.factory_name_signal = Emitter()
+        self.version_packet = Emitter()
+        self.time_sync_packet = Emitter()
 
         self.crc16_table = []
         self.init_crc16_table()
@@ -115,14 +99,14 @@ class lapRFprotocol:
         self.communication_interface = communication_interface
 
         self.laprf_buffer = []
-        self.laprf_parsing_status = 'LOOK_FOR_SOR'
+        self.laprf_parsing_status = "LOOK_FOR_SOR"
         self.laprf_receive_count = 0
 
         self.received_packets_count = 0
 
-        self.SOR = 0x5a
-        self.EOR = 0x5b
-        self.ESC = 0x5c
+        self.SOR = 0x5A
+        self.EOR = 0x5B
+        self.ESC = 0x5C
         self.escape_offset = 0x40
 
         self.last_time_request = 0
@@ -132,13 +116,13 @@ class lapRFprotocol:
 
         self.status_count = 0
         logging.debug("proto init")
-        crc_check_str = ['1', '2', '3', '4', '5', '6', '7', '8', '9']
+        crc_check_str = ["1", "2", "3", "4", "5", "6", "7", "8", "9"]
         crc_check_val = bytearray("123456789", encoding="ascii")
         logging.debug("crc check: {:04x}".format(self.compute_CRC(crc_check_val)))
 
         self.logging = False
 
-    def log(self, txt, end='\n'):
+    def log(self, txt, end="\n"):
         if self.logging:
             logging.debug(txt, end=end)
 
@@ -155,9 +139,9 @@ class lapRFprotocol:
         data_type = FOR_constants[field_type].data_type
 
         if data == None:
-            packed = struct.pack('<BB', tof, 0)
+            packed = struct.pack("<BB", tof, 0)
         else:
-            packed = struct.pack('<BB' + data_type, tof, length, data)
+            packed = struct.pack("<BB" + data_type, tof, length, data)
 
         # logging.debug("packed FOR [{}]".format(packed))
         return packed
@@ -165,14 +149,14 @@ class lapRFprotocol:
     def init_crc16_table(self):
 
         for i in range(256):
-            remainder = (i << 8) & 0xff00
+            remainder = (i << 8) & 0xFF00
             #            crc = (i << 8) & 0xffff
 
             for j in range(8):
                 if remainder & 0x8000 == 0x8000:
                     remainder = ((remainder << 1) & 0xFFFF) ^ 0x8005
                 else:
-                    remainder = ((remainder << 1) & 0xFFFF)
+                    remainder = (remainder << 1) & 0xFFFF
 
             self.crc16_table.append(remainder)
 
@@ -184,7 +168,7 @@ class lapRFprotocol:
 
         for i in range(nbits):
             if (input & 0x01) == 0x01:
-                output |= (1 << ((nbits - 1) - i))
+                output |= 1 << ((nbits - 1) - i)
 
             input = input >> 1
 
@@ -195,8 +179,8 @@ class lapRFprotocol:
         #    logging.debug (type(data))
         for bt in data:
             a = self.reflect(bt, 8) & 0xFF
-            b = ((crc >> 8) & 0xFF)
-            c = ((crc << 8) & 0xFFFF)
+            b = (crc >> 8) & 0xFF
+            c = (crc << 8) & 0xFFFF
             dat = a ^ b
             crc = self.crc16_table[dat] ^ c
 
@@ -243,10 +227,10 @@ class lapRFprotocol:
 
         EOR = self.EOR
 
-        header = struct.pack('<BHHH', SOR, length, CRC, TOR)
+        header = struct.pack("<BHHH", SOR, length, CRC, TOR)
 
         #    logging.debug(type(header))
-        end = struct.pack('<B', EOR)
+        end = struct.pack("<B", EOR)
         #    logging.debug( type(data) )
         #    logging.debug(type(end))
         packet = None
@@ -258,7 +242,7 @@ class lapRFprotocol:
         CRC = self.compute_CRC(packet)
         #    logging.debug(CRC)
 
-        header = struct.pack('<BHHH', SOR, length, CRC, TOR)
+        header = struct.pack("<BHHH", SOR, length, CRC, TOR)
 
         packet = None
         if data is not None:
@@ -277,26 +261,26 @@ class lapRFprotocol:
         # parse
         #        logging.debug("received: [", hex(rx), "] - status ", self.laprf_parsing_status)
         rx_val = int(rx)
-        if self.laprf_parsing_status == 'LOOK_FOR_SOR':
+        if self.laprf_parsing_status == "LOOK_FOR_SOR":
             if rx_val == self.SOR:
                 self.laprf_buffer = [rx]
                 self.laprf_receive_count += 1
-            self.laprf_parsing_status = 'LOOK_FOR_EOR'
+            self.laprf_parsing_status = "LOOK_FOR_EOR"
 
-        elif self.laprf_parsing_status == 'ESCAPE':
+        elif self.laprf_parsing_status == "ESCAPE":
             self.laprf_buffer.append(rx - self.escape_offset)
 
             self.laprf_receive_count += 1
 
-            self.laprf_parsing_status = 'LOOK_FOR_EOR'
+            self.laprf_parsing_status = "LOOK_FOR_EOR"
 
-        elif self.laprf_parsing_status == 'LOOK_FOR_EOR':
+        elif self.laprf_parsing_status == "LOOK_FOR_EOR":
             if rx_val == self.ESC:
-                self.laprf_parsing_status = 'ESCAPE'
+                self.laprf_parsing_status = "ESCAPE"
             elif rx_val == self.EOR:
                 self.laprf_buffer.append(rx)
                 self.laprf_receive_count += 1
-                self.laprf_parsing_status = 'LOOK_FOR_SOR'
+                self.laprf_parsing_status = "LOOK_FOR_SOR"
 
                 return True
             else:
@@ -307,46 +291,46 @@ class lapRFprotocol:
 
     def request_save_settings(self):
         logging.info("REQUEST SAVE")
-        data = self.build_FOR('SETTINGS_SAVE_SETTINGS', 1)
-        packet = self.build_header_and_data_packet('SETTINGS', data)
+        data = self.build_FOR("SETTINGS_SAVE_SETTINGS", 1)
+        packet = self.build_header_and_data_packet("SETTINGS", data)
         return packet
 
     def request_shutdown(self):
         logging.info("REQUEST SHUTDOWN")
-        data = self.build_FOR('CTRL_REQ_RACE', 0xFF)
-        packet = self.build_header_and_data_packet('STATE_CTRL', data)
+        data = self.build_FOR("CTRL_REQ_RACE", 0xFF)
+        packet = self.build_header_and_data_packet("STATE_CTRL", data)
         return packet
 
     def request_start_race(self):
         logging.info("REQUEST START RACE")
-        data = self.build_FOR('CTRL_REQ_RACE', 1)
-        packet = self.build_header_and_data_packet('STATE_CTRL', data)
+        data = self.build_FOR("CTRL_REQ_RACE", 1)
+        packet = self.build_header_and_data_packet("STATE_CTRL", data)
         return packet
 
     def request_stop_race(self):
         logging.info("REQUEST STOP RACE")
-        data = self.build_FOR('CTRL_REQ_RACE', 0)
-        packet = self.build_header_and_data_packet('STATE_CTRL', data)
+        data = self.build_FOR("CTRL_REQ_RACE", 0)
+        packet = self.build_header_and_data_packet("STATE_CTRL", data)
         return packet
 
     def request_data(self):
         logging.info("REQUEST DATA")
-        data = self.build_FOR('CTRL_REQ_DATA', 0)
-        packet = self.build_header_and_data_packet('STATE_CTRL', data)
+        data = self.build_FOR("CTRL_REQ_DATA", 0)
+        packet = self.build_header_and_data_packet("STATE_CTRL", data)
         return packet
 
     def request_version(self):
         logging.info("REQUEST VERSION")
-        data = self.build_FOR('DESC_SYSTEM_VERSION', None)
-        packet = self.build_header_and_data_packet('DESC', data)
+        data = self.build_FOR("DESC_SYSTEM_VERSION", None)
+        packet = self.build_header_and_data_packet("DESC", data)
         return packet
 
     def request_time(self):
         now = time.time()
         self.last_time_request = now
         logging.info("[{}] REQUEST TIME".format(now))
-        data = self.build_FOR('RTC_TIME', None)
-        packet = self.build_header_and_data_packet('TIME', data)
+        data = self.build_FOR("RTC_TIME", None)
+        packet = self.build_header_and_data_packet("TIME", data)
         return packet
 
     def laprf_protocol_decoder(self, packet):
@@ -362,24 +346,26 @@ class lapRFprotocol:
         self.received_packets_count += 1
         self.log("packet count: {}".format(self.received_packets_count))
         packet_receive_time = time.time()
-        self.log("[{}] ".format(packet_receive_time), end=' ')
-        SOR, length, CRC, TOR = struct.unpack('<BHHH', header)
+        self.log("[{}] ".format(packet_receive_time), end=" ")
+        SOR, length, CRC, TOR = struct.unpack("<BHHH", header)
         if len(packet) != length:
             self.log("length error")
         else:
-            self.log(" length OK ", end=' ')
+            self.log(" length OK ", end=" ")
         # set CRC to 0
         packet[3] = 0
         packet[4] = 0
         computed_crc = self.compute_CRC(bytearray(packet))
         #        computed_crc = CRC
         if computed_crc != CRC:
-            self.log("CRC error, computed: {:04x} received {:04x}".format(computed_crc, CRC))
+            self.log(
+                "CRC error, computed: {:04x} received {:04x}".format(computed_crc, CRC)
+            )
             return
         else:
-            self.log(" CRC OK ", end=' ')
+            self.log(" CRC OK ", end=" ")
 
-        if TOR == TOR_constants['DETECTION']:
+        if TOR == TOR_constants["DETECTION"]:
             # passing record
 
             # logging.debug( " [ ", end=' ')
@@ -388,7 +374,7 @@ class lapRFprotocol:
             #     logging.debug( hex(d), end=' ')
             # logging.debug()
 
-            self.log(" passing ", end=' ')
+            self.log(" passing ", end=" ")
             idx = 7
             decoder_id = 0
             detection_number = 0
@@ -399,61 +385,69 @@ class lapRFprotocol:
 
             while int(packet[idx]) != self.EOR:
 
-                field_str_idx = ''
+                field_str_idx = ""
 
-                if int(packet[idx]) == FOR_constants['DECODER_ID'].tof:
+                if int(packet[idx]) == FOR_constants["DECODER_ID"].tof:
                     idx += 1
-                    field_str_idx = 'DECODER_ID'
-                elif int(packet[idx]) == FOR_constants['PILOT_ID'].tof:
+                    field_str_idx = "DECODER_ID"
+                elif int(packet[idx]) == FOR_constants["PILOT_ID"].tof:
                     idx += 1
-                    field_str_idx = 'PILOT_ID'
-                elif int(packet[idx]) == FOR_constants['RTC_TIME'].tof:
+                    field_str_idx = "PILOT_ID"
+                elif int(packet[idx]) == FOR_constants["RTC_TIME"].tof:
                     idx += 1
-                    field_str_idx = 'RTC_TIME'
-                elif int(packet[idx]) == FOR_constants['DETECTION_NUMBER'].tof:
+                    field_str_idx = "RTC_TIME"
+                elif int(packet[idx]) == FOR_constants["DETECTION_NUMBER"].tof:
                     idx += 1
-                    field_str_idx = 'DETECTION_NUMBER'
-                elif int(packet[idx]) == FOR_constants['DETECTION_PEAK_HEIGHT'].tof:
+                    field_str_idx = "DETECTION_NUMBER"
+                elif int(packet[idx]) == FOR_constants["DETECTION_PEAK_HEIGHT"].tof:
                     idx += 1
-                    field_str_idx = 'DETECTION_PEAK_HEIGHT'
-                elif int(packet[idx]) == FOR_constants['DETECTION_FLAGS'].tof:
+                    field_str_idx = "DETECTION_PEAK_HEIGHT"
+                elif int(packet[idx]) == FOR_constants["DETECTION_FLAGS"].tof:
                     idx += 1
-                    field_str_idx = 'DETECTION_FLAGS'
+                    field_str_idx = "DETECTION_FLAGS"
                 else:
-                    logging.warning("UNKNOWN FIELD ID: {}".format(packet[idx]), end=' ')
+                    logging.warning("UNKNOWN FIELD ID: {}".format(packet[idx]), end=" ")
                     idx += 1
 
-                if field_str_idx != '':
+                if field_str_idx != "":
                     length = FOR_constants[field_str_idx].length
                     data_type = FOR_constants[field_str_idx].data_type
                     length += 1  # add size byte
-                    size, data = struct.unpack('<B' + data_type, bytes(packet[idx:idx + length]))
+                    size, data = struct.unpack(
+                        "<B" + data_type, bytes(packet[idx : idx + length])
+                    )
                     idx += length
 
                     self.log("{} - [{}]:\t{}".format(field_str_idx, size, data))
 
-                    if field_str_idx == 'PILOT_ID':
+                    if field_str_idx == "PILOT_ID":
                         pilot_id = data
-                    elif field_str_idx == 'DECODER_ID':
+                    elif field_str_idx == "DECODER_ID":
                         decoder_id = data
-                    elif field_str_idx == 'RTC_TIME':
+                    elif field_str_idx == "RTC_TIME":
                         rtc_time = data
-                    elif field_str_idx == 'DETECTION_NUMBER':
+                    elif field_str_idx == "DETECTION_NUMBER":
                         detection_number = data
-                    elif field_str_idx == 'DETECTION_PEAK_HEIGHT':
+                    elif field_str_idx == "DETECTION_PEAK_HEIGHT":
                         detection_peak_height = data
-                    elif field_str_idx == 'DETECTION_FLAGS':
+                    elif field_str_idx == "DETECTION_FLAGS":
                         detection_flags = data
 
             rtc_time = 0
             #            logging.debug("[" + str((decoder_id, passing_number, transponder, rtc_time,
             #            passing_strength, passing_hits, passing_flags)) + "]")
 
-            self.passing_packet.emit(decoder_id, detection_number, pilot_id, rtc_time, detection_peak_height,
-                                     detection_flags)
+            self.passing_packet.emit(
+                decoder_id,
+                detection_number,
+                pilot_id,
+                rtc_time,
+                detection_peak_height,
+                detection_flags,
+            )
 
-        elif TOR == TOR_constants['RF_SETTINGS']:
-            self.log(" RF settings ", end=' ')
+        elif TOR == TOR_constants["RF_SETTINGS"]:
+            self.log(" RF settings ", end=" ")
             idx = 7
             data = object()
             max_pilots = 8
@@ -468,62 +462,73 @@ class lapRFprotocol:
             lst = []
             dct = None
             while int(packet[idx]) != self.EOR:
-                field_str_idx = ''
+                field_str_idx = ""
 
                 #                logging.debug(hex(int(packet[idx])), end=' ')
-                if int(packet[idx]) == FOR_constants['PILOT_ID'].tof:
+                if int(packet[idx]) == FOR_constants["PILOT_ID"].tof:
                     idx += 1
-                    field_str_idx = 'PILOT_ID'
-                elif int(packet[idx]) == FOR_constants['RF_GAIN'].tof:
+                    field_str_idx = "PILOT_ID"
+                elif int(packet[idx]) == FOR_constants["RF_GAIN"].tof:
                     idx += 1
-                    field_str_idx = 'RF_GAIN'
-                elif int(packet[idx]) == FOR_constants['RF_THRESHOLD'].tof:
+                    field_str_idx = "RF_GAIN"
+                elif int(packet[idx]) == FOR_constants["RF_THRESHOLD"].tof:
                     idx += 1
-                    field_str_idx = 'RF_THRESHOLD'
-                elif int(packet[idx]) == FOR_constants['RF_ENABLE'].tof:
+                    field_str_idx = "RF_THRESHOLD"
+                elif int(packet[idx]) == FOR_constants["RF_ENABLE"].tof:
                     idx += 1
-                    field_str_idx = 'RF_ENABLE'
-                elif int(packet[idx]) == FOR_constants['RF_CHANNEL'].tof:
+                    field_str_idx = "RF_ENABLE"
+                elif int(packet[idx]) == FOR_constants["RF_CHANNEL"].tof:
                     idx += 1
-                    field_str_idx = 'RF_CHANNEL'
-                elif int(packet[idx]) == FOR_constants['RF_BAND'].tof:
+                    field_str_idx = "RF_CHANNEL"
+                elif int(packet[idx]) == FOR_constants["RF_BAND"].tof:
                     idx += 1
-                    field_str_idx = 'RF_BAND'
-                elif int(packet[idx]) == FOR_constants['RF_FREQUENCY'].tof:
+                    field_str_idx = "RF_BAND"
+                elif int(packet[idx]) == FOR_constants["RF_FREQUENCY"].tof:
                     idx += 1
-                    field_str_idx = 'RF_FREQUENCY'
+                    field_str_idx = "RF_FREQUENCY"
                 else:
-                    logging.warning("UNKNOWN FIELD ID: {}".format(packet[idx]), end=' ')
+                    logging.warning("UNKNOWN FIELD ID: {}".format(packet[idx]), end=" ")
                     idx += 1
 
-                if field_str_idx != '':
+                if field_str_idx != "":
 
                     length = FOR_constants[field_str_idx].length
                     data_type = FOR_constants[field_str_idx].data_type
                     length += 1  # add size byte
-                    size, data = struct.unpack('<B' + data_type, bytes(packet[idx:idx + length]))
+                    size, data = struct.unpack(
+                        "<B" + data_type, bytes(packet[idx : idx + length])
+                    )
                     idx += length
 
-                    if field_str_idx == 'PILOT_ID':
+                    if field_str_idx == "PILOT_ID":
                         rf_pilotid = data - 1
-                        dct = {'PILOT_ID': data}
+                        dct = {"PILOT_ID": data}
 
                         lst.append(dct)
 
-                    elif field_str_idx == 'RF_GAIN' or field_str_idx == 'RF_THRESHOLD' or field_str_idx == 'RF_ENABLE' or field_str_idx == 'RF_CHANNEL' or field_str_idx == 'RF_BAND' or field_str_idx == 'RF_FREQUENCY':
+                    elif (
+                        field_str_idx == "RF_GAIN"
+                        or field_str_idx == "RF_THRESHOLD"
+                        or field_str_idx == "RF_ENABLE"
+                        or field_str_idx == "RF_CHANNEL"
+                        or field_str_idx == "RF_BAND"
+                        or field_str_idx == "RF_FREQUENCY"
+                    ):
                         if rf_pilotid > -1 and rf_pilotid < max_pilots:
                             dct[field_str_idx] = data
 
-                    self.log("{} - [{}]:\t{}".format(field_str_idx, size, data), end=' ')
+                    self.log(
+                        "{} - [{}]:\t{}".format(field_str_idx, size, data), end=" "
+                    )
 
-            self.log('\n')
+            self.log("\n")
 
             self.log(lst)
 
             self.rf_settings_packet.emit(lst)
 
-        elif TOR == TOR_constants['STATUS']:
-            self.log(" status ", end=' ')
+        elif TOR == TOR_constants["STATUS"]:
+            self.log(" status ", end=" ")
             self.status_count += 1
 
             idx = 7
@@ -531,147 +536,169 @@ class lapRFprotocol:
             current_pilot_id = 0
             while int(packet[idx]) != self.EOR:
 
-                field_str_idx = ''
-                if int(packet[idx]) == FOR_constants['STATUS_NOISE'].tof:  # noise
+                field_str_idx = ""
+                if int(packet[idx]) == FOR_constants["STATUS_NOISE"].tof:  # noise
                     idx += 1
-                    field_str_idx = 'STATUS_NOISE'
+                    field_str_idx = "STATUS_NOISE"
 
-                elif int(packet[idx]) == FOR_constants['STATUS_INPUT_VOLTAGE'].tof:  # noise
+                elif (
+                    int(packet[idx]) == FOR_constants["STATUS_INPUT_VOLTAGE"].tof
+                ):  # noise
                     idx += 1
-                    field_str_idx = 'STATUS_INPUT_VOLTAGE'
-                elif int(packet[idx]) == FOR_constants['PILOT_ID'].tof:  # noise
+                    field_str_idx = "STATUS_INPUT_VOLTAGE"
+                elif int(packet[idx]) == FOR_constants["PILOT_ID"].tof:  # noise
                     idx += 1
-                    field_str_idx = 'PILOT_ID'
-                elif int(packet[idx]) == FOR_constants['RSSI_MEAN'].tof:  # noise
+                    field_str_idx = "PILOT_ID"
+                elif int(packet[idx]) == FOR_constants["RSSI_MEAN"].tof:  # noise
                     idx += 1
-                    field_str_idx = 'RSSI_MEAN'
-                elif int(packet[idx]) == FOR_constants['STATUS_COUNT'].tof:  # noise
+                    field_str_idx = "RSSI_MEAN"
+                elif int(packet[idx]) == FOR_constants["STATUS_COUNT"].tof:  # noise
                     idx += 1
-                    field_str_idx = 'STATUS_COUNT'
-                elif int(packet[idx]) == FOR_constants['STATUS_GATE_STATE'].tof:  # noise
+                    field_str_idx = "STATUS_COUNT"
+                elif (
+                    int(packet[idx]) == FOR_constants["STATUS_GATE_STATE"].tof
+                ):  # noise
                     idx += 1
-                    field_str_idx = 'STATUS_GATE_STATE'
-                elif int(packet[idx]) == FOR_constants['STATUS_FLAGS'].tof:  # noise
+                    field_str_idx = "STATUS_GATE_STATE"
+                elif int(packet[idx]) == FOR_constants["STATUS_FLAGS"].tof:  # noise
                     idx += 1
-                    field_str_idx = 'STATUS_FLAGS'
+                    field_str_idx = "STATUS_FLAGS"
                 else:
                     idx += 1
 
-                if field_str_idx != '':
+                if field_str_idx != "":
                     length = FOR_constants[field_str_idx].length
                     data_type = FOR_constants[field_str_idx].data_type
                     length += 1  # add size byte
-                    size, data = struct.unpack('<B' + data_type, bytes(packet[idx:idx + length]))
+                    size, data = struct.unpack(
+                        "<B" + data_type, bytes(packet[idx : idx + length])
+                    )
                     idx += length
 
                     self.log("{} - [{}]:\t{}".format(field_str_idx, size, data))
 
-                    if field_str_idx == 'PILOT_ID':
+                    if field_str_idx == "PILOT_ID":
                         current_pilot_id = data
-                    elif field_str_idx == 'RSSI_MEAN':
+                    elif field_str_idx == "RSSI_MEAN":
                         rssis[current_pilot_id - 1] = data
 
             self.status_packet.emit(self.status_count, rssis)
-        elif TOR == TOR_constants['DESC']:
-            self.log(" desc ", end=' ')
+        elif TOR == TOR_constants["DESC"]:
+            self.log(" desc ", end=" ")
             idx = 7
             system_version = [0, 0, 0, 0]
             protocol_version = 0
 
             while int(packet[idx]) != self.EOR:
 
-                field_str_idx = ''
-                if int(packet[idx]) == FOR_constants['DESC_SYSTEM_VERSION'].tof:
+                field_str_idx = ""
+                if int(packet[idx]) == FOR_constants["DESC_SYSTEM_VERSION"].tof:
                     idx += 1
-                    field_str_idx = 'DESC_SYSTEM_VERSION'
-                elif int(packet[idx]) == FOR_constants['DESC_PROTOCOL_VERSION'].tof:
+                    field_str_idx = "DESC_SYSTEM_VERSION"
+                elif int(packet[idx]) == FOR_constants["DESC_PROTOCOL_VERSION"].tof:
                     idx += 1
-                    field_str_idx = 'DESC_PROTOCOL_VERSION'
+                    field_str_idx = "DESC_PROTOCOL_VERSION"
                 else:
                     idx += 1
 
-                if field_str_idx != '':
+                if field_str_idx != "":
                     length = FOR_constants[field_str_idx].length
                     data_type = FOR_constants[field_str_idx].data_type
                     length += 1  # add size byte
-                    size, data = struct.unpack('<B' + data_type, bytes(packet[idx:idx + length]))
+                    size, data = struct.unpack(
+                        "<B" + data_type, bytes(packet[idx : idx + length])
+                    )
                     idx += length
 
                     self.log("{} - [{}]:\t{}".format(field_str_idx, size, data))
 
-                    if field_str_idx == 'DESC_SYSTEM_VERSION':
-                        system_version = [(data >> 24) & 0xFF,
-                                          (data >> 16) & 0xFF,
-                                          (data >> 8) & 0xFF,
-                                          (data >> 0) & 0xFF, ]
-                    elif field_str_idx == 'DESC_PROTOCOL_VERSION':
+                    if field_str_idx == "DESC_SYSTEM_VERSION":
+                        system_version = [
+                            (data >> 24) & 0xFF,
+                            (data >> 16) & 0xFF,
+                            (data >> 8) & 0xFF,
+                            (data >> 0) & 0xFF,
+                        ]
+                    elif field_str_idx == "DESC_PROTOCOL_VERSION":
                         protocol_version = data
 
             self.version_packet.emit(system_version, protocol_version)
 
-        elif TOR == TOR_constants['TIME']:
+        elif TOR == TOR_constants["TIME"]:
             rtc_time = 0
             time_rtc_time = 0
-            self.log(" time ", end=' ')
+            self.log(" time ", end=" ")
             idx = 7
             while int(packet[idx]) != self.EOR:
 
-                field_str_idx = ''
-                if int(packet[idx]) == FOR_constants['TIME_RTC_TIME'].tof:
+                field_str_idx = ""
+                if int(packet[idx]) == FOR_constants["TIME_RTC_TIME"].tof:
                     idx += 1
-                    field_str_idx = 'TIME_RTC_TIME'
+                    field_str_idx = "TIME_RTC_TIME"
                     self.log("t")
-                elif int(packet[idx]) == FOR_constants['RTC_TIME'].tof:
+                elif int(packet[idx]) == FOR_constants["RTC_TIME"].tof:
                     idx += 1
-                    field_str_idx = 'RTC_TIME'
+                    field_str_idx = "RTC_TIME"
                     self.log("t")
                 else:
                     idx += 1
 
-                if field_str_idx != '':
+                if field_str_idx != "":
                     length = FOR_constants[field_str_idx].length
                     data_type = FOR_constants[field_str_idx].data_type
                     length += 1  # add size byte
-                    size, data = struct.unpack('<B' + data_type, bytes(packet[idx:idx + length]))
+                    size, data = struct.unpack(
+                        "<B" + data_type, bytes(packet[idx : idx + length])
+                    )
                     idx += length
 
-                    if field_str_idx == 'RTC_TIME':  # device packet sendout time
+                    if field_str_idx == "RTC_TIME":  # device packet sendout time
                         self.log("rtc time: {}".format(data))
                         rtc_time = data * 1e-6
-                    elif field_str_idx == 'TIME_RTC_TIME':  # device packet receive time
+                    elif field_str_idx == "TIME_RTC_TIME":  # device packet receive time
                         self.log("time rtc time: {}".format(data))
                         # self.factory_name_signal.emit(data)
                         time_rtc_time = data * 1e-6
-            self.log("Packet delta: {}".format(packet_receive_time - self.last_time_request))
-            self.log("Device offset: {}".format((packet_receive_time + self.last_time_request) / 2.0 - rtc_time))
+            self.log(
+                "Packet delta: {}".format(packet_receive_time - self.last_time_request)
+            )
+            self.log(
+                "Device offset: {}".format(
+                    (packet_receive_time + self.last_time_request) / 2.0 - rtc_time
+                )
+            )
 
-            self.time_sync_packet.emit(self.last_time_request, time_rtc_time, rtc_time, packet_receive_time)
+            self.time_sync_packet.emit(
+                self.last_time_request, time_rtc_time, rtc_time, packet_receive_time
+            )
 
-        elif TOR == TOR_constants['SETTINGS']:
-            self.log(" settings packet ", end=' ')
+        elif TOR == TOR_constants["SETTINGS"]:
+            self.log(" settings packet ", end=" ")
             idx = 7
             while int(packet[idx]) != self.EOR:
 
-                field_str_idx = ''
-                if int(packet[idx]) == FOR_constants['SETTINGS_FACTORY_NAME'].tof:
+                field_str_idx = ""
+                if int(packet[idx]) == FOR_constants["SETTINGS_FACTORY_NAME"].tof:
                     idx += 1
-                    field_str_idx = 'SETTINGS_FACTORY_NAME'
+                    field_str_idx = "SETTINGS_FACTORY_NAME"
                     self.log("f")
                 else:
                     idx += 1
 
-                if field_str_idx != '':
+                if field_str_idx != "":
                     length = FOR_constants[field_str_idx].length
                     data_type = FOR_constants[field_str_idx].data_type
                     length += 1  # add size byte
-                    size, data = struct.unpack('<B' + data_type, bytes(packet[idx:idx + length]))
+                    size, data = struct.unpack(
+                        "<B" + data_type, bytes(packet[idx : idx + length])
+                    )
                     idx += length
 
-                    if field_str_idx == 'SETTINGS_FACTORY_NAME':
+                    if field_str_idx == "SETTINGS_FACTORY_NAME":
                         self.factory_name_signal.emit(data)
 
-        elif TOR == TOR_constants['NETWORK']:
-            self.log(" network packet ", end=' ')
+        elif TOR == TOR_constants["NETWORK"]:
+            self.log(" network packet ", end=" ")
 
             idx = 7
             ping_number = 0
@@ -679,19 +706,21 @@ class lapRFprotocol:
             while int(packet[idx]) != self.EOR:
 
                 self.log(idx)
-                field_str_idx = ''
-                if int(packet[idx]) == FOR_constants['NETWORK_PING'].tof:  # noise
+                field_str_idx = ""
+                if int(packet[idx]) == FOR_constants["NETWORK_PING"].tof:  # noise
                     idx += 1
-                    field_str_idx = 'NETWORK_PING'
+                    field_str_idx = "NETWORK_PING"
                     self.log("f")
                 else:
                     idx += 1
 
-                if field_str_idx != '':
+                if field_str_idx != "":
                     length = FOR_constants[field_str_idx].length
                     data_type = FOR_constants[field_str_idx].data_type
                     length += 1  # add size byte
-                    size, data = struct.unpack('<B' + data_type, bytes(packet[idx:idx + length]))
+                    size, data = struct.unpack(
+                        "<B" + data_type, bytes(packet[idx : idx + length])
+                    )
                     idx += length
 
                     self.log("{} - [{}]: {}\t".format(field_str_idx, size, data))
@@ -699,45 +728,51 @@ class lapRFprotocol:
                     ping_number = data
 
             self.log("ping: {}".format(ping_number))
-        elif TOR == TOR_constants['DATA']:
-            logging.debug("DATA", end='\n')
+        elif TOR == TOR_constants["DATA"]:
+            logging.debug("DATA", end="\n")
 
             idx = 7
-            logging.info("data received: [{0}]: {1}".format(idx, hex(packet[idx]), end='\n'))
+            logging.info(
+                "data received: [{0}]: {1}".format(idx, hex(packet[idx]), end="\n")
+            )
 
             tof = int(packet[idx])
             idx += 1
             sz = 5
-            size, packet_idx = struct.unpack('<BI', bytes(packet[idx:idx + sz]))
+            size, packet_idx = struct.unpack("<BI", bytes(packet[idx : idx + sz]))
             idx += sz
-            logging.debug("data packet idx {0}, {1} bytes".format(packet_idx, size), end='\n')
+            logging.debug(
+                "data packet idx {0}, {1} bytes".format(packet_idx, size), end="\n"
+            )
 
             if size == 0:
                 if self.receiving_data == True:
                     self.receiving_data = False
                     self.data_file.close()
-                    logging.info("closing log data file", end='\n')
+                    logging.info("closing log data file", end="\n")
             else:
                 if self.receiving_data == False:
                     self.receiving_data = True
                     self.data_file = tempfile.TemporaryFile()
-                    logging.info("start data dump", end='\n')
+                    logging.info("start data dump", end="\n")
 
-                data = struct.unpack('<' + str(size) + 'B', bytes(packet[idx:idx + size]))
+                data = struct.unpack(
+                    "<" + str(size) + "B", bytes(packet[idx : idx + size])
+                )
                 idx += size
                 self.data_file.write(bytearray(data))
 
-                if tof == FOR_constants['DATA_DUMP_LAST_PACKET'].tof:
+                if tof == FOR_constants["DATA_DUMP_LAST_PACKET"].tof:
                     self.receiving_data = False
                     self.data_file.close()
-                    logging.info("closing log data file", end='\n')
+                    logging.info("closing log data file", end="\n")
                     # ask to delete current one and start to send new one
                     # dt = self.build_FOR('CTRL_REQ_DATA', -1)
                     # packet = self.build_header_and_data_packet('STATE_CTRL', dt)
                     # self.communication_interface.send_data(packet)
-                elif tof == FOR_constants['DATA_DUMP'].tof:
-                    dt = self.build_FOR('CTRL_REQ_DATA', packet_idx + 1)
-                    packet = self.build_header_and_data_packet('STATE_CTRL', dt)
+                elif tof == FOR_constants["DATA_DUMP"].tof:
+                    dt = self.build_FOR("CTRL_REQ_DATA", packet_idx + 1)
+                    packet = self.build_header_and_data_packet("STATE_CTRL", dt)
                     self.communication_interface.send_data(packet)
 
         self.log("end receive")

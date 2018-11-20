@@ -4,38 +4,32 @@
 import logging
 import time
 import os
+import click
 
-from handlers.racetracker import LapRFRaceTracker
+from .handlers.racetracker import LapRFRaceTracker
 
 myPath = os.path.dirname(os.path.realpath(__file__))
-logPath = os.path.join(myPath, 'log/race_core.log')
+logPath = os.path.join(myPath, "log/race_core.log")
 logging.basicConfig(
-    filename=logPath,
-    format='%(asctime)s %(levelname)-7s %(message)s',
-    datefmt='%Y-%d-%m %H:%M:%S',
-    level=logging.DEBUG)
+    # filename=logPath,
+    format="%(asctime)s %(levelname)-7s %(message)s",
+    datefmt="%Y-%d-%m %H:%M:%S",
+    level=logging.DEBUG,
+)
 
 
-def return_tester(*args, **kwargs):
-    logging.info("return tester called")
-
-    for arg in args:
-        logging.info(arg)
-
-    for key, value in kwargs.items():
-        logging.info("%s == %s" % (key, value))
-
-
-if __name__ == "__main__":
+@click.command()
+@click.option('--device', prompt='Device?', default="/dev/ttyACM0")
+def main(device):
     logging.info("starting up")
 
-    tracker = LapRFRaceTracker('/dev/ttyACM0', return_tester)
-    # tracker.register_callback()
-    tracker.version()
+    tracker = LapRFRaceTracker(device)
+    tracker.on_version.connect(logging.info)
 
-    while True:
-        logging.info("read data loop")
-        tracker.recieve_data()
+    tracker.request_version()
 
-        # just so we can kill it
-        time.sleep(0.01)
+    tracker.read_data(stop_if_no_data=True)
+
+
+if __name__ == '__main__':
+    main()
