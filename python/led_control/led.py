@@ -9,7 +9,7 @@ import paho.mqtt.client as mqtt
 myPath = os.path.dirname(os.path.realpath(__file__))
 logPath = os.path.join(myPath, 'log/led_control.log')
 logging.basicConfig(
-    filename=logPath,
+    #filename=logPath,
     format='%(asctime)s %(levelname)-7s %(message)s',
     datefmt='%Y-%d-%m %H:%M:%S',
     level=logging.DEBUG)
