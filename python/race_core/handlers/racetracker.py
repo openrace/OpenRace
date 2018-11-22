@@ -32,6 +32,10 @@ class RaceTracker:
     def request_version(self):
         raise NotImplemented()
 
+    def pilot_passed(self):
+        raise NotImplemented()
+    #   decoder_id, detection_number, pilot_id, rtc_time, detection_peak_height, detection_flags,
+
 
 from .laprf import lapRFprotocol
 from .serialinterface import SerialInterfaceHandler
@@ -59,14 +63,13 @@ class LapRFRaceTracker(RaceTracker):
 
         self.serial_dev = SerialInterfaceHandler(self.device)
 
-
         self.laprf = lapRFprotocol(self.serial_dev)
 
         self.serial_dev.data_available.connect(self.laprf.receive_data)
 
         self.laprf.status_packet.connect(mklog('status_packet', 'debug'))
         self.laprf.rf_settings_packet.connect(mklog('rf_settings_packet', 'debug'))
-        self.laprf.passing_packet.connect(mklog('passing_packet', 'debug'))
+        self.laprf.passing_packet.connect(self.pilot_passed())
 
         self.laprf.factory_name_signal.connect(mklog('factory_name_signal', 'debug'))
 
@@ -84,6 +87,17 @@ class LapRFRaceTracker(RaceTracker):
 
     def read_data(self, stop_if_no_data=False):
         self.serial_dev.read_data(stop_if_no_data)
+
+    # Emitting methods
+    def pilot_passed(self, decoder_id, detection_number, pilot_id, rtc_time, detection_peak_height, detection_flags):
+        logging.debug("Passing packet:")
+        logging.debug("decoder_id:            " % decoder_id)
+        logging.debug("detection_number:      " % detection_number)
+        logging.debug("pilot_id:              " % pilot_id)
+        logging.debug("rtc_time:              " % rtc_time)
+        logging.debug("detection_peak_height: " % detection_peak_height)
+        logging.debug("detection_flags:       " % detection_flags)
+        pass
 
     # laprf.request_save_settings
     # laprf.request_shutdown

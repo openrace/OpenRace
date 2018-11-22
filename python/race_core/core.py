@@ -27,6 +27,7 @@ class RaceCore:
 
         self.tracker = LapRFRaceTracker(device)
         self.tracker.on_version.connect(logging.info)
+        self.tracker.passing_packet.connect(self.on_pilot_passed)
 
     def mqtt_connect(self):
         logging.info("Connecting to MQTT server %s" % (self.mqtt_server))
@@ -51,6 +52,22 @@ class RaceCore:
 
     def on_message(self, client, userdata, msg):
         logging.debug("Recieved MQTT message: <%s> <%s>" % (msg.topic, msg.payload))
+
+    # MQTT Events callback
+
+
+    # RaceTracker Events callback
+    def on_pilot_passed(self):
+        debugg.logging("passing packet reached the top")
+        pass
+
+    # def start_race(self):
+    # def end_race(self):
+    # def save_settings(self):
+    # def get_settings(self):
+    # def request_version(self):
+    # def pilot_passed(self):
+
 
     def run(self):
         self.tracker.request_version()
