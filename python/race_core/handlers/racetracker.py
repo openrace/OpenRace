@@ -73,6 +73,10 @@ class LapRFRaceTracker(RaceTracker):
         self.protocol_version = protocol_version
         logging.info("Systemversion: %s, Protocol version: %s" % (self.system_version, self.protocol_version))
 
+    def request_shutdown(self):
+        logging.info("Requesting tracker shutdown")
+        self.send_data(self.laprf.request_shutdown())
+
     def send_data(self, data):
         self.serial_dev.send_data(data)
 
