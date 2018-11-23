@@ -19,13 +19,13 @@ logging.basicConfig(
 
 
 class RaceCore:
-    def __init__(self, device, server, user, password):
+    def __init__(self, tracker, server, user, password):
         self.mqtt_server = server
         self.mqtt_user = user
         self.mqtt_password = password
         self.client = None
 
-        self.tracker = LapRFRaceTracker(device)
+        self.tracker = tracker
         self.tracker.on_version.connect(logging.info)
         self.tracker.on_passing_packet.connect(self.on_pilot_passed)
 
@@ -82,7 +82,9 @@ class RaceCore:
 def main(device):
     logging.info("starting up")
 
-    rc = RaceCore(device, "localhost", "openrace", "PASSWORD")
+    rc = RaceCore(
+        LapRFRaceTracker(device),
+        "localhost", "openrace", "PASSWORD")
     rc.mqtt_connect()
     rc.run()
 
