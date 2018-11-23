@@ -12,6 +12,9 @@ class Emitter:
         for l in self.listeners:
             l(*args, **kwargs)
 
+    def __call__(self, *args, **kwargs):
+        self.emit(*args, **kwargs)
+
 
 def mklog(prefix, level):
     def logany(*args, **kwargs):

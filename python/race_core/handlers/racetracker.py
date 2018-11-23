@@ -63,8 +63,9 @@ class LapRFRaceTracker(RaceTracker):
             lambda version, _: self.on_version.emit(".".join([str(x) for x in version]))
         )
         self.laprf.version_packet.connect(mklog('version_packet', 'debug'))
-        # self.laprf.passing_packet.connect(self.pilot_passed)
-        self.laprf.passing_packet.connect(mklog('passing_packet', 'debug'))
+
+        self.laprf.passing_packet.connect(self.pilot_passed)
+        #self.laprf.passing_packet.connect(mklog('passing_packet', 'debug'))
 
 
     def request_version(self):
@@ -80,15 +81,21 @@ class LapRFRaceTracker(RaceTracker):
         self.serial_dev.read_data(stop_if_no_data)
 
     # Emitting methods
-    def pilot_passed(self):
+    def pilot_passed(
+            self,
+            decoder_id,
+            detection_number,
+            pilot_id,
+            rtc_time,
+            detection_peak_height,
+            detection_flags):
         logging.debug("Passing packet:")
-        logging.debug("decoder_id:            " % decoder_id)
-        logging.debug("detection_number:      " % detection_number)
-        logging.debug("pilot_id:              " % pilot_id)
-        logging.debug("rtc_time:              " % rtc_time)
-        logging.debug("detection_peak_height: " % detection_peak_height)
-        logging.debug("detection_flags:       " % detection_flags)
-        pass
+        logging.debug("decoder_id:            %s" % decoder_id)
+        logging.debug("detection_number:      %s" % detection_number)
+        logging.debug("pilot_id:              %s" % pilot_id)
+        logging.debug("rtc_time:              %s" % rtc_time)
+        logging.debug("detection_peak_height: %s" % detection_peak_height)
+        logging.debug("detection_flags:       %s" % detection_flags)
 
     # laprf.request_save_settings
     # laprf.request_shutdown

@@ -437,13 +437,13 @@ class lapRFprotocol:
             #            logging.debug("[" + str((decoder_id, passing_number, transponder, rtc_time,
             #            passing_strength, passing_hits, passing_flags)) + "]")
 
-            self.passing_packet.emit(
-                decoder_id,
-                detection_number,
-                pilot_id,
-                rtc_time,
-                detection_peak_height,
-                detection_flags,
+            self.passing_packet(
+                decoder_id=           decoder_id,
+                detection_number=     detection_number,
+                pilot_id=             pilot_id,
+                rtc_time=             rtc_time,
+                detection_peak_height=detection_peak_height,
+                detection_flags=      detection_flags,
             )
 
         elif TOR == TOR_constants["RF_SETTINGS"]:
