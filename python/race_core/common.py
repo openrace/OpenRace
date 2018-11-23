@@ -1,5 +1,6 @@
 import logging
 
+
 class Emitter:
     def __init__(self):
         self.listeners = []
@@ -12,3 +13,12 @@ class Emitter:
             l(*args, **kwargs)
 
 
+def mklog(prefix, level):
+    def logany(*args, **kwargs):
+        call = getattr(logging, level)
+        if kwargs:
+            call("%s %s %s" % (prefix, str(args), str(kwargs)))
+        else:
+            call("%s %s" % (prefix, str(args)))
+
+    return logany

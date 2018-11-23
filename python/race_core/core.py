@@ -27,7 +27,7 @@ class RaceCore:
 
         self.tracker = LapRFRaceTracker(device)
         self.tracker.on_version.connect(logging.info)
-        self.tracker.passing_packet.connect(self.on_pilot_passed)
+        self.tracker.on_passing_packet.connect(self.on_pilot_passed)
 
     def mqtt_connect(self):
         logging.info("Connecting to MQTT server %s" % (self.mqtt_server))
@@ -71,6 +71,7 @@ class RaceCore:
 
     def run(self):
         self.tracker.request_version()
+        self.tracker.request_time()
         while True:
             self.client.loop()
             self.tracker.read_data(stop_if_no_data=True)
@@ -81,7 +82,7 @@ class RaceCore:
 def main(device):
     logging.info("starting up")
 
-    rc = RaceCore(device, "10.5.20.35", "openrace", "PASSWORD")
+    rc = RaceCore(device, "localhost", "openrace", "PASSWORD")
     rc.mqtt_connect()
     rc.run()
 

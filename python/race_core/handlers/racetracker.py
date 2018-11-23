@@ -4,6 +4,7 @@
 import logging
 
 from ..common import Emitter
+from ..common import mklog
 
 
 class Pilot:
@@ -41,46 +42,36 @@ from .laprf import lapRFprotocol
 from .serialinterface import SerialInterfaceHandler
 
 
-def mklog(prefix, level):
-    def logany(*args, **kwargs):
-        call = getattr(logging, level)
-        if kwargs:
-            call("%s %s %s" % (prefix, str(args), str(kwargs)))
-        else:
-            call("%s %s" % (prefix, str(args)))
-
-    return logany
-
-
 class LapRFRaceTracker(RaceTracker):
     def __init__(self, device):
         super().__init__()
-        self.device = device
-        self.laprf = None
-        self.serial_dev = None
+        self.serial_dev = SerialInterfaceHandler(device)
+        self.laprf = lapRFprotocol(self.serial_dev)
+        self.serial_dev.data_available.connect(self.laprf.receive_data)
 
         self.on_version = Emitter()
-
-        self.serial_dev = SerialInterfaceHandler(self.device)
-
-        self.laprf = lapRFprotocol(self.serial_dev)
-
-        self.serial_dev.data_available.connect(self.laprf.receive_data)
+        self.on_passing_packet= Emitter()
 
         self.laprf.status_packet.connect(mklog('status_packet', 'debug'))
         self.laprf.rf_settings_packet.connect(mklog('rf_settings_packet', 'debug'))
-        self.laprf.passing_packet.connect(self.pilot_passed())
-
         self.laprf.factory_name_signal.connect(mklog('factory_name_signal', 'debug'))
+        self.laprf.time_sync_packet.connect(mklog('time_sync_packet', 'debug'))
+        # self.last_time_request, time_rtc_time, rtc_time, packet_receive_time
 
         self.laprf.version_packet.connect(
+            # system_version, protocol_version
             lambda version, _: self.on_version.emit(".".join([str(x) for x in version]))
         )
+        self.laprf.version_packet.connect(mklog('version_packet', 'debug'))
+        # self.laprf.passing_packet.connect(self.pilot_passed)
+        self.laprf.passing_packet.connect(mklog('passing_packet', 'debug'))
 
-        self.laprf.time_sync_packet.connect(mklog('time_sync_packet', 'debug'))
 
     def request_version(self):
         self.send_data(self.laprf.request_version())
+
+    def request_time(self):
+        self.send_data(self.laprf.request_time())
 
     def send_data(self, data):
         self.serial_dev.send_data(data)
@@ -89,7 +80,7 @@ class LapRFRaceTracker(RaceTracker):
         self.serial_dev.read_data(stop_if_no_data)
 
     # Emitting methods
-    def pilot_passed(self, decoder_id, detection_number, pilot_id, rtc_time, detection_peak_height, detection_flags):
+    def pilot_passed(self):
         logging.debug("Passing packet:")
         logging.debug("decoder_id:            " % decoder_id)
         logging.debug("detection_number:      " % detection_number)
