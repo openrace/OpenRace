@@ -65,25 +65,25 @@ class LedController:
 
     # mqtt racing methods
     def on_race_start(self, client, userdata, msg):
-        self.current_event = self.check_race
+        self.current_event = self.race_cowntdown
         self.current_event_payload = self.now + float(msg.payload)
-        self.current_event_control = self.now - 1.0
+        self.current_event_control = self.now - 1.1
         logging.info("Race will start in %s seconds" % int(msg.payload))
 
     # internal race methods
-    def check_race(self):
+    def race_cowntdown(self):
         if self.current_event_payload <= self.now:
-            logging.debug("GO!")
-            self.client.publish("/d1ws2812/all", "6;0;255;0", qos=1)
+            logging.debug("GO! %s" % time.time())
             self.current_event = None
-        elif (self.now - self.current_event_control) >= 1.0:
-            logging.debug("Wait ...")
+            self.client.publish("/d1ws2812/all", "6;0;255;0", qos=1)
+        elif (self.now - self.current_event_control) >= 1.5:
+            logging.debug("Wait ... %s" % time.time())
+            self.current_event_control = time.time()
             self.client.publish("/d1ws2812/all", "6;255;0;0", qos=1)
-            self.current_event_control = self.now
 
     # internal helper methods
     def led_cleanup(self):
-        if (self.last_led_cleanup + 30) < self.now:
+        if (self.last_led_cleanup + 900) < self.now:
             self.last_led_cleanup = self.now
             logging.debug("Cleaning up ledstrips")
             for mac in self.led_strips.keys():
@@ -92,18 +92,19 @@ class LedController:
                     del self.led_strips[mac]
 
     def status_update(self):
-        if (self.last_status_update + 10) < self.now:
+        if (self.last_status_update + 30) < self.now:
             self.last_status_update = self.now
             logging.info("LED strips: %s - Pilots: %s" % (len(self.led_strips.keys()), len(self.pilots.keys())))
 
     def run(self):
         while True:
             self.now = time.time()
-            self.client.loop()
-            self.led_cleanup()
-            self.status_update()
             if self.current_event:
                 self.current_event()
+            else:
+                self.led_cleanup()
+                self.status_update()
+                self.client.loop()
 
 
 if __name__ == "__main__":
