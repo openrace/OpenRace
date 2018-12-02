@@ -70,6 +70,7 @@ FOR_constants = {
 TOR_constants = {
     "RSSI": 0xDA01,
     "RF_SETTINGS": 0xDA02,
+    "TESTA": 0xDA03,
     "STATE_CTRL": 0xDA04,
     "DATA": 0xDA05,
     "CALIBRATION_LOG": 0xDA06,
@@ -120,11 +121,12 @@ class lapRFprotocol:
         crc_check_val = bytearray("123456789", encoding="ascii")
         logging.debug("crc check: {:04x}".format(self.compute_CRC(crc_check_val)))
 
-        self.logging = False
+        self.logging = True
 
     def log(self, txt, end="\n"):
         if self.logging:
-            logging.debug(txt, end=end)
+            # logging.debug(txt, end=end)
+            logging.debug(txt)
 
     def receive_data(self, data):
         for d in data:
@@ -290,37 +292,37 @@ class lapRFprotocol:
         return False
 
     def request_save_settings(self):
-        logging.info("REQUEST SAVE")
+        logging.debug("REQUEST SAVE")
         data = self.build_FOR("SETTINGS_SAVE_SETTINGS", 1)
         packet = self.build_header_and_data_packet("SETTINGS", data)
         return packet
 
     def request_shutdown(self):
-        logging.info("REQUEST SHUTDOWN")
+        logging.debug("REQUEST SHUTDOWN")
         data = self.build_FOR("CTRL_REQ_RACE", 0xFF)
         packet = self.build_header_and_data_packet("STATE_CTRL", data)
         return packet
 
     def request_start_race(self):
-        logging.info("REQUEST START RACE")
+        logging.debug("REQUEST START RACE")
         data = self.build_FOR("CTRL_REQ_RACE", 1)
         packet = self.build_header_and_data_packet("STATE_CTRL", data)
         return packet
 
     def request_stop_race(self):
-        logging.info("REQUEST STOP RACE")
+        logging.debug("REQUEST STOP RACE")
         data = self.build_FOR("CTRL_REQ_RACE", 0)
         packet = self.build_header_and_data_packet("STATE_CTRL", data)
         return packet
 
     def request_data(self):
-        logging.info("REQUEST DATA")
+        logging.debug("REQUEST DATA")
         data = self.build_FOR("CTRL_REQ_DATA", 0)
         packet = self.build_header_and_data_packet("STATE_CTRL", data)
         return packet
 
     def request_version(self):
-        logging.info("REQUEST VERSION")
+        logging.debug("REQUEST VERSION")
         data = self.build_FOR("DESC_SYSTEM_VERSION", None)
         packet = self.build_header_and_data_packet("DESC", data)
         return packet
@@ -328,7 +330,7 @@ class lapRFprotocol:
     def request_time(self):
         now = time.time()
         self.last_time_request = now
-        logging.info("[{}] REQUEST TIME".format(now))
+        logging.debug("[{}] REQUEST TIME".format(now))
         data = self.build_FOR("RTC_TIME", None)
         packet = self.build_header_and_data_packet("TIME", data)
         return packet
@@ -433,7 +435,6 @@ class lapRFprotocol:
                     elif field_str_idx == "DETECTION_FLAGS":
                         detection_flags = data
 
-            rtc_time = 0
             #            logging.debug("[" + str((decoder_id, passing_number, transponder, rtc_time,
             #            passing_strength, passing_hits, passing_flags)) + "]")
 
@@ -516,7 +517,7 @@ class lapRFprotocol:
                     ):
                         if rf_pilotid > -1 and rf_pilotid < max_pilots:
                             dct[field_str_idx] = data
-
+                    # logging.debug("test 2" % dct)
                     self.log(
                         "{} - [{}]:\t{}".format(field_str_idx, size, data), end=" "
                     )
@@ -524,8 +525,8 @@ class lapRFprotocol:
             self.log("\n")
 
             self.log(lst)
-
-            self.rf_settings_packet.emit(lst)
+            # logging.debug("test " % lst)
+            self.rf_settings_packet(pilot=lst)
 
         elif TOR == TOR_constants["STATUS"]:
             self.log(" status ", end=" ")
@@ -582,7 +583,8 @@ class lapRFprotocol:
                     elif field_str_idx == "RSSI_MEAN":
                         rssis[current_pilot_id - 1] = data
 
-            self.status_packet.emit(self.status_count, rssis)
+            self.status_packet(self.status_count, rssis)
+
         elif TOR == TOR_constants["DESC"]:
             self.log(" desc ", end=" ")
             idx = 7
@@ -622,7 +624,7 @@ class lapRFprotocol:
                     elif field_str_idx == "DESC_PROTOCOL_VERSION":
                         protocol_version = data
 
-            self.version_packet.emit(system_version, protocol_version)
+            self.version_packet(system_version, protocol_version)
 
         elif TOR == TOR_constants["TIME"]:
             rtc_time = 0
@@ -668,7 +670,7 @@ class lapRFprotocol:
                 )
             )
 
-            self.time_sync_packet.emit(
+            self.time_sync_packet(
                 self.last_time_request, time_rtc_time, rtc_time, packet_receive_time
             )
 
@@ -695,7 +697,7 @@ class lapRFprotocol:
                     idx += length
 
                     if field_str_idx == "SETTINGS_FACTORY_NAME":
-                        self.factory_name_signal.emit(data)
+                        self.factory_name_signal(data)
 
         elif TOR == TOR_constants["NETWORK"]:
             self.log(" network packet ", end=" ")
@@ -728,6 +730,7 @@ class lapRFprotocol:
                     ping_number = data
 
             self.log("ping: {}".format(ping_number))
+
         elif TOR == TOR_constants["DATA"]:
             logging.debug("DATA", end="\n")
 
@@ -753,7 +756,8 @@ class lapRFprotocol:
             else:
                 if self.receiving_data == False:
                     self.receiving_data = True
-                    self.data_file = tempfile.TemporaryFile()
+                    self.data_file = tempfile.NamedTemporaryFile()
+                    logging.debug("Logging into temp file: " % self.data_file.name)
                     logging.info("start data dump", end="\n")
 
                 data = struct.unpack(
@@ -774,5 +778,7 @@ class lapRFprotocol:
                     dt = self.build_FOR("CTRL_REQ_DATA", packet_idx + 1)
                     packet = self.build_header_and_data_packet("STATE_CTRL", dt)
                     self.communication_interface.send_data(packet)
+        else:
+            logging.debug("Unknown TOR recieved: %s" % TOR)
 
         self.log("end receive")

@@ -1,8 +1,10 @@
 # OpenRace
 
-OpenRace is a dockerized open source solution to run FPV races. It makes use of MQTT and Python and supports the immersion RC LapRF tracker as well as fancy RGB LED effects for gates.
+OpenRace is a dockerized open source solution to run FPV races. It makes use of MQTT and Python and supports the
+immersion RC LapRF tracker as well as fancy RGB LED effects for gates.
 
-The default use case is to deploy this on a RaspberryPi which will talk with the race tracker over Bluetooth and controls the LED's over WiFi trough MQTT.
+The default use case is to deploy this on a RaspberryPi which will talk with the race tracker over Bluetooth and
+controls the LED's over WiFi trough MQTT.
 
 It makes use of the following external Projects:
 * https://github.com/oxivanisher/d1ws2812mqtt
@@ -10,10 +12,12 @@ It makes use of the following external Projects:
 * https://github.com/pascaldevink/rpi-mosquitto
 
 # Module communication matrix
+All MQTT connections are running trough the Mosquitto container. But to show the dependencies a little bit better,
+some MQTT based connections are presented as direct connections.
 ```
- ---------------------------    Bluetooth     --------------
+ ---------------------------                 --------------
 | Race controller container |---------------| Race tracker |
- ---------------------------                  --------------
+ ---------------------------   USB SERIAL    --------------
     |
     | MQTT
     |
@@ -23,9 +27,9 @@ It makes use of the following external Projects:
     |
     | MQTT
     |
- -----------------------
-| d1ws2812mqtt RGB LEDs |
- -----------------------
+  ----------------      MQTT    -----------------------
+ | LED controller | -----------| d1ws2812mqtt RGB LEDs |
+  ----------------              -----------------------
 ```
 
 # Automated setup with ansible
@@ -47,7 +51,27 @@ Run the playbook:
 ```
 After entering your password for SUDO, the installation continues.
 
-# Manual Setup
+# MQTT Topics
+## OpenRace topics
+### /OpenRace/events
+To start and stop races.
+### /OpenRace/pilots
+To set and get the configured pilots.
+### /OpenRace/race
+Race events like pilots passing the finish line and such.
+### /OpenRace/settings
+Race settings like MW settings, number of laps, minimal lap time ...
+
+## d1ws2812 topics
+### /d1ws2812/all
+All LED strips are listening on this topic. See the
+[d1ws2812 project documentation](https://github.com/oxivanisher/d1ws2812mqtt) for more information.
+### /d1ws2812/MAC
+Each LED strip is listening to his own topic here. See the
+[d1ws2812 project documentation](https://github.com/oxivanisher/d1ws2812mqtt) for more information.
+
+
+# Manual Setup (Legacy documentation!)
 
 The basis for this project is a  RaspberryPi 3 B+ with a updated [Raspbian](http://www.raspbian.org/).
 
@@ -125,7 +149,8 @@ rsn_pairwise=CCMP
 ssid=OpenRace
 wpa_passphrase=PASSWORD
 ```
-**Attention**: You have to change the `PASSWORD` to something only you know. You will have to use the same one for the d1ws2812mqtt!
+**Attention**: You have to change the `PASSWORD` to something only you know. You will have to use the same one for the
+d1ws2812mqtt!
 
 Tell hostapd where to find our configuration file by editing its configuration `/etc/default/hostapd`
 ```bash
@@ -138,7 +163,9 @@ DAEMON_CONF="/etc/hostapd/hostapd.conf"
 
 ### Optional
 
-The following configuration is only required, if you want to use the RaspberryPis WiFi for internet connectivity over the LAN cable. For example if you use a tablet or phone (which requires internet) to control the system. OpenRace and d1ws2812mqtt are not depending on internet access.
+The following configuration is only required, if you want to use the RaspberryPis WiFi for internet connectivity over
+the LAN cable. For example if you use a tablet or phone (which requires internet) to control the system. OpenRace and
+d1ws2812mqtt are not depending on internet access.
 
 Configure traffic forwarding by editing the file `/etc/sysctl.conf`
 ```bash
@@ -208,16 +235,19 @@ docker run -tip 1883:1883 -p 9001:9001 pascaldevink/rpi-mosquitto
 
 ## Race controller
 
-You have to give the Bluetooth device to the container: [Source](https://stackoverflow.com/questions/24225647/docker-a-way-to-give-access-to-a-host-usb-or-serial-device/24231872#24231872)
+You have to give the Bluetooth device to the container:
+[Source](https://stackoverflow.com/questions/24225647/docker-a-way-to-give-access-to-a-host-usb-or-serial-device/24231872#24231872)
 
 ### LapRF
 
-**Notice:** Thanks to Yann Oeffner, we where provided with the official protocol implementation for LapRF. Thank you very much!
+**Notice:** Thanks to Yann Oeffner, we where provided with the official protocol implementation for LapRF. Thank you
+very much!
 
 # Questions and answers
 * **Q:** Why do you use docker?
 
-  **A:** The aim of this project is, to provide a simple solution to everyone wanting to organize FPV (fun) races. Docker makes it easy for everyone to use this project.
+  **A:** The aim of this project is, to provide a simple solution to everyone wanting to organize FPV (fun) races.
+  Docker makes it easy for everyone to use this project.
 
 * **Q:** Where can I see all DHCP leases?
 

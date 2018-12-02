@@ -25,3 +25,10 @@ def mklog(prefix, level):
             call("%s %s" % (prefix, str(args)))
 
     return logany
+
+
+class Pilot:
+    def __init__(self, frequency, name=""):
+        self.name = name
+        self.frequency = frequency
+        self.laps = []
