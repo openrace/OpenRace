@@ -89,7 +89,6 @@ class lapRFprotocol:
         self.status_packet = Emitter()
         self.rf_settings_packet = Emitter()
         self.passing_packet = Emitter()
-
         self.factory_name_signal = Emitter()
         self.version_packet = Emitter()
         self.time_sync_packet = Emitter()
@@ -121,7 +120,7 @@ class lapRFprotocol:
         crc_check_val = bytearray("123456789", encoding="ascii")
         logging.debug("crc check: {:04x}".format(self.compute_CRC(crc_check_val)))
 
-        self.logging = True
+        self.logging = False
 
     def log(self, txt, end="\n"):
         if self.logging:
@@ -535,6 +534,7 @@ class lapRFprotocol:
             idx = 7
             rssis = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
             current_pilot_id = 0
+            millivolts = 0
             while int(packet[idx]) != self.EOR:
 
                 field_str_idx = ""
@@ -582,8 +582,14 @@ class lapRFprotocol:
                         current_pilot_id = data
                     elif field_str_idx == "RSSI_MEAN":
                         rssis[current_pilot_id - 1] = data
+                    elif field_str_idx == "STATUS_INPUT_VOLTAGE":
+                        millivolts = data
 
-            self.status_packet(self.status_count, rssis)
+            self.status_packet(
+                status_count = self.status_count,
+                millivolts = millivolts,
+                rssis = rssis
+            )
 
         elif TOR == TOR_constants["DESC"]:
             self.log(" desc ", end=" ")
@@ -624,7 +630,10 @@ class lapRFprotocol:
                     elif field_str_idx == "DESC_PROTOCOL_VERSION":
                         protocol_version = data
 
-            self.version_packet(system_version, protocol_version)
+            self.version_packet(
+                system_version = system_version,
+                protocol_version = protocol_version
+            )
 
         elif TOR == TOR_constants["TIME"]:
             rtc_time = 0
@@ -671,7 +680,10 @@ class lapRFprotocol:
             )
 
             self.time_sync_packet(
-                self.last_time_request, time_rtc_time, rtc_time, packet_receive_time
+                last_time_request = self.last_time_request,
+                time_rtc_time = time_rtc_time,
+                rtc_time = rtc_time,
+                packet_receive_time = packet_receive_time
             )
 
         elif TOR == TOR_constants["SETTINGS"]:
