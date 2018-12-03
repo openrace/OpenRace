@@ -29,8 +29,8 @@ class RaceCore:
         self.mqtt_client = None
 
         self.tracker = tracker
-        self.tracker.on_version.connect(logging.info)
         self.tracker.on_passing_packet.connect(self.on_pilot_passed)
+        self.tracker.on_status_packet.connect(self.on_status_package)
 
         self.mqtt_connected = False
 
@@ -81,13 +81,11 @@ class RaceCore:
         pass
 
     # RaceTracker Events callback
-    def on_pilot_passed(self):
-        debugg.logging("passing packet reached the top")
-        pass
+    def on_pilot_passed(self, pilot_id, seconds):
+        logging.info("Pilot %s passed the gate with %s seconds" % (pilot_id, seconds))
 
-    # def on_rf_settings_packet(self):
-    #     pass
-
+    def on_status_package(self, rssis):
+        logging.info("Status: %s mV | RSSIS %s" % (self.tracker.millivolts, rssis))
 
     # def start_race(self):
     # def end_race(self):
@@ -96,7 +94,6 @@ class RaceCore:
     # def request_version(self):
     # def pilot_passed(self):
 
-
     def run(self):
 
         # MQTT connection
@@ -104,10 +101,6 @@ class RaceCore:
         while not self.mqtt_connected:
             self.mqtt_client.loop()
             time.sleep(0.1)
-
-        # basic RaceTracker information gathering
-        self.tracker.request_version()
-        self.tracker.request_time()
 
         # request all pilots
         for i in range(1, 8):

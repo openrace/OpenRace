@@ -43,38 +43,34 @@ class LapRFRaceTracker(RaceTracker):
         self.laprf = lapRFprotocol(self.serial_dev)
         self.serial_dev.data_available.connect(self.laprf.receive_data)
 
-        self.on_version = Emitter()
-        self.on_passing_packet= Emitter()
+        self.on_passing_packet = Emitter()
+        self.on_status_packet = Emitter()
 
-        self.laprf.status_packet.connect(mklog('status_packet', 'debug'))
-        self.laprf.factory_name_signal.connect(mklog('factory_name_signal', 'debug'))
-        self.laprf.time_sync_packet.connect(mklog('time_sync_packet', 'debug'))
-        # last_time_request, time_rtc_time, rtc_time, packet_receive_time
-
-        self.laprf.version_packet.connect(
-            # system_version, protocol_version
-            lambda version, _: self.on_version.emit(".".join([str(x) for x in version]))
-        )
-        self.laprf.version_packet.connect(mklog('version_packet', 'debug'))
-
+        self.laprf.status_packet.connect(self.status_recieved)
+        self.laprf.time_sync_packet.connect(self.time_sync)
+        self.laprf.version_packet.connect(self.on_version_packet)
         self.laprf.rf_settings_packet.connect(self.rf_settings_packet)
         self.laprf.passing_packet.connect(self.pilot_passed)
 
+        self.laprf.factory_name_signal.connect(mklog('factory_name_signal', 'debug'))
 
-    def request_version(self):
-        self.send_data(self.laprf.request_version())
+        self.millivolts = 0.0
+        self.system_version = None
+        self.protocol_version = None
+        self.timedelta = 0
 
-    def request_time(self):
-        self.send_data(self.laprf.request_time())
+        self.serial_dev.send_data(self.laprf.request_version())
+        self.serial_dev.send_data(self.laprf.request_time())
 
-    def request_voltage(self):
-        self.send_data(self.laprf.request_voltage())
+    def time_sync(self, last_time_request, time_rtc_time, rtc_time, packet_receive_time):
+        packet_delta = packet_receive_time - last_time_request
+        device_offset = (packet_receive_time + last_time_request) / 2.0 - rtc_time
+        logging.info("Time stats: Packet delta: %s - Device offset: %s" % (packet_delta, device_offset))
 
-    # def request_status(self):
-    #     self.send_data(self.laprf.request_status())
-
-    def request_pilot_rfsettings(self, pilot_id):
-        self.send_data(self.laprf.request_pilot_rfsettings(pilot_id))
+    def on_version_packet(self, system_version, protocol_version):
+        self.system_version = ".".join([str(x) for x in system_version])
+        self.protocol_version = protocol_version
+        logging.info("Systemversion: %s, Protocol version: %s" % (self.system_version, self.protocol_version))
 
     def send_data(self, data):
         self.serial_dev.send_data(data)
@@ -91,17 +87,25 @@ class LapRFRaceTracker(RaceTracker):
             rtc_time,
             detection_peak_height,
             detection_flags):
-        logging.debug("Passing packet:")
-        logging.debug("decoder_id:            %s" % decoder_id)
-        logging.debug("detection_number:      %s" % detection_number)
-        logging.debug("pilot_id:              %s" % pilot_id)
-        logging.debug("rtc_time:              %s" % rtc_time)
-        logging.debug("detection_peak_height: %s" % detection_peak_height)
-        logging.debug("detection_flags:       %s" % detection_flags)
+        self.on_passing_packet(
+            pilot_id = pilot_id,
+            seconds = rtc_time / 1000000 - self.timedelta
+        )
+        # logging.debug("Passing packet:")
+        # logging.debug("decoder_id:            %s" % decoder_id)
+        # logging.debug("detection_number:      %s" % detection_number)
+        # logging.debug("pilot_id:              %s" % pilot_id)
+        # logging.debug("rtc_time:              %s" % rtc_time)
+        # logging.debug("detection_peak_height: %s" % detection_peak_height)
+        # logging.debug("detection_flags:       %s" % detection_flags)
 
     def rf_settings_packet(self, pilot):
         # answer to request_pilot
         logging.debug("Pilot: %s " % pilot)
+
+    def status_recieved(self, status_count, millivolts, rssis):
+        self.millivolts = millivolts
+        self.on_status_packet(rssis = rssis)
 
     # Setting Methods
     def set_pilot(self, id, band, freq, gain, channel, enabled, threshold):
@@ -119,7 +123,7 @@ class LapRFRaceTracker(RaceTracker):
         self.send_data(packet)
 
     def request_pilot(self, pilot_id):
-        logging.info("Requesting pilot")
+        logging.debug("Requesting pilot %s" % pilot_id)
         data = self.laprf.build_FOR("PILOT_ID", pilot_id)
         packet = self.laprf.build_header_and_data_packet("RF_SETTINGS", data)
         self.send_data(packet)
@@ -131,10 +135,6 @@ class LapRFRaceTracker(RaceTracker):
     def request_stop_race(self):
         logging.info("Request race stop")
         self.laprf.request_stop_race()
-
-    def request_time(self):
-        logging.info("Request time")
-        self.laprf.request_time()
 
     # laprf.request_save_settings
     # laprf.request_shutdown
