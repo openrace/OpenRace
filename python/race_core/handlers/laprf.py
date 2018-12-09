@@ -525,7 +525,7 @@ class lapRFprotocol:
 
             self.log(lst)
             # logging.debug("test " % lst)
-            self.rf_settings_packet(pilot=lst)
+            self.rf_settings_packet(pilots=lst)
 
         elif TOR == TOR_constants["STATUS"]:
             self.log(" status ", end=" ")

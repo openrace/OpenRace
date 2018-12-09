@@ -45,6 +45,7 @@ class LapRFRaceTracker(RaceTracker):
 
         self.on_passing_packet = Emitter()
         self.on_status_packet = Emitter()
+        self.on_rf_settings = Emitter()
 
         self.laprf.status_packet.connect(self.status_recieved)
         self.laprf.time_sync_packet.connect(self.time_sync)
@@ -89,7 +90,8 @@ class LapRFRaceTracker(RaceTracker):
             detection_flags):
         self.on_passing_packet(
             pilot_id = pilot_id,
-            seconds = rtc_time / 1000000 - self.timedelta
+            seconds = rtc_time / 1000000 - self.timedelta,
+
         )
         # logging.debug("Passing packet:")
         # logging.debug("decoder_id:            %s" % decoder_id)
@@ -99,9 +101,22 @@ class LapRFRaceTracker(RaceTracker):
         # logging.debug("detection_peak_height: %s" % detection_peak_height)
         # logging.debug("detection_flags:       %s" % detection_flags)
 
-    def rf_settings_packet(self, pilot):
-        # answer to request_pilot
-        logging.debug("Pilot: %s " % pilot)
+    def rf_settings_packet(self, pilots):
+        # answer to request_pilots
+        # other fields: RF_GAIN, RF_THRESHOLD, RF_BAND, RF_CHANNEL
+        # logging.debug("Pilots: %s " % pilots)
+        ret_pilots = []
+        for pilot in pilots:
+            id = pilot['PILOT_ID']
+            frequency = pilot['RF_FREQUENCY']
+            enabled = False
+            if pilot['RF_ENABLE'] == 1:
+                enabled = True
+
+            ret_pilots.append({'id': id, 'frequency': frequency, 'enabled': enabled})
+
+        self.on_rf_settings(pilots = ret_pilots)
+
 
     def status_recieved(self, status_count, millivolts, rssis):
         self.millivolts = millivolts
@@ -122,10 +137,12 @@ class LapRFRaceTracker(RaceTracker):
         packet = self.laprf.build_header_and_data_packet("RF_SETTINGS", b"".join(data))
         self.send_data(packet)
 
-    def request_pilot(self, pilot_id):
-        logging.debug("Requesting pilot %s" % pilot_id)
-        data = self.laprf.build_FOR("PILOT_ID", pilot_id)
-        packet = self.laprf.build_header_and_data_packet("RF_SETTINGS", data)
+    def request_pilots(self, start, end):
+        logging.debug("Requesting pilots %s to %s" % (start, end))
+        data = []
+        for i in range(start, end + 1):
+            data.append(self.laprf.build_FOR("PILOT_ID", i))
+        packet = self.laprf.build_header_and_data_packet("RF_SETTINGS", b"".join(data))
         self.send_data(packet)
 
     def request_start_race(self):

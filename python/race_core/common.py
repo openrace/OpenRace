@@ -28,7 +28,18 @@ def mklog(prefix, level):
 
 
 class Pilot:
-    def __init__(self, frequency, name=""):
+    def __init__(self, frequency = 0, name = ""):
         self.name = name
         self.frequency = frequency
         self.laps = []
+        self.enabled = False
+
+    def show(self):
+        if self.enabled:
+            state = "Enabled"
+        else:
+            state = "Disabled"
+        if self.name:
+            return "MHz: %s; Name: %s; %s" % (self.frequency, self.name, state)
+        else:
+            return "MHz: %s; %s" % (self.frequency, state)

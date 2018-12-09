@@ -31,11 +31,12 @@ class RaceCore:
         self.tracker = tracker
         self.tracker.on_passing_packet.connect(self.on_pilot_passed)
         self.tracker.on_status_packet.connect(self.on_status_package)
-
+        self.tracker.on_rf_settings.connect(self.on_pilots_message)
         self.mqtt_connected = False
 
-        self.pilots = []
+        self.pilots = {}
         self.band = 2 # currently fatshark hardcoded
+        # self.startup = time.time()
 
     def mqtt_connect(self):
         logging.info("Connecting to MQTT server %s" % (self.mqtt_server))
@@ -65,27 +66,34 @@ class RaceCore:
 
     # MQTT Events callback
     def on_events_message(self, client, userdata, msg):
-        logging.debug("OpenRace MQTT event recieved: %s" % msg.payload)
+        logging.debug("OpenRace MQTT event message received: %s" % msg.payload)
         if msg.payload == b'start':
             self.tracker.request_start_race()
         elif msg.payload == b'stop':
             self.tracker.request_stop_race()
 
-    def on_pilots_message(self, client, userdata, msg):
-        pass
-
     def on_race_message(self, client, userdata, msg):
-        pass
+        logging.debug("OpenRace MQTT race message received: %s" % msg.payload)
 
     def on_settings_message(self, client, userdata, msg):
-        pass
+        logging.debug("OpenRace MQTT settings message received: %s" % msg.payload)
 
     # RaceTracker Events callback
     def on_pilot_passed(self, pilot_id, seconds):
-        logging.info("Pilot %s passed the gate with %s seconds" % (pilot_id, seconds))
+        logging.info("Pilot %s (%s) passed the gate with %s seconds" % (pilot_id, self.pilots[pilot_id].frequency, seconds))
+        self.mqtt_client.publish("/OpenRace/race/passing", self.pilots[pilot_id].frequency)
 
     def on_status_package(self, rssis):
         logging.info("Status: %s mV | RSSIS %s" % (self.tracker.millivolts, rssis))
+
+    def on_pilots_message(self, pilots):
+        # logging.debug("OpenRace pilot message received: %s" % pilots)
+        for pilot in pilots:
+            id = pilot['id']
+            if id not in self.pilots.keys():
+                self.pilots[id] = Pilot()
+            self.pilots[id].frequency = pilot['frequency']
+            self.pilots[id].enabled = pilot['enabled']
 
     # def start_race(self):
     # def end_race(self):
@@ -103,15 +111,26 @@ class RaceCore:
             time.sleep(0.1)
 
         # request all pilots
-        for i in range(1, 8):
-           self.tracker.request_pilot(i)
+        self.tracker.request_pilots(1, 8)
 
         # id, band, freq, gain, channel, enabled, threshold
         # self.tracker.set_pilot(2, 2, 5800, 44, 4, 1, 800)
 
+        pilots_showed = 0
         while True:
             self.mqtt_client.loop()
             self.tracker.read_data(stop_if_no_data=True)
+
+            # show pilots every 10 seconds
+            if time.time() - pilots_showed > 10:
+                pilots_showed = time.time()
+
+                ret = []
+                for pilot in sorted(self.pilots.keys()):
+                    if self.pilots[pilot].enabled:
+                        ret.append("ID %s; %s" % (pilot, self.pilots[pilot].show()))
+
+                logging.info("Active pilots: %s" % (" | ".join(ret)))
 
 
 @click.command()
