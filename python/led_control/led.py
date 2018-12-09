@@ -47,15 +47,16 @@ class LedController:
         logging.info("Sucessfully connected to MQTT server with result code" + str(rc))
 
         #self.client.subscribe("$SYS/#")
-        self.client.subscribe("/d1ws2812/discovery")
-        self.client.message_callback_add("/d1ws2812/discovery", self.on_discovery_message)
+        self.client.subscribe("/d1ws2812/discovery/#")
+        self.client.message_callback_add("/d1ws2812/discovery/#", self.on_discovery_message)
 
-        self.client.subscribe("/openrace/race/#")
-        self.client.message_callback_add("/openrace/race/start", self.on_race_start)
+        self.client.subscribe("/OpenRace/events/#")
+        self.client.message_callback_add("/OpenRace/events/start", self.on_race_start)
 
-    def on_discovery_message(self, cleint, userdata, msg):
-        client_mac = msg.payload.decode("utf-8")
-        logging.debug("Discovered <%s>" % client_mac)
+    def on_discovery_message(self, client, userdata, msg):
+        client_mac = msg.topic.split("/")[-1]
+        client_version = msg.payload.decode("utf-8")
+        logging.debug("Discovered <%s> with version <%s>" % (client_mac, client_version))
         if client_mac not in self.led_strips.keys():
             self.client.publish("/d1ws2812/%s" % client_mac, "6;255;0;0", qos=1)
         self.led_strips[client_mac] = time.time()
