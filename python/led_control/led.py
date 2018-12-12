@@ -5,6 +5,7 @@ import logging
 import os
 import time
 import paho.mqtt.client as mqtt
+import atexit
 
 myPath = os.path.dirname(os.path.realpath(__file__))
 logPath = os.path.join(myPath, 'log/led_control.log')
@@ -31,6 +32,8 @@ class LedController:
         self.current_event_control = None
         self.last_led_cleanup = 0
         self.last_status_update = 0
+
+        atexit.register(self.exit_handler)
 
     def mqtt_connect(self):
         logging.info("Connecting to MQTT server %s" % (self.mqtt_server))
@@ -132,10 +135,13 @@ class LedController:
         if (self.last_led_cleanup + 900) < self.now:
             self.last_led_cleanup = self.now
             logging.debug("Cleaning up ledstrips")
+            strips_to_remove = []
             for mac in self.led_strips.keys():
                 if (self.led_strips[mac] + 60) < self.now:
-                    logging.info("Removing LED strip <%s>" % (mac))
-                    del self.led_strips[mac]
+                    strips_to_remove.append(mac)
+            for mac in strips_to_remove:
+                logging.info("Removing LED strip <%s>" % (mac))
+                del self.led_strips[mac]
 
     def status_update(self):
         if (self.last_status_update + 30) < self.now:
@@ -152,6 +158,10 @@ class LedController:
                 self.status_update()
                 self.client.loop()
 
+    def exit_handler(self):
+        logging.debug("Removing %s retained discovery messages" % len(self.led_strips))
+        for mac in self.led_strips.keys():
+            self.client.publish("/d1ws2812/discovery/%s" % mac, None, qos=1, retain=True)
 
 if __name__ == "__main__":
     lc = LedController("10.5.20.35", "openrace", "PASSWORD")
