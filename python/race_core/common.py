@@ -1,5 +1,5 @@
 import logging
-
+import time
 
 class Emitter:
     def __init__(self):
@@ -33,6 +33,7 @@ class Pilot:
         self.frequency = frequency
         self.laps = []
         self.enabled = False
+        self.lastlap = 0
 
     def show(self):
         if self.enabled:
@@ -43,3 +44,11 @@ class Pilot:
             return "MHz: %s; Name: %s; %s" % (self.frequency, self.name, state)
         else:
             return "MHz: %s; %s" % (self.frequency, state)
+
+    def passed(self):
+        now = time.time()
+        if self.lastlap + 10 < now:
+            self.lastlap = now
+            self.laps.append(now)
+            return True
+        return False
