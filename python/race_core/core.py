@@ -80,8 +80,11 @@ class RaceCore:
 
     # RaceTracker Events callback
     def on_pilot_passed(self, pilot_id, seconds):
-        logging.info("Pilot %s (%s) passed the gate with %s seconds" % (pilot_id, self.pilots[pilot_id].frequency, seconds))
-        self.mqtt_client.publish("/OpenRace/race/passing", self.pilots[pilot_id].frequency)
+        if self.pilots[pilot_id].passed():
+            logging.info("Pilot %s (%s) passed the gate with %s seconds" % (pilot_id, self.pilots[pilot_id].frequency, seconds))
+            self.mqtt_client.publish("/OpenRace/race/passing", self.pilots[pilot_id].frequency)
+        else:
+            logging.debug("Pilot %s (%s) passed the gate with %s seconds, but it will be ignored due to minimal lap time" % (pilot_id, self.pilots[pilot_id].frequency, seconds))
 
     def on_status_package(self, rssis):
         logging.info("Status: %s mV | RSSIS %s" % (self.tracker.millivolts, rssis))
