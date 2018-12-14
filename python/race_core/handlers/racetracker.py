@@ -150,12 +150,16 @@ class LapRFRaceTracker(RaceTracker):
         self.send_data(packet)
 
     def request_start_race(self):
-        logging.info("Request race start")
-        self.laprf.request_start_race()
+        pass
+        # since we can handle everything ourselfs in the core, this is probably not needed
+        # logging.info("Request race start")
+        # self.laprf.request_start_race()
 
     def request_stop_race(self):
-        logging.info("Request race stop")
-        self.laprf.request_stop_race()
+        pass
+        # since we can handle everything ourselfs in the core, this is probably not needed
+        # logging.info("Request race stop")
+        # self.laprf.request_stop_race()
 
     # laprf.request_save_settings
     # laprf.request_shutdown
