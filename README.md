@@ -61,7 +61,7 @@ To set and get the configured pilots.
 Race events like pilots passing the finish line and such.
 ### /OpenRace/status/[tracker_voltage, RSSI/1..8, led_strips]
 Status information mostly from the race tracker
-### /OpenRace/settings
+### /OpenRace/settings/[amount_laps, min_lap_time, start_delay]
 Race settings like MW settings, number of laps, minimal lap time ...
 
 ## d1ws2812 topics

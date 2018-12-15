@@ -47,7 +47,7 @@ class Pilot:
 
     def passed(self):
         now = time.time()
-        if self.lastlap + 10 < now:
+        if self.lastlap + 3 < now:
             self.lastlap = now
             self.laps.append(now)
             return True

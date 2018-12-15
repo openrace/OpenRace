@@ -40,6 +40,11 @@ class RaceCore:
         self.band = 2  # currently fatshark hardcoded
         # self.startup = time.time()
 
+        # race settings
+        self.race_amount_laps = 4
+        self.race_min_lap_time = 10
+        self.race_start_delay = 5
+
     def mqtt_connect(self):
         logging.info("Connecting to MQTT server %s" % (self.mqtt_server))
         self.mqtt_client = mqtt.Client()
@@ -59,7 +64,7 @@ class RaceCore:
         self.mqtt_client.message_callback_add("/OpenRace/events/#", self.on_events_message)
         self.mqtt_client.message_callback_add("/OpenRace/pilots", self.on_pilots_message)
         # self.mqtt_client.message_callback_add("/OpenRace/race", self.on_race_message)
-        self.mqtt_client.message_callback_add("/OpenRace/settings", self.on_settings_message)
+        self.mqtt_client.message_callback_add("/OpenRace/settings/#", self.on_settings_message)
 
         self.mqtt_connected = True
 
@@ -68,12 +73,12 @@ class RaceCore:
 
     # internal race methods
     def race_start(self, start_delay):
-        self.mqtt_client.publish("/OpenRace/race/start", start_delay, qos=2)
-        self.current_race = time.time() + start_delay
+        self.mqtt_client.publish("/OpenRace/race/start", self.race_start_delay, qos=2)
+        self.current_race = time.time() + self.race_start_delay
         self.race[self.current_race] = {}
-        self.race[self.current_race]['start_delay'] = start_delay
-        self.race[self.current_race]['amount_laps'] = 4  # TODO: make this configurable, remember that the start also counts
-        self.race[self.current_race]['min_lap_time'] = 10  # TODO: make this configurable and implement it!
+        self.race[self.current_race]['start_delay'] = self.race_start_delay
+        self.race[self.current_race]['amount_laps'] = self.race_amount_laps  # TODO: make this configurable, remember that the start also counts
+        self.race[self.current_race]['min_lap_time'] = self.race_min_lap_time  # TODO: make this configurable and implement it!
         for pilot in self.pilots.keys():
             self.pilots[pilot].laps = []
         self.tracker.request_start_race()
@@ -99,19 +104,29 @@ class RaceCore:
         logging.debug("Recieved MQTT event message: <%s> <%s>" % (msg.topic, msg.payload))
 
         if msg.topic == '/OpenRace/events/request_start':
-            logging.info("Race will start in %s seconds!" % int(msg.payload))
+            logging.info("Race will start in %s seconds!" % self.race_start_delay)
             self.race_start(int(msg.payload))
         elif msg.topic == '/OpenRace/events/request_stop':
             logging.info("Race ended")
             self.race_stop()
 
-        # TODO: handle race timeout (dnf)
+        # TODO: handle race timeout (dnf) / max lap time?
 
     # def on_race_message(self, client, userdata, msg):
     #     logging.debug("OpenRace MQTT race message received: %s" % msg.payload)
 
     def on_settings_message(self, client, userdata, msg):
         logging.debug("OpenRace MQTT settings message received: %s" % msg.payload)
+
+        if msg.topic == '/OpenRace/settings/amount_laps':
+            logging.info("Setting amount of laps to %s" % int(msg.payload))
+            self.race_amount_laps = int(msg.payload)
+        elif msg.topic == '/OpenRace/settings/min_lap_time':
+            logging.info("Setting minimal lap time to %s" % int(msg.payload))
+            self.race_min_lap_time = int(msg.payload)
+        elif msg.topic == '/OpenRace/settings/start_delay':
+            logging.info("Setting race start delay %s" % int(msg.payload))
+            self.race_start_delay = int(msg.payload)
 
     # RaceTracker Events callback
     def on_pilot_passed(self, pilot_id, seconds):
@@ -144,7 +159,7 @@ class RaceCore:
                 if self.race[self.current_race]['amount_laps'] == len(self.pilots[pilot_id].laps):
                     # race finished
                     logging.info("Pilot %s finished the race" % self.pilots[pilot_id].name)
-                elif (self.race[self.current_race]['amount_laps'] - 1) < len(self.pilots[pilot_id].laps):
+                elif (self.race[self.current_race]['amount_laps'] - 1) == len(self.pilots[pilot_id].laps):
                     # last lap
                     logging.info("Last lap for pilot %s" % self.pilots[pilot_id].name)
                     self.mqtt_client.publish("/OpenRace/race/lastlap", self.pilots[pilot_id].frequency, qos=1)
@@ -179,13 +194,6 @@ class RaceCore:
             self.pilots[id].frequency = pilot['frequency']
             self.pilots[id].enabled = pilot['enabled']
 
-    # def start_race(self):
-    # def end_race(self):
-    # def save_settings(self):
-    # def get_settings(self):
-    # def request_version(self):
-    # def pilot_passed(self):
-
     def run(self):
 
         # MQTT connection
@@ -197,8 +205,10 @@ class RaceCore:
         # request all pilots
         self.tracker.request_pilots(1, 8)
 
-        # id, band, freq, gain, channel, enabled, threshold
-        # self.tracker.set_pilot(2, 2, 5800, 44, 4, 1, 800)
+        # publishing race settings
+        self.mqtt_client.publish("/OpenRace/settings/amount_laps", self.race_amount_laps, qos=1, retain=True)
+        self.mqtt_client.publish("/OpenRace/settings/min_lap_time", self.race_min_lap_time, qos=1, retain=True)
+        self.mqtt_client.publish("/OpenRace/settings/start_delay", self.race_start_delay, qos=1, retain=True)
 
         pilots_showed = 0
         while True:
@@ -206,7 +216,7 @@ class RaceCore:
             self.tracker.read_data(stop_if_no_data=True)
 
             # show pilots every 10 seconds
-            if time.time() - pilots_showed > 10:
+            if time.time() - pilots_showed > 30:
                 pilots_showed = time.time()
 
                 ret = []
