@@ -57,8 +57,10 @@ After entering your password for SUDO, the installation continues.
 To start and stop races.
 ### /OpenRace/pilots
 To set and get the configured pilots.
-### /OpenRace/race/[passing, lastlap, stop]
+### /OpenRace/race/[passing, lastlap, start, stop]
 Race events like pilots passing the finish line and such.
+### /OpenRace/status/[tracker_voltage, RSSI/1..8, led_strips]
+Status information mostly from the race tracker
 ### /OpenRace/settings
 Race settings like MW settings, number of laps, minimal lap time ...
 

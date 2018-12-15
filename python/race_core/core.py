@@ -9,7 +9,6 @@ import json
 import paho.mqtt.client as mqtt
 from .common import Pilot
 
-
 from .handlers.racetracker import LapRFRaceTracker
 
 myPath = os.path.dirname(os.path.realpath(__file__))
@@ -38,7 +37,7 @@ class RaceCore:
         self.pilots = {}
         self.race = {}
         self.current_race = 0
-        self.band = 2 # currently fatshark hardcoded
+        self.band = 2  # currently fatshark hardcoded
         # self.startup = time.time()
 
     def mqtt_connect(self):
@@ -46,7 +45,7 @@ class RaceCore:
         self.mqtt_client = mqtt.Client()
 
         self.mqtt_client.on_connect = self.on_connect
-        self.mqtt_client.on_message = self.on_message
+        # self.mqtt_client.on_message = self.on_message
 
         self.mqtt_client.username_pw_set(self.mqtt_user, self.mqtt_password)
 
@@ -54,38 +53,42 @@ class RaceCore:
 
     def on_connect(self, client, userdata, flags, rc):
         logging.info("Sucessfully connected to MQTT server with result code: " + str(rc))
-        #self.client.subscribe("$SYS/#")
+        # self.client.subscribe("$SYS/#")
 
         self.mqtt_client.subscribe("/OpenRace/#")
         self.mqtt_client.message_callback_add("/OpenRace/events/#", self.on_events_message)
         self.mqtt_client.message_callback_add("/OpenRace/pilots", self.on_pilots_message)
-        self.mqtt_client.message_callback_add("/OpenRace/race", self.on_race_message)
+        # self.mqtt_client.message_callback_add("/OpenRace/race", self.on_race_message)
         self.mqtt_client.message_callback_add("/OpenRace/settings", self.on_settings_message)
 
         self.mqtt_connected = True
 
-    def on_message(self, client, userdata, msg):
-        logging.debug("Recieved MQTT message: <%s> <%s>" % (msg.topic, msg.payload))
+    # def on_message(self, client, userdata, msg):
+    #     logging.debug("Recieved MQTT message: <%s> <%s>" % (msg.topic, msg.payload))
 
     # internal race methods
-    def race_start(self):
-        self.tracker.time_sync()
-        self.race[self.current_race]['start_delay'] = 5  # TODO: make this configurable, and implement in d1...
-        self.current_race = time.time() + self.race[self.current_race]['start_delay']
+    def race_start(self, start_delay):
+        self.mqtt_client.publish("/OpenRace/race/start", start_delay, qos=2)
+        self.current_race = time.time() + start_delay
         self.race[self.current_race] = {}
-        self.race[self.current_race]['amount_laps'] = 3  # TODO: make this configurable
+        self.race[self.current_race]['start_delay'] = start_delay
+        self.race[self.current_race]['amount_laps'] = 4  # TODO: make this configurable, remember that the start also counts
         self.race[self.current_race]['min_lap_time'] = 10  # TODO: make this configurable and implement it!
         for pilot in self.pilots.keys():
             self.pilots[pilot].laps = []
-        self.race[self.current_race]['pilots'] = self.pilots
         self.tracker.request_start_race()
 
     def race_stop(self):
-        self.mqtt_client.publish("/OpenRace/race/stop", None)
-        if self.current_race > 0:
+        self.mqtt_client.publish("/OpenRace/race/stop", None, qos=2)
+
+        if self.current_race in self.race.keys():
             self.race[self.current_race]['race_ended'] = time.time()
-        with open('race_%s.json' % self.current_race, 'w') as fp:
-            json.dump(self.race, fp)
+            self.race[self.current_race]['pilots'] = []
+            for pilot in self.pilots.keys():
+                if self.pilots[pilot].enabled:
+                    self.race[self.current_race]['pilots'].append(self.pilots[pilot].get_stats())
+            with open('race_%s.json' % self.current_race, 'w') as fp:
+                json.dump(self.race, fp)
         self.race = {}
         self.current_race = 0
         self.tracker.request_stop_race()
@@ -94,46 +97,78 @@ class RaceCore:
     # MQTT Events callback
     def on_events_message(self, client, userdata, msg):
         logging.debug("Recieved MQTT event message: <%s> <%s>" % (msg.topic, msg.payload))
-        if msg.payload == b'request_start':
-            logging.info("Race will start in 5 seconds!")
-            self.race_start()
-        elif msg.payload == b'request_stop':
+
+        if msg.topic == '/OpenRace/events/request_start':
+            logging.info("Race will start in %s seconds!" % int(msg.payload))
+            self.race_start(int(msg.payload))
+        elif msg.topic == '/OpenRace/events/request_stop':
             logging.info("Race ended")
             self.race_stop()
 
         # TODO: handle race timeout (dnf)
 
-    def on_race_message(self, client, userdata, msg):
-        logging.debug("OpenRace MQTT race message received: %s" % msg.payload)
+    # def on_race_message(self, client, userdata, msg):
+    #     logging.debug("OpenRace MQTT race message received: %s" % msg.payload)
 
     def on_settings_message(self, client, userdata, msg):
         logging.debug("OpenRace MQTT settings message received: %s" % msg.payload)
 
     # RaceTracker Events callback
     def on_pilot_passed(self, pilot_id, seconds):
-        if 0 < self.current_race < time.time():
-            logging.info("Pilot %s (%s) passed too soon!" % (pilot_id, self.pilots[pilot_id].frequency))
+        # check if pilot is configured
+        if pilot_id not in self.pilots.keys():
+            logging.warning("Unknown Pilot with ID %s detected" % pilot_id)
             return False
-        if self.pilots[pilot_id].passed():
-            logging.info("Pilot %s (%s) passed the gate with %s seconds" % (pilot_id, self.pilots[pilot_id].frequency, seconds))
-            self.mqtt_client.publish("/OpenRace/race/passing", self.pilots[pilot_id].frequency)
-            if self.race[self.current_race]['amount_laps'] - 1 >= len(self.pilots[pilot_id].laps):
-                logging.info("Last lap for pilot %s" % self.pilots[pilot_id])
-                self.mqtt_client.publish("/OpenRace/race/lastlap", self.pilots[pilot_id].frequency)
-            race_ended = True
-            for pilot in self.pilots.keys():
-                if self.pilots[pilot].enabled:
-                    # TODO: what happens if someone makes more rounds than the last one?
-                    if len(self.pilots[pilot]['laps']) < self.race[self.current_race]['amount_laps']:
-                        race_ended = False
-            if race_ended:
-                self.race_stop()
 
+        # check if a race is currently happening
+        if self.current_race not in self.race.keys():
+            # no active race
+            self.mqtt_client.publish("/OpenRace/race/passing", self.pilots[pilot_id].frequency, qos=1)
+            logging.info("Pilot %s (%s) passed the gate with %s seconds" %
+                         (pilot_id, self.pilots[pilot_id].frequency, seconds))
         else:
-            logging.debug("Pilot %s (%s) passed the gate with %s seconds, but it will be ignored due to minimal lap time" % (pilot_id, self.pilots[pilot_id].frequency, seconds))
+            # active race
+
+            # check if the pilot went trough the start gate too soon
+            if self.current_race > 0 and self.current_race > time.time():
+                logging.info("Pilot %s (%s) passed too soon!" % (pilot_id, self.pilots[pilot_id].frequency))
+                return False
+
+            # check for minimal lap time (and also register the laptime on success)
+            if self.pilots[pilot_id].passed():
+                self.mqtt_client.publish("/OpenRace/race/passing", self.pilots[pilot_id].frequency, qos=1)
+                logging.info("Pilot %s (%s) passed the gate with %s seconds (%s/%s)" %
+                             (pilot_id, self.pilots[pilot_id].frequency, seconds,
+                              len(self.pilots[pilot_id].laps), self.race[self.current_race]['amount_laps']))
+
+                if self.race[self.current_race]['amount_laps'] == len(self.pilots[pilot_id].laps):
+                    # race finished
+                    logging.info("Pilot %s finished the race" % self.pilots[pilot_id].name)
+                elif (self.race[self.current_race]['amount_laps'] - 1) < len(self.pilots[pilot_id].laps):
+                    # last lap
+                    logging.info("Last lap for pilot %s" % self.pilots[pilot_id].name)
+                    self.mqtt_client.publish("/OpenRace/race/lastlap", self.pilots[pilot_id].frequency, qos=1)
+
+                # checking if the race is over
+                race_ended = True
+                for pilot in self.pilots.keys():
+                    if self.pilots[pilot].enabled:
+                        # TODO: what happens if someone makes more rounds than the last one?
+                        if len(self.pilots[pilot].laps) < self.race[self.current_race]['amount_laps']:
+                            race_ended = False
+                if race_ended:
+                    self.race_stop()
+
+            else:
+                logging.debug(
+                    'Pilot %s (%s) passed the gate with %s seconds, ignoring due to minimal lap time' % (
+                        pilot_id, self.pilots[pilot_id].frequency, seconds))
 
     def on_status_package(self, rssis):
-        logging.info("Status: %s mV | RSSIS %s" % (self.tracker.millivolts, rssis))
+        # logging.debug("Status: %s mV | RSSIS %s" % (self.tracker.millivolts, rssis))
+        self.mqtt_client.publish("/OpenRace/status/tracker_voltage", self.tracker.millivolts, qos=1)
+        for idx, rssi in enumerate(rssis):
+            self.mqtt_client.publish("/OpenRace/status/RSSI/%s" % idx, rssi, qos=1)
 
     def on_pilots_message(self, pilots):
         # logging.debug("OpenRace pilot message received: %s" % pilots)

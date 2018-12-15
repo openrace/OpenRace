@@ -2,6 +2,7 @@
 # vim: set filencoding=utf-8
 
 import logging
+import time
 
 from ..common import Emitter
 from ..common import mklog
@@ -58,15 +59,15 @@ class LapRFRaceTracker(RaceTracker):
         self.millivolts = 0.0
         self.system_version = None
         self.protocol_version = None
-        self.timedelta = 0
+        self.device_offset = 0
 
         self.serial_dev.send_data(self.laprf.request_version())
         self.serial_dev.send_data(self.laprf.request_time())
 
     def time_sync(self, last_time_request, time_rtc_time, rtc_time, packet_receive_time):
         packet_delta = packet_receive_time - last_time_request
-        device_offset = (packet_receive_time + last_time_request) / 2.0 - rtc_time
-        logging.info("Time stats: Packet delta: %s - Device offset: %s" % (packet_delta, device_offset))
+        self.device_offset = (packet_receive_time + last_time_request) / 2.0 - rtc_time
+        logging.info("Time stats: Packet delta: %s - Device offset: %s" % (packet_delta, self.device_offset))
 
     def on_version_packet(self, system_version, protocol_version):
         self.system_version = ".".join([str(x) for x in system_version])
@@ -94,7 +95,7 @@ class LapRFRaceTracker(RaceTracker):
             detection_flags):
         self.on_passing_packet(
             pilot_id = pilot_id,
-            seconds = rtc_time / 1000000 - self.timedelta,
+            seconds = rtc_time / 1000000.0  #  - (time.time() - self.device_offset),
 
         )
         # logging.debug("Passing packet:")

@@ -27,6 +27,7 @@ class LedController:
         self.pilots = {}
 
         self.now = 0
+        self.race_start = 0
         self.current_event = None
         self.current_event_payload = None
         self.current_event_control = None
@@ -47,48 +48,32 @@ class LedController:
         self.client.connect(self.mqtt_server, 1883, 60)
 
     def on_connect(self, client, userdata, flags, rc):
-        logging.info("Sucessfully connected to MQTT server with result code" + str(rc))
+        logging.info("Sucessfully connected to MQTT server with result code " + str(rc))
 
         #self.client.subscribe("$SYS/#")
         self.client.subscribe("/d1ws2812/discovery/#")
         self.client.message_callback_add("/d1ws2812/discovery/#", self.on_discovery_message)
 
-        self.client.subscribe("/OpenRace/events/#")
-        self.client.message_callback_add("/OpenRace/events/start", self.on_race_start)
+        # self.client.subscribe("/OpenRace/events/#")
 
         self.client.subscribe("/OpenRace/race/#")
+        self.client.message_callback_add("/OpenRace/race/stop", self.on_race_stop)
+        self.client.message_callback_add("/OpenRace/race/start/#", self.on_race_start)
         self.client.message_callback_add("/OpenRace/race/passing/#", self.on_pilot_passing)
+        self.client.message_callback_add("/OpenRace/race/lastlap", self.on_last_lap)
 
     def on_discovery_message(self, client, userdata, msg):
         client_mac = msg.topic.split("/")[-1]
         client_version = msg.payload.decode("utf-8")
-        logging.debug("Discovered <%s> with version <%s>" % (client_mac, client_version))
         if client_mac not in self.led_strips.keys():
+            logging.debug("Discovered <%s> with version <%s>" % (client_mac, client_version))
             self.client.publish("/d1ws2812/%s" % client_mac, "6;255;0;0", qos=1)
         self.led_strips[client_mac] = time.time()
 
     def on_pilot_passing(self, client, userdata, msg):
         frequency = int(msg.payload)
-        logging.debug("Pilot with frequency %s passed the gate" % frequency)
+        logging.debug("Pilot with frequency %s passed the gate %s" % (frequency, (time.time() - self.race_start)))
         # https://github.com/betaflight/betaflight/blob/39ced6bbfefa52a6f605ed6635b7e62105c71672/src/main/io/ledstrip.c
-
-
-        # } else if (frequency <= 5750) {
-        #     colorIndex = COLOR_ORANGE;
-        # } else if (frequency <= 5789) {
-        #     colorIndex = COLOR_YELLOW;
-        # } else if (frequency <= 5829) {
-        #     colorIndex = COLOR_GREEN;
-        # } else if (frequency <= 5867) {
-        #     colorIndex = COLOR_BLUE;
-        # } else if (frequency <= 5906) {
-        #     colorIndex = COLOR_DARK_VIOLET;
-        # } else {
-        #     colorIndex = COLOR_DEEP_PINK;
-        # }
-        # hsvColor_t color = ledStripConfig()->colors[colorIndex];
-        # color.v = pit ? (blink ? 15 : 0) : 255; // blink when in pit mode
-        # applyLedHsv(LED_MOV_OVERLAY(LED_FLAG_OVERLAY(LED_OVERLAY_VTX)), &color);
 
         color = "255;20;147"        # COLOR_DEEP_PINK
         if frequency <= 5672:
@@ -108,27 +93,56 @@ class LedController:
 
         self.client.publish("/d1ws2812/all", "6;%s" % color, qos=1)
 
-
     def on_message(self, client, userdata, msg):
         logging.debug("Recieved MQTT message: <%s> <%s>" % (msg.topic, msg.payload))
 
     # mqtt racing methods
     def on_race_start(self, client, userdata, msg):
+        self.race_start = self.now + float(msg.payload)
         self.current_event = self.race_cowntdown
         self.current_event_payload = self.now + float(msg.payload)
         self.current_event_control = self.now - 1.1
         logging.info("Race will start in %s seconds" % int(msg.payload))
+        self.client.publish("/d1ws2812/all", "Z;255;0;0", qos=1)
+
+    def on_race_stop(self, client, userdata, msg):
+        self.current_event = self.race_stop
+        logging.debug("Race is stopping")
+
+    def on_last_lap(self, client, userdata, msg):
+        self.current_event = self.last_lap
+        logging.debug("Initializing last lap")
 
     # internal race methods
     def race_cowntdown(self):
         if self.current_event_payload <= self.now:
-            logging.debug("GO! %s" % time.time())
+            logging.debug("GO! %s" % (time.time() - self.race_start))
             self.current_event = None
-            self.client.publish("/d1ws2812/all", "6;0;255;0", qos=1)
-        elif (self.now - self.current_event_control) >= 1.5:
-            logging.debug("Wait ... %s" % time.time())
+            self.client.publish("/d1ws2812/all", "6;0;0;255", qos=1)
+        elif (self.current_event_payload - 0.8) <= self.now:
+            self.current_event_control = time.time()
+        elif (self.now - self.current_event_control) >= 1:
+            logging.debug("Wait... %s" % (time.time() - self.race_start))
             self.current_event_control = time.time()
             self.client.publish("/d1ws2812/all", "6;255;0;0", qos=1)
+
+    def race_stop(self):
+        logging.info("Race stop %s" % (time.time() - self.race_start))
+        self.client.publish("/d1ws2812/all", "Z;0", qos=1)
+        self.client.loop()
+        self.client.publish("/d1ws2812/all", "6;255;255;255", qos=1)
+        self.client.loop()
+        self.current_event = None
+        self.race_start = 0
+
+    def last_lap(self):
+        logging.info("Last lap! %s" % (time.time() - self.race_start))
+        # TODO: implement one start gate and not for all
+        self.client.publish("/d1ws2812/all", "Z;7;3;100;0;255;255;255;0;0;0", qos=1)
+        self.client.loop()
+        self.client.publish("/d1ws2812/all",   "6;255;255;255", qos=1)
+        self.client.loop()
+        self.current_event = None
 
     # internal helper methods
     def led_cleanup(self):
@@ -137,7 +151,7 @@ class LedController:
             logging.debug("Cleaning up ledstrips")
             strips_to_remove = []
             for mac in self.led_strips.keys():
-                if (self.led_strips[mac] + 60) < self.now:
+                if (self.led_strips[mac] + 90) < self.now:
                     strips_to_remove.append(mac)
             for mac in strips_to_remove:
                 logging.info("Removing LED strip <%s>" % (mac))
@@ -147,6 +161,7 @@ class LedController:
         if (self.last_status_update + 30) < self.now:
             self.last_status_update = self.now
             logging.info("LED strips: %s - Pilots: %s" % (len(self.led_strips.keys()), len(self.pilots.keys())))
+            self.client.publish("/OpenRace/status/led_strips", len(self.led_strips.keys()))
 
     def run(self):
         while True:
@@ -162,6 +177,7 @@ class LedController:
         logging.debug("Removing %s retained discovery messages" % len(self.led_strips))
         for mac in self.led_strips.keys():
             self.client.publish("/d1ws2812/discovery/%s" % mac, None, qos=1, retain=True)
+
 
 if __name__ == "__main__":
     lc = LedController("10.5.20.35", "openrace", "PASSWORD")

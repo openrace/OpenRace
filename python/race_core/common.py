@@ -28,7 +28,7 @@ def mklog(prefix, level):
 
 
 class Pilot:
-    def __init__(self, frequency = 0, name = ""):
+    def __init__(self, frequency = 0, name = "Unknown"):
         self.name = name
         self.frequency = frequency
         self.laps = []
@@ -52,3 +52,9 @@ class Pilot:
             self.laps.append(now)
             return True
         return False
+
+    def get_stats(self):
+        ret = {}
+        ret['name'] = self.name
+        ret['laps'] = self.laps
+        return ret
