@@ -8,6 +8,7 @@ import time
 import json
 import paho.mqtt.client as mqtt
 from .common import Pilot
+import atexit
 
 from .handlers.racetracker import LapRFRaceTracker
 
@@ -44,6 +45,8 @@ class RaceCore:
         self.race_amount_laps = 4
         self.race_min_lap_time = 10
         self.race_start_delay = 5
+
+        atexit.register(self.exit_handler)
 
     def mqtt_connect(self):
         logging.info("Connecting to MQTT server %s" % (self.mqtt_server))
@@ -205,7 +208,7 @@ class RaceCore:
         # request all pilots
         self.tracker.request_pilots(1, 8)
 
-        # publishing race settings
+        # publishing retained race settings
         self.mqtt_client.publish("/OpenRace/settings/amount_laps", self.race_amount_laps, qos=1, retain=True)
         self.mqtt_client.publish("/OpenRace/settings/min_lap_time", self.race_min_lap_time, qos=1, retain=True)
         self.mqtt_client.publish("/OpenRace/settings/start_delay", self.race_start_delay, qos=1, retain=True)
@@ -225,6 +228,12 @@ class RaceCore:
                         ret.append("ID %s; %s" % (pilot, self.pilots[pilot].show()))
 
                 logging.info("Active pilots: %s" % (" | ".join(ret)))
+
+    def exit_handler(self):
+        logging.debug("Removing retained settings")
+        self.mqtt_client.publish("/OpenRace/settings/amount_laps", None, qos=1, retain=True)
+        self.mqtt_client.publish("/OpenRace/settings/min_lap_time", None, qos=1, retain=True)
+        self.mqtt_client.publish("/OpenRace/settings/start_delay", None, qos=1, retain=True)
 
 
 @click.command()
