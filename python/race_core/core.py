@@ -77,8 +77,8 @@ class RaceCore:
         self.current_race = time.time() + self.race_start_delay
         self.race[self.current_race] = {}
         self.race[self.current_race]['start_delay'] = self.race_start_delay
-        self.race[self.current_race]['amount_laps'] = self.race_amount_laps  # TODO: make this configurable, remember that the start also counts
-        self.race[self.current_race]['min_lap_time'] = self.race_min_lap_time  # TODO: make this configurable and implement it!
+        self.race[self.current_race]['amount_laps'] = self.race_amount_laps
+        self.race[self.current_race]['min_lap_time'] = self.race_min_lap_time
         for pilot in self.pilots.keys():
             self.pilots[pilot].laps = []
         self.tracker.request_start_race()
