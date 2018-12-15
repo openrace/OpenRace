@@ -63,14 +63,18 @@ Race events like pilots passing the finish line and such.
 Status information mostly from the race tracker
 ### /OpenRace/settings/[amount_laps, min_lap_time, start_delay]
 Race settings like MW settings, number of laps, minimal lap time ...
+### /OpenRace/led/category/[start_gates, normal_gates, strips_run_forward, strips_run_backward]/[add, remove]
+Set LED strips for the LED controller
 
 ## d1ws2812 topics
 ### /d1ws2812/all
 All LED strips are listening on this topic. See the
 [d1ws2812 project documentation](https://github.com/oxivanisher/d1ws2812mqtt) for more information.
-### /d1ws2812/MAC
+### /d1ws2812/[LED strip MAC]
 Each LED strip is listening to his own topic here. See the
 [d1ws2812 project documentation](https://github.com/oxivanisher/d1ws2812mqtt) for more information.
+### /d1ws2812/discovery/[LED strip MAC]
+All strips reporting in are publishing here
 
 
 # Manual Setup (Legacy documentation!)

@@ -34,6 +34,13 @@ class LedController:
         self.last_led_cleanup = 0
         self.last_status_update = 0
 
+        # led strip categories
+        self.categories = {
+            'start_gates': [],
+            'normal_gates': [],
+            'strips_run_forward': [],
+            'strips_run_backward': []}
+
         atexit.register(self.exit_handler)
 
     def mqtt_connect(self):
@@ -61,6 +68,7 @@ class LedController:
         self.client.message_callback_add("/OpenRace/race/start/#", self.on_race_start)
         self.client.message_callback_add("/OpenRace/race/passing/#", self.on_pilot_passing)
         self.client.message_callback_add("/OpenRace/race/lastlap", self.on_last_lap)
+        self.client.message_callback_add("/OpenRace/led/category/#", self.on_led_category)
 
     def on_discovery_message(self, client, userdata, msg):
         client_mac = msg.topic.split("/")[-1]
@@ -106,12 +114,18 @@ class LedController:
         self.client.publish("/d1ws2812/all", "Z;255;0;0", qos=1)
 
     def on_race_stop(self, client, userdata, msg):
-        self.current_event = self.race_stop
         logging.debug("Race is stopping")
+        self.current_event = self.race_stop
 
     def on_last_lap(self, client, userdata, msg):
-        self.current_event = self.last_lap
         logging.debug("Initializing last lap")
+        self.current_event = self.last_lap
+
+    def on_led_category(self, client, userdata, msg):
+        logging.warning("led category: <%s> <%s>" % (msg.topic, msg.payload))
+        # split topic, detect add or remove
+        # /OpenRace/led/category/ CATEGORY / add,remove
+        # self.categories[category].append()
 
     # internal race methods
     def race_cowntdown(self):
