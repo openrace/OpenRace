@@ -37,6 +37,24 @@
     mode: 0777
   become: true
 
+- name: Create OpenRace log directory
+  file:
+    path: /srv/openrace/log/
+    state: directory
+    owner: pi
+    group: pi
+    mode: 0777
+  become: true
+
+- name: Create OpenRace race archive directory
+  file:
+    path: /srv/openrace/archive/
+    state: directory
+    owner: pi
+    group: pi
+    mode: 0777
+  become: true
+
 - name: putting custom mqtt config in place
   copy:
     src: mqtt-auth.conf

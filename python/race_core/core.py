@@ -8,7 +8,6 @@ import time
 import json
 import paho.mqtt.client as mqtt
 from .common import Pilot
-import atexit
 
 from .handlers.racetracker import LapRFRaceTracker
 
@@ -95,7 +94,7 @@ class RaceCore:
             for pilot in self.pilots.keys():
                 if self.pilots[pilot].enabled:
                     self.race[self.current_race]['pilots'].append(self.pilots[pilot].get_stats())
-            with open('race_%s.json' % self.current_race, 'w') as fp:
+            with open('archive/race_%s.json' % self.current_race, 'w') as fp:
                 json.dump(self.race, fp)
         self.race = {}
         self.current_race = 0
