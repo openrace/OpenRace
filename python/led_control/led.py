@@ -194,6 +194,6 @@ class LedController:
 
 
 if __name__ == "__main__":
-    lc = LedController("10.5.20.35", "openrace", "PASSWORD")
+    lc = LedController("mqtt", "openrace", "PASSWORD")
     lc.mqtt_connect()
     lc.run()

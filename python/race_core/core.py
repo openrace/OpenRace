@@ -243,7 +243,7 @@ def main(device):
 
     rc = RaceCore(
         LapRFRaceTracker(device),
-        "localhost", "openrace", "PASSWORD")
+        "mqtt", "openrace", "PASSWORD")
     rc.run()
 
 
