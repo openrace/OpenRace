@@ -6,6 +6,7 @@ import os
 import click
 import time
 import json
+import atexit
 import paho.mqtt.client as mqtt
 from .common import Pilot
 

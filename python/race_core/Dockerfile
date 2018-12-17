@@ -6,14 +6,13 @@ WORKDIR /app
 
 # Copy the current directory contents into the container at /app
 COPY . /app
-COPY ./setup.py /
 
 # Install any needed packages specified in requirements.txt
 RUN pip install --trusted-host pypi.python.org -r requirements.txt
-RUN pip install -e /setup.py
+RUN pip install -e .
 
 # Make port 80 available to the world outside this container
 # EXPOSE 80
 
 # Run app.py when the container launches
-CMD ["openrace", "--device", "/dev/ttyACM0"]
+CMD ["race_core", "--device", "/dev/ttyACM0"]

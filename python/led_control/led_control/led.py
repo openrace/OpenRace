@@ -6,6 +6,7 @@ import os
 import time
 import paho.mqtt.client as mqtt
 import atexit
+import click
 
 myPath = os.path.dirname(os.path.realpath(__file__))
 logPath = os.path.join(myPath, 'log/led_control.log')
@@ -193,7 +194,14 @@ class LedController:
             self.client.publish("/d1ws2812/discovery/%s" % mac, None, qos=1, retain=True)
 
 
-if __name__ == "__main__":
+@click.command()
+def main():
+    logging.info("starting up")
+
     lc = LedController("mqtt", "openrace", "PASSWORD")
     lc.mqtt_connect()
     lc.run()
+
+
+if __name__ == '__main__':
+    main()

@@ -8,11 +8,11 @@ setup(
     description='OpenRace',
     author='Marc Urben',
     author_email='aegnor@mittelerde.ch',
-    url='',
+    url='https://github.com/oxivanisher/OpenRace',
     packages=['race_core'],
     entry_points = {
         'console_scripts': [
-            'openrace = race_core.core:main',
+            'race_core = race_core.core:main',
         ]
     }
 )
