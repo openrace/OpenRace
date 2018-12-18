@@ -24,12 +24,12 @@ some MQTT based connections are presented as direct connections.
  ---------------------     MQTT     -------
 | Mosquitto container |------------| WebUi |
  ---------------------              -------
-    |
-    | MQTT
-    |
-  ----------------      MQTT    -----------------------
- | LED controller | -----------| d1ws2812mqtt RGB LEDs |
-  ----------------              -----------------------
+    |                \
+    | MQTT            \ MQTT
+    |                  \
+  ----------------      -----------------------
+ | LED controller |    | d1ws2812mqtt RGB LEDs |
+  ----------------      -----------------------
 ```
 
 # Automated setup with ansible
