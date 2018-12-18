@@ -55,14 +55,16 @@ After entering your password for SUDO, the installation continues.
 ## OpenRace topics
 ### /OpenRace/events/[request_start, request_stop]
 To start and stop races.
-### /OpenRace/pilots
+### /OpenRace/pilots/[ID]/[enabled, frequency, band, channel, name]
 To set and get the configured pilots.
 ### /OpenRace/race/[passing, lastlap, start, stop]
 Race events like pilots passing the finish line and such.
 ### /OpenRace/status/[tracker_voltage, RSSI/1..8, led_strips]
 Status information mostly from the race tracker
-### /OpenRace/settings/[amount_laps, min_lap_time, start_delay]
-Race settings like MW settings, number of laps, minimal lap time ...
+### /OpenRace/settings/race_core/[amount_laps, min_lap_time, start_delay]
+Race settings like for the race_core.
+### /OpenRace/settings/led_control/[start_go_effect, start_countdown_effect, stop_effect, lastlap_effect, lastlap_gate]
+Race settings like for the led_controller.
 ### /OpenRace/led/category/[start_gates, normal_gates, strips_run_forward, strips_run_backward]/[add, remove]
 Set LED strips for the LED controller
 

@@ -28,12 +28,14 @@ def mklog(prefix, level):
 
 
 class Pilot:
-    def __init__(self, frequency = 0, name = "Unknown"):
-        self.name = name
-        self.frequency = frequency
+    def __init__(self):
+        self.name = ""
+        self.frequency = 0
         self.laps = []
         self.enabled = False
         self.lastlap = 0
+        self.band = 0
+        self.channel = 0
 
     def show(self):
         if self.enabled:

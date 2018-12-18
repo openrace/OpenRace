@@ -112,13 +112,11 @@ class LapRFRaceTracker(RaceTracker):
         # logging.debug("Pilots: %s " % pilots)
         ret_pilots = []
         for pilot in pilots:
-            id = pilot['PILOT_ID']
-            frequency = pilot['RF_FREQUENCY']
-            enabled = False
-            if pilot['RF_ENABLE'] == 1:
-                enabled = True
-
-            ret_pilots.append({'id': id, 'frequency': frequency, 'enabled': enabled})
+            ret_pilots.append({'id': int(pilot['PILOT_ID']),
+                               'frequency': int(pilot['RF_FREQUENCY']),
+                               'enabled': int(pilot['RF_ENABLE']),
+                               'band': int(pilot['RF_BAND']),
+                               'channel': int(pilot['RF_CHANNEL'])})
 
         self.on_rf_settings(pilots = ret_pilots)
 
