@@ -1,0 +1,52 @@
+# TODO: Make things configurable by using some environment files or so. Also read those in the python modules
+
+version: '2'
+services:
+  mqtt:
+    restart: always
+    image: "pascaldevink/rpi-mosquitto"
+    ports:
+     - "1883:1883"
+     - "9001:9001"
+    volumes:
+     - "/srv/mqtt/config:/mqtt/config/conf.d/:ro"
+     - "/srv/mqtt/log:/mqtt/log:rw"
+     - "/srv/mqtt/data:/mqtt/data:rw"
+
+  race_core:
+    restart: always
+    build:
+      context: "python/race_core/"
+    depends_on:
+      - "mqtt"
+    links:
+      - "mqtt"
+    volumes:
+     - "/srv/openrace/log:/app/log/:rw"
+     - "/srv/openrace/archive:/app/archive/:rw"
+    devices:
+     - "/dev/ttyACM0:/dev/ttyACM0"
+
+  led_control:
+    restart: always
+    build:
+      context: "python/led_control/"
+    depends_on:
+      - "mqtt"
+    links:
+      - "mqtt"
+    volumes:
+     - "/srv/openrace/log:/app/log/:rw"
+
+  webui:
+    restart: always
+    build:
+      context: "python/webui/"
+    depends_on:
+      - "mqtt"
+    links:
+      - "mqtt"
+    ports:
+      - "80:5000"
+    volumes:
+     - "/srv/openrace/log:/app/log/:rw"
