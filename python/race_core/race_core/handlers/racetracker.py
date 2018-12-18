@@ -2,35 +2,26 @@
 # vim: set filencoding=utf-8
 
 import logging
-import time
 
 from ..common import Emitter
 from ..common import mklog
-# from ..common import poilot
 
 
 class RaceTracker:
     def __init__(self):
         pass
 
-    def start_race(self):
+    def request_start_race(self):
         raise NotImplemented()
 
-    def end_race(self):
-        raise NotImplemented()
-
-    def save_settings(self):
-        raise NotImplemented()
-
-    def get_settings(self):
-        raise NotImplemented()
-
-    def request_version(self):
+    def request_stop_race(self):
         raise NotImplemented()
 
     def pilot_passed(self):
         raise NotImplemented()
-    #   decoder_id, detection_number, pilot_id, rtc_time, detection_peak_height, detection_flags,
+
+    def set_pilot(self):
+        raise NotImplemented()
 
 
 from .laprf import lapRFprotocol
@@ -120,23 +111,28 @@ class LapRFRaceTracker(RaceTracker):
 
         self.on_rf_settings(pilots = ret_pilots)
 
-
     def status_recieved(self, status_count, millivolts, rssis):
         self.millivolts = millivolts
         self.on_status_packet(rssis = rssis)
 
     # Setting Methods
-    def set_pilot(self, id, band, freq, gain, channel, enabled, threshold):
+    def set_pilot(self, id, band=None, freq=None, gain=None, channel=None, enabled=None, threshold=None):
         logging.info("Setting pilot")
 
-        data = []
-        data.append(self.laprf.build_FOR("PILOT_ID", id))
-        data.append(self.laprf.build_FOR("RF_BAND", band))
-        data.append(self.laprf.build_FOR("RF_FREQUENCY", freq))
-        data.append(self.laprf.build_FOR("RF_GAIN", gain))
-        data.append(self.laprf.build_FOR("RF_CHANNEL", channel))
-        data.append(self.laprf.build_FOR("RF_ENABLE", enabled))
-        data.append(self.laprf.build_FOR("RF_THRESHOLD", threshold))
+        data = [self.laprf.build_FOR("PILOT_ID", id)]
+        if band:
+            data.append(self.laprf.build_FOR("RF_BAND", band))
+        if freq:
+            data.append(self.laprf.build_FOR("RF_FREQUENCY", freq))
+        if gain:
+            data.append(self.laprf.build_FOR("RF_GAIN", gain))
+        if channel:
+            data.append(self.laprf.build_FOR("RF_CHANNEL", channel))
+        if enabled:
+            data.append(self.laprf.build_FOR("RF_ENABLE", enabled))
+        if threshold:
+            data.append(self.laprf.build_FOR("RF_THRESHOLD", threshold))
+
         packet = self.laprf.build_header_and_data_packet("RF_SETTINGS", b"".join(data))
         self.send_data(packet)
 
@@ -150,20 +146,12 @@ class LapRFRaceTracker(RaceTracker):
 
     def request_start_race(self):
         pass
-        # since we can handle everything ourselfs in the core, this is probably not needed
+        # since we can handle everything ourselves in the core, this is probably not needed
         # logging.info("Request race start")
         # self.laprf.request_start_race()
 
     def request_stop_race(self):
         pass
-        # since we can handle everything ourselfs in the core, this is probably not needed
+        # since we can handle everything ourselves in the core, this is probably not needed
         # logging.info("Request race stop")
         # self.laprf.request_stop_race()
-
-    # laprf.request_save_settings
-    # laprf.request_shutdown
-    # laprf.request_start_race
-    # laprf.request_stop_race
-    # laprf.request_data
-    # laprf.request_version
-    # laprf.request_time
