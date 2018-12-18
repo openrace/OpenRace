@@ -1,6 +1,6 @@
 # TODO: Make things configurable by using some environment files or so. Also read those in the python modules
 
-version: '2'
+version: '2' # Version 3 is not supported by RaspberryPi docker at the moment
 services:
   mqtt:
     restart: always
@@ -16,7 +16,7 @@ services:
   race_core:
     restart: always
     build:
-      context: "python/race_core/"
+      context: "race_core/"
     depends_on:
       - "mqtt"
     links:
@@ -30,7 +30,7 @@ services:
   led_control:
     restart: always
     build:
-      context: "python/led_control/"
+      context: "led_control/"
     depends_on:
       - "mqtt"
     links:
@@ -41,7 +41,7 @@ services:
   webui:
     restart: always
     build:
-      context: "python/webui/"
+      context: "webui/"
     depends_on:
       - "mqtt"
     links:
