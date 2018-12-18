@@ -143,13 +143,21 @@ class RaceCore:
         if field == 'name':
             self.pilots[id].name = str(msg.payload)
         elif field == 'enabled':
-            self.pilots[id].enabled = int(msg.payload)
+            if self.pilots[id].enabled != int(msg.payload):
+                self.pilots[id].enabled = int(msg.payload)
+                self.tracker.set_pilot(id, enabled=int(msg.payload))
         elif field == 'frequency':
-            self.pilots[id].frequency = int(msg.payload)
+            if self.pilots[id].frequency != int(msg.payload):
+                self.pilots[id].frequency = int(msg.payload)
+                self.tracker.set_pilot(id, freq=int(msg.payload))
         elif field == 'band':
-            self.pilots[id].band = int(msg.payload)
+            if self.pilots[id].band != int(msg.payload):
+                self.pilots[id].band = int(msg.payload)
+                self.tracker.set_pilot(id, band=int(msg.payload))
         elif field == 'channel':
-            self.pilots[id].channel = int(msg.payload)
+            if self.pilots[id].channel != int(msg.payload):
+                self.pilots[id].channel = int(msg.payload)
+                self.tracker.set_pilot(id, channel=int(msg.payload))
 
     # RaceTracker Events callback
     def on_pilot_passed(self, pilot_id, seconds):
@@ -222,6 +230,7 @@ class RaceCore:
             # remember: the name is set trough the webinterface or will be get trough the retain message
 
     def run(self):
+        first_run = True
 
         # MQTT connection
         self.mqtt_connect()
@@ -233,7 +242,6 @@ class RaceCore:
         self.tracker.request_pilots(1, 8)
 
         pilots_showed = 0
-        first_run = True
         while True:
             self.mqtt_client.loop()
             self.tracker.read_data(stop_if_no_data=True)
@@ -248,10 +256,10 @@ class RaceCore:
                 self.mqtt_client.publish("/OpenRace/settings/race_core/start_delay",
                                          self.race_settings['start_delay'], qos=1, retain=True)
 
-            first_run = False
+                first_run = False
 
-            # show pilots every 10 seconds
-            if time.time() - pilots_showed > 30:
+            # show pilots every 60 seconds
+            if time.time() - pilots_showed > 60:
                 pilots_showed = time.time()
 
                 ret = []
