@@ -25,7 +25,6 @@ class LedController:
         self.client = None
 
         self.led_strips = {}
-        self.pilots = {}
 
         self.now = 0
         self.race_start = 0
@@ -34,6 +33,15 @@ class LedController:
         self.current_event_control = None
         self.last_led_cleanup = 0
         self.last_status_update = 0
+
+        # module settings
+        self.led_settings = {
+            'start_go_effect': "6;0;0;255",
+            'start_countdown_effect': "6;255;0;0",
+            'stop_effect': "6;255;255;255",
+            'lastlap_effect': "Z;7;3;100;0;255;255;255;0;0;0",
+            'lastlap_gate': "5C:CF:7F:73:01:32", #TODO: this is my own internal testing strip. needs to be removed
+        }
 
         # led strip categories
         self.categories = {
@@ -62,14 +70,15 @@ class LedController:
         self.client.subscribe("/d1ws2812/discovery/#")
         self.client.message_callback_add("/d1ws2812/discovery/#", self.on_discovery_message)
 
-        # self.client.subscribe("/OpenRace/events/#")
-
         self.client.subscribe("/OpenRace/race/#")
         self.client.message_callback_add("/OpenRace/race/stop", self.on_race_stop)
         self.client.message_callback_add("/OpenRace/race/start/#", self.on_race_start)
         self.client.message_callback_add("/OpenRace/race/passing/#", self.on_pilot_passing)
         self.client.message_callback_add("/OpenRace/race/lastlap", self.on_last_lap)
-        self.client.message_callback_add("/OpenRace/led/category/#", self.on_led_category)
+
+        self.client.message_callback_add("/OpenRace/led_category/#", self.on_led_category)
+
+        self.client.message_callback_add("/OpenRace/settings/led_control/#", self.on_settings)
 
     def on_discovery_message(self, client, userdata, msg):
         client_mac = msg.topic.split("/")[-1]
@@ -112,7 +121,6 @@ class LedController:
         self.current_event_payload = self.now + float(msg.payload)
         self.current_event_control = self.now - 1.1
         logging.info("Race will start in %s seconds" % int(msg.payload))
-        self.client.publish("/d1ws2812/all", "Z;255;0;0", qos=1)
 
     def on_race_stop(self, client, userdata, msg):
         logging.debug("Race is stopping")
@@ -128,35 +136,50 @@ class LedController:
         # /OpenRace/led/category/ CATEGORY / add,remove
         # self.categories[category].append()
 
+    def on_settings(self, client, userdata, msg):
+        logging.debug("Recieved settings: <%s> <%s>" % (msg.topic, msg.payload))
+
+        if msg.topic == '/OpenRace/settings/led_control/start_go_effect':
+            logging.info("Setting start_go_effect to %s" % str(msg.payload))
+            self.led_settings['start_go_effect'] = str(msg.payload)
+        elif msg.topic == '/OpenRace/settings/led_control/start_countdown_effect':
+            logging.info("Setting start_countdown_effect to %s" % str(msg.payload))
+            self.led_settings['start_countdown_effect'] = str(msg.payload)
+        elif msg.topic == '/OpenRace/settings/led_control/stop_effect':
+            logging.info("Setting stop_effect to %s" % str(msg.payload))
+            self.led_settings['stop_effect'] = str(msg.payload)
+        elif msg.topic == '/OpenRace/settings/led_control/lastlap_effect':
+            logging.info("Setting lastlap_effect to %s" % str(msg.payload))
+            self.led_settings['lastlap_effect'] = str(msg.payload)
+        elif msg.topic == '/OpenRace/settings/led_control/lastlap_gate':
+            logging.info("Setting lastlap_gate to %s" % str(msg.payload))
+            self.led_settings['lastlap_gate'] = str(msg.payload)
+
     # internal race methods
     def race_cowntdown(self):
         if self.current_event_payload <= self.now:
             logging.debug("GO! %s" % (time.time() - self.race_start))
             self.current_event = None
-            self.client.publish("/d1ws2812/all", "6;0;0;255", qos=1)
+            self.client.publish("/d1ws2812/all", self.led_settings['start_go_effect'], qos=1)
         elif (self.current_event_payload - 0.8) <= self.now:
             self.current_event_control = time.time()
         elif (self.now - self.current_event_control) >= 1:
             logging.debug("Wait... %s" % (time.time() - self.race_start))
             self.current_event_control = time.time()
-            self.client.publish("/d1ws2812/all", "6;255;0;0", qos=1)
+            self.client.publish("/d1ws2812/all", self.led_settings['start_countdown_effect'], qos=1)
 
     def race_stop(self):
         logging.info("Race stop %s" % (time.time() - self.race_start))
         self.client.publish("/d1ws2812/all", "Z;0", qos=1)
-        self.client.loop()
-        self.client.publish("/d1ws2812/all", "6;255;255;255", qos=1)
-        self.client.loop()
+        self.client.publish("/d1ws2812/all", self.led_settings['stop_effect'], qos=1)
         self.current_event = None
         self.race_start = 0
 
     def last_lap(self):
         logging.info("Last lap! %s" % (time.time() - self.race_start))
-        # TODO: implement one start gate and not for all
-        self.client.publish("/d1ws2812/all", "Z;7;3;100;0;255;255;255;0;0;0", qos=1)
-        self.client.loop()
-        self.client.publish("/d1ws2812/all",   "6;255;255;255", qos=1)
-        self.client.loop()
+        # TODO: implement effect for one start gate and not for all
+        for gate in self.led_settings['lastlap_gate'].split(','):
+            self.client.publish("/d1ws2812/%s" % gate, self.led_settings['lastlap_effect'], qos=1)
         self.current_event = None
 
     # internal helper methods
@@ -173,12 +196,13 @@ class LedController:
                 del self.led_strips[mac]
 
     def status_update(self):
-        if (self.last_status_update + 30) < self.now:
+        if (self.last_status_update + 60) < self.now:
             self.last_status_update = self.now
-            logging.info("LED strips: %s - Pilots: %s" % (len(self.led_strips.keys()), len(self.pilots.keys())))
+            logging.info("Detected LED strips: %s" % len(self.led_strips.keys()))
             self.client.publish("/OpenRace/status/led_strips", len(self.led_strips.keys()))
 
     def run(self):
+        first_run = True
         while True:
             self.now = time.time()
             if self.current_event:
@@ -186,12 +210,29 @@ class LedController:
             else:
                 self.led_cleanup()
                 self.status_update()
-                self.client.loop()
+            self.client.loop()
+
+            if first_run:
+                # publishing retained led_control settings, after the first loop if there are already
+                # retained setting from somewhere else or a earlier run
+                self.client.publish("/OpenRace/settings/led_control/start_go_effect",
+                                    self.led_settings['start_go_effect'], qos=1, retain=True)
+                self.client.publish("/OpenRace/settings/led_control/start_countdown_effect",
+                                    self.led_settings['start_countdown_effect'], qos=1, retain=True)
+                self.client.publish("/OpenRace/settings/led_control/stop_effect",
+                                    self.led_settings['stop_effect'], qos=1, retain=True)
+                self.client.publish("/OpenRace/settings/led_control/lastlap_gate",
+                                    self.led_settings['lastlap_gate'], qos=1, retain=True)
+                self.client.publish("/OpenRace/settings/led_control/lastlap_effect",
+                                    self.led_settings['lastlap_effect'], qos=1, retain=True)
+
+            first_run = False
 
     def exit_handler(self):
-        logging.debug("Removing %s retained discovery messages" % len(self.led_strips))
-        for mac in self.led_strips.keys():
-            self.client.publish("/d1ws2812/discovery/%s" % mac, None, qos=1, retain=True)
+        pass
+        # logging.debug("Removing %s retained discovery messages" % len(self.led_strips))
+        # for mac in self.led_strips.keys():
+        #     self.client.publish("/d1ws2812/discovery/%s" % mac, None, qos=1, retain=True)
 
 
 @click.command()
