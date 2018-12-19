@@ -117,27 +117,34 @@ class LapRFRaceTracker(RaceTracker):
 
     # Setting Methods
     def set_pilot(self, id, band=None, freq=None, gain=None, channel=None, enabled=None, threshold=None):
-        logging.info("Setting pilot")
-
+        msg = []
         data = [self.laprf.build_FOR("PILOT_ID", id)]
         if band:
             data.append(self.laprf.build_FOR("RF_BAND", band))
+            msg.append("%s: %s" % ('band', band))
         if freq:
             data.append(self.laprf.build_FOR("RF_FREQUENCY", freq))
+            msg.append("%s: %s" % ('freq', freq))
         if gain:
             data.append(self.laprf.build_FOR("RF_GAIN", gain))
+            msg.append("%s: %s" % ('gain', gain))
         if channel:
             data.append(self.laprf.build_FOR("RF_CHANNEL", channel))
+            msg.append("%s: %s" % ('channel', channel))
         if enabled:
             data.append(self.laprf.build_FOR("RF_ENABLE", enabled))
+            msg.append("%s: %s" % ('enabled', enabled))
         if threshold:
             data.append(self.laprf.build_FOR("RF_THRESHOLD", threshold))
+            msg.append("%s: %s" % ('threshold', threshold))
+
+        logging.info("Setting pilot %s on LapRF: %s" % (id, ",".join(msg)))
 
         packet = self.laprf.build_header_and_data_packet("RF_SETTINGS", b"".join(data))
         self.send_data(packet)
 
     def request_pilots(self, start, end):
-        logging.debug("Requesting pilots %s to %s" % (start, end))
+        logging.info("Requesting pilots %s to %s" % (start, end))
         data = []
         for i in range(start, end + 1):
             data.append(self.laprf.build_FOR("PILOT_ID", i))

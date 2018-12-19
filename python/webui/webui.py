@@ -7,6 +7,8 @@ A small Test application to show how to use Flask-MQTT.
 
 import eventlet
 import json
+import os
+import binascii
 from flask import Flask, render_template
 from flask_mqtt import Mqtt
 from flask_socketio import SocketIO
@@ -15,12 +17,11 @@ from flask_bootstrap import Bootstrap
 eventlet.monkey_patch()
 
 app = Flask(__name__)
-app.config['SECRET'] = 'my secret key'
-app.config['TEMPLATES_AUTO_RELOAD'] = True
-app.config['MQTT_BROKER_URL'] = 'mqtt'
+app.config['SECRET'] = binascii.hexlify(os.urandom(24))
+app.config['MQTT_BROKER_URL'] = os.environ.get('MQTT_HOST', "mqtt")
 app.config['MQTT_BROKER_PORT'] = 1883
-app.config['MQTT_USERNAME'] = 'openrace'
-app.config['MQTT_PASSWORD'] = 'PASSWORD'
+app.config['MQTT_USERNAME'] = os.environ.get('MQTT_USER', "openrace")
+app.config['MQTT_PASSWORD'] = os.environ.get('MQTT_PASS', "PASSWORD")
 app.config['MQTT_KEEPALIVE'] = 5
 app.config['MQTT_TLS_ENABLED'] = False
 
@@ -67,4 +68,4 @@ def handle_logging(client, userdata, level, buf):
 
 
 if __name__ == '__main__':
-    socketio.run(app, host='0.0.0.0', port=5000, use_reloader=True, debug=True)
+    socketio.run(app, host='0.0.0.0', port=5000)

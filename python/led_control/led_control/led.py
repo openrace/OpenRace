@@ -8,13 +8,18 @@ import paho.mqtt.client as mqtt
 import atexit
 import click
 
+
+level = logging.INFO
+if os.environ.get("DEBUG", "true").lower() == "true":
+    level = logging.DEBUG
+
 myPath = os.path.dirname(os.path.realpath(__file__))
 logPath = os.path.join(myPath, 'log/led_control.log')
 logging.basicConfig(
     #filename=logPath,
     format='%(asctime)s %(levelname)-7s %(message)s',
     datefmt='%Y-%d-%m %H:%M:%S',
-    level=logging.DEBUG)
+    level=level)
 
 
 class LedController:
@@ -53,7 +58,7 @@ class LedController:
         atexit.register(self.exit_handler)
 
     def mqtt_connect(self):
-        logging.info("Connecting to MQTT server %s" % (self.mqtt_server))
+        logging.info("Connecting to MQTT server <%s>" % (self.mqtt_server))
         self.client = mqtt.Client()
 
         self.client.on_connect = self.on_connect
@@ -64,7 +69,7 @@ class LedController:
         self.client.connect(self.mqtt_server, 1883, 60)
 
     def on_connect(self, client, userdata, flags, rc):
-        logging.info("Sucessfully connected to MQTT server with result code " + str(rc))
+        logging.info("Sucessfully connected to MQTT server <%s> with result code: %s" % (self.mqtt_server, str(rc)))
 
         #self.client.subscribe("$SYS/#")
         self.client.subscribe("/d1ws2812/discovery/#")
@@ -239,7 +244,9 @@ class LedController:
 def main():
     logging.info("starting up")
 
-    lc = LedController("mqtt", "openrace", "PASSWORD")
+    lc = LedController(os.environ.get('MQTT_HOST', "mqtt"),
+                       os.environ.get('MQTT_USER', "openrace"),
+                       os.environ.get('MQTT_PASS', "PASSWORD"))
     lc.mqtt_connect()
     lc.run()
 

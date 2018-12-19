@@ -27,6 +27,11 @@ services:
      - "/srv/openrace/archive:/app/archive/:rw"
     devices:
      - "/dev/ttyACM0:/dev/ttyACM0"
+    environment:
+      - MQTT_HOST=${MQTT_HOST}
+      - MQTT_USER=${MQTT_USER}
+      - MQTT_PASS=${MQTT_PASS}
+      - DEBUG=${DEBUG}
 
   led_control:
     restart: always
@@ -38,6 +43,11 @@ services:
       - "mqtt"
     volumes:
      - "/srv/openrace/log:/app/log/:rw"
+    environment:
+      - MQTT_HOST=${MQTT_HOST}
+      - MQTT_USER=${MQTT_USER}
+      - MQTT_PASS=${MQTT_PASS}
+      - DEBUG=${DEBUG}
 
   webui:
     restart: always
@@ -51,3 +61,8 @@ services:
       - "80:5000"
     volumes:
      - "/srv/openrace/log:/app/log/:rw"
+    environment:
+      - MQTT_HOST=${MQTT_HOST}
+      - MQTT_USER=${MQTT_USER}
+      - MQTT_PASS=${MQTT_PASS}
+      - FLASK_ENV=${FLASK_ENV}

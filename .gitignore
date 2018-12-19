@@ -1,3 +1,6 @@
+# OpenRace specific ignores
+python/.env
+
 # IDE
 .idea
 

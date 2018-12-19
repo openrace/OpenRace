@@ -12,13 +12,17 @@ from .common import Pilot
 
 from .handlers.racetracker import LapRFRaceTracker
 
+level = logging.INFO
+if os.environ.get("DEBUG", "true").lower() == "true":
+    level = logging.DEBUG
+
 myPath = os.path.dirname(os.path.realpath(__file__))
 logPath = os.path.join(myPath, "log/race_core.log")
 logging.basicConfig(
     # filename=logPath,
     format="%(asctime)s %(levelname)-7s %(message)s",
     datefmt="%Y-%d-%m %H:%M:%S",
-    level=logging.DEBUG,
+    level=level,
 )
 
 
@@ -49,7 +53,7 @@ class RaceCore:
         atexit.register(self.exit_handler)
 
     def mqtt_connect(self):
-        logging.info("Connecting to MQTT server %s" % (self.mqtt_server))
+        logging.info("Connecting to MQTT server <%s>" % (self.mqtt_server))
         self.mqtt_client = mqtt.Client()
 
         self.mqtt_client.on_connect = self.on_connect
@@ -60,7 +64,7 @@ class RaceCore:
         self.mqtt_client.connect(self.mqtt_server, 1883, 60)
 
     def on_connect(self, client, userdata, flags, rc):
-        logging.info("Sucessfully connected to MQTT server with result code: " + str(rc))
+        logging.info("Sucessfully connected to MQTT server <%s> with result code: %s" % (self.mqtt_server, str(rc)))
         # self.client.subscribe("$SYS/#")
 
         self.mqtt_client.subscribe("/OpenRace/#")
@@ -288,8 +292,10 @@ def main(device):
     logging.info("starting up")
 
     rc = RaceCore(
-        LapRFRaceTracker(device),
-        "mqtt", "openrace", "PASSWORD")
+        LapRFRaceTracker(os.environ.get('TRACKER_DEVICE', device)),
+        os.environ.get('MQTT_HOST', "mqtt"),
+        os.environ.get('MQTT_USER', "openrace"),
+        os.environ.get('MQTT_PASS', "PASSWORD"))
     rc.run()
 
 
