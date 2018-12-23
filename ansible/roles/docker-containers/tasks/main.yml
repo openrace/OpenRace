@@ -66,6 +66,11 @@
     dest: /srv/mqtt/data/mqtt-users.txt
   changed_when: false
 
+- name: copy websocket configuration
+  copy:
+    src: mqtt-webscocket.conf
+    dest: /srv/mqtt/config/mqtt-websocket.conf
+
 - name: run mqtt container
   docker_container:
     name: 'mqtt'
