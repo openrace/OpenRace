@@ -1,8 +1,36 @@
-{{message}}
+<div cdkDropList fxLayout="column" fxLayoutGap="1em" fxLayoutAlign="space-evenly">
+  <mat-expansion-panel *ngFor="let pilot of pilots" class="mat-elevation-z15" cdkDrag>
+    <mat-expansion-panel-header>
+      {{pilot.name}} - Frequency: {{pilot.frequency}}
+    </mat-expansion-panel-header>
 
-<div *ngFor="let pilot of pilots">
-  <mat-card class="mat-elevation-z8">
-    {{pilot.name}} {{pilot.frequency}} {{pilot.enabled}}
-  </mat-card>
+
+
+      <mat-form-field>
+        <input matInput placeholder="Name" value="">
+      </mat-form-field>
+    <mat-form-field>
+      <mat-select placeholder="Band">
+        <mat-option value="option">Band 1</mat-option>
+        <mat-option value="option">Band 2</mat-option>
+        <mat-option value="option">Band 3</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-select placeholder="Channel">
+        <mat-option value="option">Channel 1</mat-option>
+        <mat-option value="option">Channel 2</mat-option>
+        <mat-option value="option">Channel 3</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field>
+      <input matInput placeholder="Gain" value="">
+    </mat-form-field>
+
+    <mat-action-row>
+      <button mat-flat-button color="primary">Save</button>
+    </mat-action-row>
+  </mat-expansion-panel>
 </div>
 
