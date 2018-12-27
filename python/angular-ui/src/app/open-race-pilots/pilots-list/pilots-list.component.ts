@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {IMqttMessage, MqttService} from "ngx-mqtt";
 import {Subscription} from "rxjs";
 
@@ -9,17 +9,17 @@ export class Pilot {
 }
 
 const staticpilots: Pilot[] = [
-  { name: 'Roman', frequency: '433.5', enabled: true},
-  { name: 'Marc', frequency: '866.3', enabled: false},
-  { name: 'Claudia', frequency: '866.3', enabled: false},
+  {name: 'Roman', frequency: '433.5', enabled: true},
+  {name: 'Marc', frequency: '866.3', enabled: false},
+  {name: 'Claudia', frequency: '866.3', enabled: false},
 ];
 
 @Component({
-  selector: 'app-pilots',
-  templateUrl: './pilots.component.html',
-  styleUrls: ['./pilots.component.css']
+  selector: 'app-pilots-list',
+  templateUrl: './pilots-list.component.html',
+  styleUrls: ['./pilots-list.component.css']
 })
-export class PilotsComponent implements OnInit {
+export class PilotsListComponent implements OnInit {
   public pilots: Pilot[] = staticpilots;
 
   private subscription: Subscription;
