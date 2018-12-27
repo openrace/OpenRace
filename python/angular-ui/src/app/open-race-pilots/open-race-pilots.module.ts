@@ -21,6 +21,7 @@ export const MQTT_SERVICE_OPTIONS: IMqttServiceOptions = {
     CommonModule,
     FormsModule,
     MaterialModule,
+
     MqttModule.forRoot(MQTT_SERVICE_OPTIONS)
   ],
   exports: [

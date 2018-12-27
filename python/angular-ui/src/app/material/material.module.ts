@@ -12,23 +12,11 @@ import {
   MatToolbarModule
 } from "@angular/material";
 import {DragDropModule} from "@angular/cdk/drag-drop";
+import {FlexLayoutModule} from "@angular/flex-layout";
 
 @NgModule({
   declarations: [],
   imports: [
-    CommonModule,
-    BrowserModule,
-    BrowserAnimationsModule,
-    MatToolbarModule,
-    MatTabsModule,
-    MatCardModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatSelectModule,
-    MatExpansionModule,
-    MatDividerModule,
-    MatButtonModule,
-    DragDropModule,
   ],
   exports: [
     CommonModule,
@@ -45,7 +33,8 @@ import {DragDropModule} from "@angular/cdk/drag-drop";
     MatButtonModule,
     DragDropModule,
     MatSlideToggleModule,
-    MatSliderModule
+    MatSliderModule,
+    FlexLayoutModule,
   ]
 })
 export class MaterialModule {
