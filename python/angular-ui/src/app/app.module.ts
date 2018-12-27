@@ -1,20 +1,12 @@
-import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 
 import { AppComponent } from './app.component';
-import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
-import {
-  MatButtonModule,
-  MatCardModule, MatDividerModule,
-  MatExpansionModule,
-  MatFormFieldModule, MatInputModule, MatSelectModule,
-  MatTabsModule,
-  MatToolbarModule
-} from "@angular/material";
 import { PilotsComponent } from './pilots/pilots.component';
 import {IMqttServiceOptions, MqttModule} from "ngx-mqtt";
 import {FlexLayoutModule} from "@angular/flex-layout";
-import {DragDropModule} from "@angular/cdk/drag-drop";
+import {FormsModule} from "@angular/forms";
+import {OpenRacePilotsModule} from "./open-race-pilots/open-race-pilots.module";
+import {MaterialModule} from "./material/material.module";
 
 export const MQTT_SERVICE_OPTIONS: IMqttServiceOptions = {
   hostname: '10.5.20.35',
@@ -29,20 +21,11 @@ export const MQTT_SERVICE_OPTIONS: IMqttServiceOptions = {
     PilotsComponent
   ],
   imports: [
+    FormsModule,
     FlexLayoutModule,
     MqttModule.forRoot(MQTT_SERVICE_OPTIONS),
-    BrowserModule,
-    BrowserAnimationsModule,
-    MatToolbarModule,
-    MatTabsModule,
-    MatCardModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatSelectModule,
-    MatExpansionModule,
-    MatDividerModule,
-    MatButtonModule,
-    DragDropModule
+    MaterialModule,
+    OpenRacePilotsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

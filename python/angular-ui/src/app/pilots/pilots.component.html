@@ -1,32 +1,24 @@
-<div cdkDropList fxLayout="column" fxLayoutGap="1em" fxLayoutAlign="space-evenly">
-  <mat-expansion-panel *ngFor="let pilot of pilots" class="mat-elevation-z15" cdkDrag>
+<div fxLayout="column" fxLayoutGap="1em" fxLayoutAlign="space-evenly">
+  <mat-expansion-panel *ngFor="let pilot of pilots" class="mat-elevation-z15">
     <mat-expansion-panel-header>
-      {{pilot.name}} - Frequency: {{pilot.frequency}}
+      <mat-panel-title>
+        {{pilot.name}}
+      </mat-panel-title>
+      <mat-panel-description fxLayout="row-reverse">
+        <mat-slide-toggle [checked]="pilot.enabled" color="primary"
+                          (click)="$event.stopPropagation();"></mat-slide-toggle>
+      </mat-panel-description>
     </mat-expansion-panel-header>
 
 
+    <mat-form-field>
+      <input matInput placeholder="Name" [(ngModel)]="pilot.name">
+    </mat-form-field>
+    <app-frequency-chooser></app-frequency-chooser>
 
-      <mat-form-field>
-        <input matInput placeholder="Name" value="">
-      </mat-form-field>
-    <mat-form-field>
-      <mat-select placeholder="Band">
-        <mat-option value="option">Band 1</mat-option>
-        <mat-option value="option">Band 2</mat-option>
-        <mat-option value="option">Band 3</mat-option>
-      </mat-select>
-    </mat-form-field>
 
-    <mat-form-field>
-      <mat-select placeholder="Channel">
-        <mat-option value="option">Channel 1</mat-option>
-        <mat-option value="option">Channel 2</mat-option>
-        <mat-option value="option">Channel 3</mat-option>
-      </mat-select>
-    </mat-form-field>
-    <mat-form-field>
-      <input matInput placeholder="Gain" value="">
-    </mat-form-field>
+    <mat-slider matInput min="1" max="100" step="1" thumbLabel></mat-slider>
+
 
     <mat-action-row>
       <button mat-flat-button color="primary">Save</button>

@@ -2,13 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import {IMqttMessage, MqttService} from "ngx-mqtt";
 import {Subscription} from "rxjs";
 
-export interface Player {
+export class Pilot {
   name: string;
   frequency: string;
   enabled: boolean;
 }
 
-const staticpilots: Player[] = [
+const staticpilots: Pilot[] = [
   { name: 'Roman', frequency: '433.5', enabled: true},
   { name: 'Marc', frequency: '866.3', enabled: false},
   { name: 'Claudia', frequency: '866.3', enabled: false},
@@ -20,7 +20,7 @@ const staticpilots: Player[] = [
   styleUrls: ['./pilots.component.css']
 })
 export class PilotsComponent implements OnInit {
-  public pilots: Player[] = staticpilots;
+  public pilots: Pilot[] = staticpilots;
 
   private subscription: Subscription;
   public message: string;
