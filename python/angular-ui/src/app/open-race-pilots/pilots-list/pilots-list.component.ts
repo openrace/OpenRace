@@ -1,17 +1,20 @@
 import {Component, OnInit} from '@angular/core';
 import {IMqttMessage, MqttService} from "ngx-mqtt";
 import {Subscription} from "rxjs";
+import {MatSlideToggleChange} from "@angular/material";
+import {PilotsService} from "../pilots.service";
 
 export class Pilot {
+  id: string;
   name: string;
   frequency: string;
   enabled: boolean;
 }
 
 const staticpilots: Pilot[] = [
-  {name: 'Roman', frequency: '433.5', enabled: true},
-  {name: 'Marc', frequency: '866.3', enabled: false},
-  {name: 'Claudia', frequency: '866.3', enabled: false},
+  {id: '1', name: 'Roman', frequency: '433.5', enabled: true},
+  {id: '2', name: 'Marc', frequency: '866.3', enabled: false},
+  {id: '3', name: 'Claudia', frequency: '866.3', enabled: false},
 ];
 
 @Component({
@@ -22,19 +25,21 @@ const staticpilots: Pilot[] = [
 export class PilotsListComponent implements OnInit {
   public pilots: Pilot[] = staticpilots;
 
-  private subscription: Subscription;
-  public message: string;
+  constructor(private pilotsService: PilotsService) {
 
-  constructor(private mqttService: MqttService) {
-    console.log('Class loaded');
-    this.message = 'test';
-    this.subscription = this.mqttService.observe('/OpenRace/status/tracker_voltage').subscribe((message: IMqttMessage) => {
-      console.log('New message');
-      this.message = message.payload.toString();
-    });
   }
 
   ngOnInit() {
+  }
+
+  pilotStatusToggled(event: MatSlideToggleChange) {
+    if(event.checked) {
+      this.pilotsService.activatePilot(event.source.id)
+    }
+    else {
+      this.pilotsService.deactivatePilot(event.source.id)
+    }
+    console.log('Player status changed' + event.checked + event.source.id)
   }
 
 }
