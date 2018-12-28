@@ -1,6 +1,4 @@
 import {Component, OnInit} from '@angular/core';
-import {IMqttMessage, MqttService} from "ngx-mqtt";
-import {Subscription} from "rxjs";
 import {MatSlideToggleChange} from "@angular/material";
 import {PilotsService} from "../pilots.service";
 
@@ -39,7 +37,6 @@ export class PilotsListComponent implements OnInit {
     else {
       this.pilotsService.deactivatePilot(event.source.id)
     }
-    console.log('Player status changed' + event.checked + event.source.id)
   }
 
 }

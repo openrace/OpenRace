@@ -4,14 +4,8 @@ import {FrequencyChooserComponent} from './frequency-chooser/frequency-chooser.c
 import {MaterialModule} from "../material/material.module";
 import {PilotsListComponent} from "./pilots-list/pilots-list.component";
 import {FormsModule} from "@angular/forms";
-import {IMqttServiceOptions, MqttModule} from "ngx-mqtt";
 import {PilotsService} from "./pilots.service";
-
-export const MQTT_SERVICE_OPTIONS: IMqttServiceOptions = {
-  hostname: '10.5.20.35',
-  port: 9001,
-  path: '/mqtt',
-};
+import {OpenRaceCommonModule} from "../open-race-common/open-race-common.module";
 
 
 @NgModule({
@@ -22,7 +16,7 @@ export const MQTT_SERVICE_OPTIONS: IMqttServiceOptions = {
     CommonModule,
     FormsModule,
     MaterialModule,
-    MqttModule.forRoot(MQTT_SERVICE_OPTIONS)
+    OpenRaceCommonModule
   ],
   providers: [
     PilotsService

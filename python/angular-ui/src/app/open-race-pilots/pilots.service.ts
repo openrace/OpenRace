@@ -1,29 +1,27 @@
-import { Injectable } from '@angular/core';
-import {Subscription} from "rxjs";
+import {Injectable} from '@angular/core';
+import {MessageQueueClientService} from "../open-race-common/message-queue-client.service";
 
 @Injectable({
   providedIn: 'root'
 })
 export class PilotsService {
+  private topic: string = '/OpenRace/pilots/';
+  private pilotEnabledSubTopic = 'enabled';
 
-  constructor() { }
-
-  activatePilot(id: string) {
-    console.log('Activated pilot ' + id);
+  constructor(private messageQueueClientService: MessageQueueClientService) {
   }
 
-  deactivatePilot(id: string) {
-    console.log('Deactivated pilot ' + id);
+  activatePilot(pilotId: string) {
+    console.log('Activated pilot ' + pilotId);
+    this.publishPilotMessage(pilotId, 'enabled', true);
+  }
+
+  deactivatePilot(pilotId: string) {
+    console.log('Deactivated pilot ' + pilotId);
+    this.publishPilotMessage(pilotId, this.pilotEnabledSubTopic, false);
+  }
+
+  private publishPilotMessage(pilotId: string, pilotSubTopic: string, value: any) {
+    this.messageQueueClientService.publishToTopic(`${this.topic + pilotId}/${pilotSubTopic}`, value.toString());
   }
 }
-
-// console.log('Class loaded');
-// this.message = 'test';
-// this.subscription = this.mqttService.observe('/OpenRace/status/tracker_voltage').subscribe((message: IMqttMessage) => {
-//   console.log('New message');
-//   this.message = message.payload.toString();
-// });
-
-//
-// private subscription: Subscription;
-// public message: string;
