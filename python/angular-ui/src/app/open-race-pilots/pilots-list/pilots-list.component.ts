@@ -5,14 +5,17 @@ import {PilotsService} from "../pilots.service";
 export class Pilot {
   id: string;
   name: string;
-  frequency: string;
   enabled: boolean;
+  band: string;
+  channel: string;
+  frequency: string;
+  gain: number;
 }
 
 const staticpilots: Pilot[] = [
-  {id: '1', name: 'Roman', frequency: '433.5', enabled: true},
-  {id: '2', name: 'Marc', frequency: '866.3', enabled: false},
-  {id: '3', name: 'Claudia', frequency: '866.3', enabled: false},
+  {id: '1', name: 'Roman', band: 'B', channel: '2', frequency: '433.5', gain: 40, enabled: true},
+  {id: '2', name: 'Marc', band: 'Fatshark', channel: '3', frequency: '433.5', gain: 40, enabled: true},
+  {id: '3', name: 'Claudia', band: 'band a', channel: 'channel a', frequency: '433.5', gain: 40, enabled: true},
 ];
 
 @Component({
@@ -38,5 +41,4 @@ export class PilotsListComponent implements OnInit {
       this.pilotsService.deactivatePilot(event.source.id)
     }
   }
-
 }

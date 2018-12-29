@@ -10,21 +10,7 @@
       </mat-panel-description>
     </mat-expansion-panel-header>
 
-
-    <div fxLayoutGap="1em">
-      <mat-form-field>
-        <input matInput placeholder="Name" [(ngModel)]="pilot.name">
-      </mat-form-field>
-      <app-frequency-chooser></app-frequency-chooser>
-
-
-      <mat-slider matInput min="1" max="100" step="1" thumbLabel></mat-slider>
-
-
-      <mat-action-row>
-        <button mat-flat-button color="primary">Save</button>
-      </mat-action-row>
-    </div>
+    <app-edit-pilot [pilot]="pilot"></app-edit-pilot>
   </mat-expansion-panel>
 </div>
 
