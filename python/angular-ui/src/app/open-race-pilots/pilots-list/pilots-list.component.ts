@@ -1,6 +1,6 @@
-import {Component, OnInit} from '@angular/core';
-import {MatSlideToggleChange} from "@angular/material";
-import {PilotsService} from "../pilots.service";
+import { Component, OnInit } from '@angular/core';
+import { MatSlideToggleChange } from '@angular/material';
+import { PilotsService } from '../pilots.service';
 
 export class Pilot {
   id: string;
@@ -34,11 +34,10 @@ export class PilotsListComponent implements OnInit {
   }
 
   pilotStatusToggled(event: MatSlideToggleChange) {
-    if(event.checked) {
-      this.pilotsService.activatePilot(event.source.id)
-    }
-    else {
-      this.pilotsService.deactivatePilot(event.source.id)
+    if (event.checked) {
+      this.pilotsService.activatePilot(event.source.id);
+    } else {
+      this.pilotsService.deactivatePilot(event.source.id);
     }
   }
 }

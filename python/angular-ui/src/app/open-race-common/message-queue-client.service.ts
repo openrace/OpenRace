@@ -1,5 +1,5 @@
-import {Injectable} from '@angular/core';
-import {MqttService} from "ngx-mqtt";
+import { Injectable } from '@angular/core';
+import { MqttService } from 'ngx-mqtt';
 
 @Injectable({
   providedIn: 'root'

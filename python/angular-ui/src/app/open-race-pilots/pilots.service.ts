@@ -1,12 +1,12 @@
-import {Injectable} from '@angular/core';
-import {MessageQueueClientService} from "../open-race-common/message-queue-client.service";
-import {Pilot} from "./pilots-list/pilots-list.component";
+import { Injectable } from '@angular/core';
+import { MessageQueueClientService } from '../open-race-common/message-queue-client.service';
+import { Pilot } from './pilots-list/pilots-list.component';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PilotsService {
-    constructor(private messageQueueClientService: MessageQueueClientService) {
+  constructor(private messageQueueClientService: MessageQueueClientService) {
   }
 
   activatePilot(pilotId: string) {

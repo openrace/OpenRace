@@ -1,6 +1,6 @@
-import {Component, Input, OnInit} from '@angular/core';
-import {Pilot} from "../pilots-list/pilots-list.component";
-import {PilotsService} from "../pilots.service";
+import { Component, Input, OnInit } from '@angular/core';
+import { Pilot } from '../pilots-list/pilots-list.component';
+import { PilotsService } from '../pilots.service';
 
 @Component({
   selector: 'app-edit-pilot',
@@ -10,7 +10,8 @@ import {PilotsService} from "../pilots.service";
 export class EditPilotComponent implements OnInit {
   @Input() private pilot: Pilot;
 
-  constructor(private pilotService: PilotsService) { }
+  constructor(private pilotService: PilotsService) {
+  }
 
   ngOnInit() {
   }

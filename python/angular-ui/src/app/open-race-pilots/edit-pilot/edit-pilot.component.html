@@ -1,4 +1,4 @@
-<form #pilotForm="ngForm" (ngSubmit)="updatePilot()">
+<form (ngSubmit)="updatePilot()">
 
   <div fxLayoutGap="1em">
     <mat-form-field>
@@ -6,9 +6,7 @@
     </mat-form-field>
     <app-frequency-chooser [pilot]="pilot"></app-frequency-chooser>
 
-
     <mat-slider matInput min="1" max="100" step="1" thumbLabel [(value)]="pilot.gain"></mat-slider>
-
 
     <mat-action-row>
       <button type="submit" mat-flat-button color="primary" >Save</button>
