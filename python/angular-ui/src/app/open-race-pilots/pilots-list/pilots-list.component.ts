@@ -1,22 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatSlideToggleChange } from '@angular/material';
 import { PilotsService } from '../pilots.service';
-
-export class Pilot {
-  id: string;
-  name: string;
-  enabled: boolean;
-  band: string;
-  channel: string;
-  frequency: string;
-  gain: number;
-}
-
-const staticpilots: Pilot[] = [
-  {id: '1', name: 'Roman', band: 'B', channel: '2', frequency: '433.5', gain: 40, enabled: true},
-  {id: '2', name: 'Marc', band: 'Fatshark', channel: '3', frequency: '433.5', gain: 40, enabled: true},
-  {id: '3', name: 'Claudia', band: 'band a', channel: 'channel a', frequency: '433.5', gain: 40, enabled: true},
-];
+import { Pilot } from '../pilot';
 
 @Component({
   selector: 'app-pilots-list',
@@ -24,13 +9,14 @@ const staticpilots: Pilot[] = [
   styleUrls: ['./pilots-list.component.css']
 })
 export class PilotsListComponent implements OnInit {
-  public pilots: Pilot[] = staticpilots;
+  private pilots: Pilot[];
 
   constructor(private pilotsService: PilotsService) {
-
+    this.pilotsService.pilots.subscribe(newPilots => this.pilots = newPilots);
   }
 
   ngOnInit() {
+
   }
 
   pilotStatusToggled(event: MatSlideToggleChange) {

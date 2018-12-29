@@ -1,13 +1,17 @@
-<mat-form-field>
-  <mat-select placeholder="Band" [(ngModel)]="pilot.band" (selectionChange)="updateFrequency()">
-    <mat-option *ngFor="let band of bands" value="{{band}}">{{band}}</mat-option>
-  </mat-select>
-</mat-form-field>
+<div fxLayoutGap="1em">
+  <mat-form-field>
+    <mat-select placeholder="Band" [(ngModel)]="pilot.band" (selectionChange)="updateFrequency()">
+      <mat-option *ngFor="let band of bands" value="{{band}}">{{band}}</mat-option>
+    </mat-select>
+  </mat-form-field>
 
-<mat-form-field>
-  <mat-select placeholder="Channel" [(ngModel)]="pilot.channel" (selectionChange)="updateFrequency()">
-    <mat-option *ngFor="let channel of channels" value="{{channel}}">{{channel}}</mat-option>
-  </mat-select>
-</mat-form-field>
+  <mat-form-field>
+    <mat-select placeholder="Channel" [(ngModel)]="pilot.channel" (selectionChange)="updateFrequency()">
+      <mat-option *ngFor="let channel of channels" value="{{channel}}">{{channel}}</mat-option>
+    </mat-select>
+  </mat-form-field>
 
-Frequency: {{pilot.frequency}}
+  <mat-form-field>
+    <input matInput placeholder="Frequency" [value]="pilot.frequency" disabled="true">
+  </mat-form-field>
+</div>

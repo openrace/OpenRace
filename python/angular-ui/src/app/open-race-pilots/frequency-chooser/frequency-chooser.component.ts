@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Pilot } from '../pilots-list/pilots-list.component';
+import { Pilot } from '../pilot';
 
 @Component({
   selector: 'app-frequency-chooser',
