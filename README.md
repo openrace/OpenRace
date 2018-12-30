@@ -65,8 +65,17 @@ Status information mostly from the race tracker
 Race settings like for the race_core.
 ### /OpenRace/settings/led_control/[start_go_effect, start_countdown_effect, stop_effect, lastlap_effect, lastlap_gate]
 Race settings like for the led_controller.
-### /OpenRace/led/category/[start_gates, normal_gates, strips_run_forward, strips_run_backward]/[add, remove]
-Set LED strips for the LED controller
+### /OpenRace/provide/
+This topic is for providing information between components.
+#### /OpenRace/provide/led_strip_categories
+The led_controller provides types of LED strips as a comma separated string. See [LED strip categories table](#led-strip-categories).
+#### /OpenRace/provide/race_mw
+The available milliwatt settings like 25, 200, 600 or 800...
+### /OpenRace/led/[ID]/[category]
+Set LED strip category enum: gate, strips_run_forward, strips_run_backward, start_pod, pilot_chip
+### /OpenRace/led/[ID]/[order]
+Set LED strip order
+
 
 ## d1ws2812 topics
 ### /d1ws2812/all
@@ -79,7 +88,34 @@ Each LED strip is listening to his own topic here. See the
 All strips reporting in are publishing here
 
 
-# Manual Setup (Legacy documentation!)
+# Tables
+## LED strip categories
+| Value               | Description                                         |
+| ------------------- | --------------------------------------------------- |
+| gate                | The strip(s) are ordered as a gate                  |
+| strips_run_forward  | The strip(s) are ordered as a line running forward  |
+| strips_run_backward | The strip(s) are ordered as a line running backward |
+| start_pod           | The strip is used in a start pod for the drones (not yet implemented, somehow the or Freq mus be set) |
+| pilot_chip          | The strip is used as a display which pilots ran over the start gate |
+
+## Frequencies, bands and channels
+| ID  | Name                            | Frequencies channel 1-8                        |
+|---: | ------------------------------- | ---------------------------------------------- |
+| 1   | Low Race / Diatone              | 5362, 5399, 5436, 5473, 5510, 5547, 5584, 5621 |
+| 2   | IRC / Fatshark / Airwave/ F     | 5740, 5760, 5780, 5800, 5820, 5840, 5860, 5880 |
+| 3   | Race Band / r                   | 5658, 5695, 5732, 5769, 5806, 5843, 5880, 5917 |
+| 4   | Boscam E Lumenier / DJI / E     | 5705, 5685, 5665, 5645, 5885, 5905, 5925, 5945 |
+| 5   | Boscam B                        | 5733, 5752, 5771, 5790, 5809, 5828, 5847, 5866 |
+| 6   | Boscam A / Team Black Sheep / A | 5865, 5845, 5825, 5805, 5785, 5765, 5745, 5725 |
+| 7   | U                               | 5325, 5348, 5366, 5384, 5402, 5420, 5438, 5456 |
+| 8   | O                               | 5474, 5492, 5510 ,5528, 5546, 5564, 5582, 5600 |
+| 9   | L                               | 5333, 5373, 5413, 5453, 5493, 5533, 5573, 5613 |
+| 10  | Raceband V2 / H                 | 5653, 5693, 5733, 5773, 5813, 5853, 5893, 5933 |
+  
+
+The ID is the internally used value in MQTT.
+
+# Manual Setup (Legacy documentation, please ignore!)
 
 The basis for this project is a  RaspberryPi 3 B+ with a updated [Raspbian](http://www.raspbian.org/).
 

@@ -55,35 +55,25 @@
     mode: 0777
   become: true
 
-- name: putting custom mqtt config in place
-  copy:
-    src: mqtt-auth.conf
-    dest: /srv/mqtt/config/mqtt-auth.conf
-
 - name: create empty mqtt users file
   copy:
     src: mqtt-users.txt
     dest: /srv/mqtt/data/mqtt-users.txt
   changed_when: false
 
-- name: copy websocket configuration
-  copy:
-    src: mqtt-webscocket.conf
-    dest: /srv/mqtt/config/mqtt-websocket.conf
-
 - name: run mqtt container
   docker_container:
     name: 'mqtt'
-    image: 'pascaldevink/rpi-mosquitto'
+    image: 'eclipse-mosquitto'
     state: 'started'
     ports:
      - "1883:1883"
      - "9001:9001"
     volumes:
-     - "/srv/mqtt/config:/mqtt/config/conf.d:ro"
-     - "/srv/mqtt/log:/mqtt/log:rw"
-     - "/srv/mqtt/data:/mqtt/data:rw"
+     - "/srv/mqtt/config/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro"
+     - "/srv/mqtt/log:/mosquitto/log:rw"
+     - "/srv/mqtt/data:/mosquitto/data:rw"
 
 - name: creating mqtt user
-  shell: docker exec -d mqtt /usr/bin/mosquitto_passwd -b /mqtt/data/mqtt-users.txt {{ mqtt.user }} {{ mqtt.pass }}
+  shell: docker exec -d mqtt /usr/bin/mosquitto_passwd -b /mosquitto/data/mqtt-users.txt {{ mqtt.user }} {{ mqtt.pass }}
   changed_when: false

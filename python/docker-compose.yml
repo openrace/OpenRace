@@ -5,14 +5,14 @@ version: '2' # Version 3 is not supported by RaspberryPi docker at the moment
 services:
   mqtt:
     restart: always
-    image: "pascaldevink/rpi-mosquitto"
+    image: "eclipse-mosquitto"
     ports:
      - "1883:1883"
      - "9001:9001"
     volumes:
-     - "/srv/mqtt/config:/mqtt/config/conf.d/:ro"
-     - "/srv/mqtt/log:/mqtt/log:rw"
-     - "/srv/mqtt/data:/mqtt/data:rw"
+     - "/srv/mqtt/config/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro"
+#     - "/srv/mqtt/log:/mosquitto/log:rw"
+     - "/srv/mqtt/data:/mosquitto/data:rw"
 
   race_core:
     restart: always
@@ -49,35 +49,35 @@ services:
       - MQTT_PASS=${MQTT_PASS}
       - DEBUG=${DEBUG}
 
-  webui:
-    restart: always
-    build:
-      context: "webui/"
-    depends_on:
-      - "mqtt"
-    links:
-      - "mqtt"
-    ports:
-      - "80:5000"
-    volumes:
-     - "/srv/openrace/log:/app/log/:rw"
-    environment:
-      - MQTT_HOST=${MQTT_HOST}
-      - MQTT_USER=${MQTT_USER}
-      - MQTT_PASS=${MQTT_PASS}
-      - FLASK_ENV=${FLASK_ENV}
-
-  angular-ui:
-    restart: always
-    build:
-      context: "angular-ui/"
-    depends_on:
-        - "mqtt"
-    links:
-        - "mqtt"
-    ports:
-      - "80:5001"
-    environment:
-      - MQTT_HOST=${MQTT_HOST}
-      - MQTT_USER=${MQTT_USER}
-      - MQTT_PASS=${MQTT_PASS}
+#  webui:
+#    restart: always
+#    build:
+#      context: "webui/"
+#    depends_on:
+#      - "mqtt"
+#    links:
+#      - "mqtt"
+#    ports:
+#      - "80:5000"
+#    volumes:
+#     - "/srv/openrace/log:/app/log/:rw"
+#    environment:
+#      - MQTT_HOST=${MQTT_HOST}
+#      - MQTT_USER=${MQTT_USER}
+#      - MQTT_PASS=${MQTT_PASS}
+#      - FLASK_ENV=${FLASK_ENV}
+#
+#  angular-ui:
+#    restart: always
+#    build:
+#      context: "angular-ui/"
+#    depends_on:
+#        - "mqtt"
+#    links:
+#        - "mqtt"
+#    ports:
+#      - "80:5001"
+#    environment:
+#      - MQTT_HOST=${MQTT_HOST}
+#      - MQTT_USER=${MQTT_USER}
+#      - MQTT_PASS=${MQTT_PASS}
