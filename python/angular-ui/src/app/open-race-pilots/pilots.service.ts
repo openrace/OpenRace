@@ -51,6 +51,7 @@ export class PilotsService {
     console.log('Deactivated pilot ' + pilotId);
     this.publishPilotMessage(pilotId, 'enabled', '0');
   }
+
   updatePilot(pilot: Pilot) {
     const pilotId = pilot.id;
 
@@ -85,7 +86,7 @@ export class PilotsService {
     PilotsService.applyPilotUpdate(property, this.safeGetPilot(pilotId), value);
 
     console.log(Array.from(this.pilotsStore.values()));
-    this._pilots.next(Array.from(this.pilotsStore.values()));
+    this._pilots.next(Array.from(this.pilotsStore.values()).sort((a: Pilot, b: Pilot) => a.id >= b.id ? 1 : -1));
   }
 
   private safeGetPilot(pilotId: string) {
