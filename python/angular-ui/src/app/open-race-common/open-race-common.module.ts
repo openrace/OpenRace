@@ -6,6 +6,8 @@ export const MQTT_SERVICE_OPTIONS: IMqttServiceOptions = {
   hostname: 'localhost',
   port: 9001,
   path: '/mqtt',
+  username: 'openrace',
+  password: 'PASSWORD'
 };
 
 @NgModule({
