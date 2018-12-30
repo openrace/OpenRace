@@ -36,19 +36,21 @@ export class PilotsService {
       case 'gain':
         pilot.gain = Number(value);
         break;
+      case 'enabled':
+        pilot.enabled = value == '0' ? false : true;
+        break;
     }
   }
 
   activatePilot(pilotId: string) {
     console.log('Activated pilot ' + pilotId);
-    this.publishPilotMessage(pilotId, 'enabled', true);
+    this.publishPilotMessage(pilotId, 'enabled', '1');
   }
 
   deactivatePilot(pilotId: string) {
     console.log('Deactivated pilot ' + pilotId);
-    this.publishPilotMessage(pilotId, 'enabled', false);
+    this.publishPilotMessage(pilotId, 'enabled', '0');
   }
-
   updatePilot(pilot: Pilot) {
     const pilotId = pilot.id;
 

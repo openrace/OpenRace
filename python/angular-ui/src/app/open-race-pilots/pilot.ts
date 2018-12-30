@@ -1,5 +1,6 @@
 export class Pilot {
   constructor(public id: string) {
+    this.name = `Pilot ${id}`;
   }
 
   name: string;
