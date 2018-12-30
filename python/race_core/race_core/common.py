@@ -32,7 +32,7 @@ class Pilot:
         self.name = ""
         self.frequency = -1
         self.laps = []
-        self.enabled = False
+        self.enabled = 0
         self.lastlap = -1
         self.band = -1
         self.channel = -1
