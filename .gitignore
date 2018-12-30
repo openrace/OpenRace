@@ -1,6 +1,7 @@
 # OpenRace specific ignores
 python/.env
 python/venv
+python/angular-ui/node-modules
 
 # IDE
 .idea

@@ -119,22 +119,22 @@ class LapRFRaceTracker(RaceTracker):
     def set_pilot(self, id, band=None, freq=None, gain=None, channel=None, enabled=None, threshold=None):
         msg = []
         data = [self.laprf.build_FOR("PILOT_ID", id)]
-        if band:
+        if band is not None:
             data.append(self.laprf.build_FOR("RF_BAND", band))
             msg.append("%s: %s" % ('band', band))
-        if freq:
+        if freq is not None:
             data.append(self.laprf.build_FOR("RF_FREQUENCY", freq))
             msg.append("%s: %s" % ('freq', freq))
-        if gain:
+        if gain is not None:
             data.append(self.laprf.build_FOR("RF_GAIN", gain))
             msg.append("%s: %s" % ('gain', gain))
-        if channel:
+        if channel is not None:
             data.append(self.laprf.build_FOR("RF_CHANNEL", channel))
             msg.append("%s: %s" % ('channel', channel))
-        if enabled:
+        if enabled is not None:
             data.append(self.laprf.build_FOR("RF_ENABLE", enabled))
             msg.append("%s: %s" % ('enabled', enabled))
-        if threshold:
+        if threshold is not None:
             data.append(self.laprf.build_FOR("RF_THRESHOLD", threshold))
             msg.append("%s: %s" % ('threshold', threshold))
 
