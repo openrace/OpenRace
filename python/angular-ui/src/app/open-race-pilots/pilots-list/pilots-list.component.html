@@ -1,0 +1,16 @@
+<div fxLayout="column" fxLayoutGap="1em">
+  <mat-expansion-panel *ngFor="let pilot of pilots" class="mat-elevation-z15">
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        {{pilot.name}}
+      </mat-panel-title>
+      <mat-panel-description fxLayout="row-reverse">
+        <mat-slide-toggle [id]="pilot.id" [checked]="pilot.enabled" color="primary"
+                          (click)="$event.stopPropagation();" (change)="pilotStatusToggled($event)"></mat-slide-toggle>
+      </mat-panel-description>
+    </mat-expansion-panel-header>
+
+    <app-edit-pilot [pilot]="pilot"></app-edit-pilot>
+  </mat-expansion-panel>
+</div>
+
