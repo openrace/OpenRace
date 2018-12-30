@@ -37,7 +37,7 @@ export class PilotsService {
         pilot.gain = Number(value);
         break;
       case 'enabled':
-        pilot.enabled = value == '0' ? false : true;
+        pilot.enabled = value === '0' ? false : true;
         break;
     }
   }

@@ -1,19 +1,6 @@
-<form>
-  <div fxLayout="column" fxLayoutGap="1em">
-    <mat-card *ngFor="let ledStrip of ledStrips" class="mat-elevation-z15">
-      <div class="mat-title">LED Strip {{ledStrip.id}}</div>
-      <div fxLayoutGap="1em" fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign="start center" fxLayoutAlign.lt-md="start stretch">
-        <mat-form-field>
-          <mat-select placeholder="Strip Category" [(ngModel)]="ledStrip.category">
-            <mat-option *ngFor="let stripCategory of stripCategories"
-                        value="{{stripCategory}}">{{stripCategory}}</mat-option>
-          </mat-select>
-        </mat-form-field>
-        <mat-form-field>
-          <input matInput placeholder="Position" name="position" [(ngModel)]="ledStrip.position">
-        </mat-form-field>
-        <button type="submit" mat-flat-button color="primary">Save</button>
-      </div>
-    </mat-card>
-  </div>
-</form>
+<div fxLayout="column" fxLayoutGap="1em">
+  <mat-card *ngFor="let ledStrip of ledStrips" class="mat-elevation-z15">
+    <div class="mat-title">LED Strip {{ledStrip.id}}</div>
+    <app-edit-led-strip [ledStrip]="ledStrip"></app-edit-led-strip>
+  </mat-card>
+</div>

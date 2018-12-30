@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { LedStrip } from '../led-strip';
+import { LedStripsService } from '../led-strips.service';
 
 @Component({
   selector: 'app-led-strips-list',
@@ -7,11 +8,10 @@ import { LedStrip } from '../led-strip';
   styleUrls: ['./led-strips-list.component.css']
 })
 export class LedStripsListComponent implements OnInit {
-  ledStrips: LedStrip[] = [new LedStrip('1'), new LedStrip('2')]
+  ledStrips: LedStrip[] = [];
 
-  stripCategories: string[] = ['gate', 'run_forward'];
-
-  constructor() {
+  constructor(private ledStripsService: LedStripsService) {
+    this.ledStripsService.ledStrips.subscribe(newLedStrips => this.ledStrips = newLedStrips);
   }
 
   ngOnInit() {
