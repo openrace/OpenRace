@@ -49,24 +49,6 @@ services:
       - MQTT_PASS=${MQTT_PASS}
       - DEBUG=${DEBUG}
 
-  #  webui:
-  #    restart: always
-  #    build:
-  #      context: "webui/"
-  #    depends_on:
-  #      - "mqtt"
-  #    links:
-  #      - "mqtt"
-  #    ports:
-  #      - "80:5000"
-  #    volumes:
-  #     - "/srv/openrace/log:/app/log/:rw"
-  #    environment:
-  #      - MQTT_HOST=${MQTT_HOST}
-  #      - MQTT_USER=${MQTT_USER}
-  #      - MQTT_PASS=${MQTT_PASS}
-  #      - FLASK_ENV=${FLASK_ENV}
-  #
   angular-ui:
     restart: always
     build:
