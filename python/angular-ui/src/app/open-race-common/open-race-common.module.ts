@@ -4,8 +4,8 @@ import { IMqttServiceOptions, MqttModule } from 'ngx-mqtt';
 
 export const MQTT_SERVICE_OPTIONS: IMqttServiceOptions = {
   hostname: 'localhost',
-  port: 9001,
-  path: '/mqtt',
+  port: 5001,
+  path: '/mqtt/',
   username: 'openrace',
   password: 'PASSWORD'
 };
