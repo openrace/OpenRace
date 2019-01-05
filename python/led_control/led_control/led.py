@@ -58,6 +58,8 @@ class LedController:
 
         self.led_events = []
 
+        self.pilots = {}
+
         # module settings
         self.led_settings = {
             'start_go_effect': "6;0;0;255",
@@ -96,6 +98,9 @@ class LedController:
         self.client.message_callback_add("/OpenRace/race/passing/#", self.on_pilot_passing)
         self.client.message_callback_add("/OpenRace/race/lastlap", self.on_last_lap)
 
+        self.client.subscribe("/OpenRace/pilots/#")
+        self.client.message_callback_add("/OpenRace/pilots/+/frequency", self.on_pilot_frequency)
+
         self.client.subscribe("/OpenRace/led/#")
         self.client.message_callback_add("/OpenRace/led/+/category", self.on_strip_category)
         self.client.message_callback_add("/OpenRace/led/+/order", self.on_strip_order)
@@ -123,8 +128,10 @@ class LedController:
         strip.time = time.time()
 
     def on_pilot_passing(self, client, userdata, msg):
-        frequency = int(msg.payload)
-        logging.debug("Pilot with frequency %s passed the gate" % frequency)
+        pilot_id = int(msg.topic.split("/")[-1])
+        frequency = self.pilots[pilot_id]
+
+        logging.debug("Pilot %s with frequency %s passed the gate" % (pilot_id, frequency))
         # https://github.com/betaflight/betaflight/blob/39ced6bbfefa52a6f605ed6635b7e62105c71672/src/main/io/ledstrip.c
 
         color = "255;20;147"        # COLOR_DEEP_PINK
@@ -150,6 +157,14 @@ class LedController:
             self.add_led_event(strip.mac, "6;%s" % color,
                                delay=delay,
                                comment="Pilot passing")
+
+    def on_pilot_frequency(self, client, userdata, msg):
+        pilot_id = int(msg.topic.split("/")[-2])
+        frequency = int(msg.payload)
+        if pilot_id not in self.pilots.keys():
+            self.pilots[pilot_id] = 0
+        self.pilots[pilot_id] = frequency
+        logging.debug("Setting pilot %s to frequency %s" % (pilot_id, frequency))
 
     def on_message(self, client, userdata, msg):
         logging.debug("Recieved MQTT message: <%s> <%s>" % (msg.topic, msg.payload.decode("utf-8")))
