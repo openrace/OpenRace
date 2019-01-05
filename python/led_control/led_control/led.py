@@ -230,6 +230,8 @@ class LedController:
                                     self.led_settings['lastlap_gate'], qos=1, retain=True)
                 self.client.publish("/OpenRace/settings/led_control/lastlap_effect",
                                     self.led_settings['lastlap_effect'], qos=1, retain=True)
+                self.client.publish("/OpenRace/provide/led_strip_categories",
+                                    ",".join(str(cat) for cat in self.categories.keys()), qos=1, retain=True)
 
             first_run = False
 
