@@ -50,6 +50,8 @@ class RaceCore:
             'start_delay': 5,
         }
 
+        self.milliwatts = [25, 200, 600, 800]
+
         atexit.register(self.exit_handler)
 
     def mqtt_connect(self):
@@ -259,6 +261,8 @@ class RaceCore:
                                          self.race_settings['min_lap_time'], qos=1, retain=True)
                 self.mqtt_client.publish("/OpenRace/settings/race_core/start_delay",
                                          self.race_settings['start_delay'], qos=1, retain=True)
+                self.mqtt_client.publish("/OpenRace/provide/race_mw",
+                                         ",".join(str(mw) for mw in self.milliwatts), qos=1, retain=True)
 
                 first_run = False
 
