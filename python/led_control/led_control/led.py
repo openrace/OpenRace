@@ -124,7 +124,7 @@ class LedController:
 
     def on_pilot_passing(self, client, userdata, msg):
         frequency = int(msg.payload)
-        logging.debug("Pilot with frequency %s passed the gate %s" % (frequency, (self.now - self.race_start)))
+        logging.debug("Pilot with frequency %s passed the gate" % frequency)
         # https://github.com/betaflight/betaflight/blob/39ced6bbfefa52a6f605ed6635b7e62105c71672/src/main/io/ledstrip.c
 
         color = "255;20;147"        # COLOR_DEEP_PINK
