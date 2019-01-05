@@ -58,9 +58,7 @@ export class PilotsService {
     this.publishPilotMessage(pilotId, 'name', pilot.name);
     this.publishPilotMessage(pilotId, 'band', pilot.band);
     this.publishPilotMessage(pilotId, 'channel', pilot.channel);
-    this.publishPilotMessage(pilotId, 'frequency', pilot.frequency);
-    this.publishPilotMessage(pilotId, 'gain', pilot.gain);
-
+    this.publishPilotMessage(pilotId, 'frequency', pilot.frequency)
   }
 
   private publishPilotMessage(pilotId: string, pilotSubTopic: string, value: any) {
