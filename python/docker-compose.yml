@@ -1,6 +1,3 @@
-# TODO: Make things configurable by using some environment files or so. Also read those in the python modules
-#       "things" are at least: debug level, connection settings for MQTT
-
 version: '2' # Version 3 is not supported by RaspberryPi docker at the moment
 services:
   mqtt:
@@ -11,6 +8,7 @@ services:
       - "9001:9001"
     volumes:
       - "/srv/mqtt/config/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro"
+      - "/srv/mqtt/data:/mosquitto/data:rw"
 
   race_core:
     restart: always
