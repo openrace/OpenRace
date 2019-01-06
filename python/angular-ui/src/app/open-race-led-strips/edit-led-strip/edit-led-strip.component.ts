@@ -11,7 +11,7 @@ import { LedStripCategoriesService } from '../led-strip-categories.service';
 export class EditLedStripComponent implements OnInit {
   @Input() private ledStrip: LedStrip;
 
-  stripCategories: string[] = ['gate', 'strips_run_forward', 'strips_run_backward', 'start_pod', 'pilot_chip'];
+  stripCategories: string[] = [];
 
   constructor(private ledStripService: LedStripsService, private ledStripCategoriesService: LedStripCategoriesService) {
     this.ledStripCategoriesService.ledStripCategories.subscribe(next => this.stripCategories = next);
