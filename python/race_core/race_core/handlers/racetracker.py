@@ -9,6 +9,7 @@ from ..common import mklog
 
 class RaceTracker:
     def __init__(self):
+        self.milliwatts = 0
         pass
 
     def request_start_race(self):
@@ -116,18 +117,31 @@ class LapRFRaceTracker(RaceTracker):
         self.on_status_packet(rssis = rssis)
 
     # Setting Methods
-    def set_pilot(self, id, band=None, freq=None, gain=None, channel=None, enabled=None, threshold=None):
+    def set_pilot(self, id, band=None, freq=None, channel=None, enabled=None, threshold=None):
         msg = []
         data = [self.laprf.build_FOR("PILOT_ID", id)]
+
+        def calc_gain(mw):
+            if mw == 25:
+                return 58
+            elif mw == 200:
+                return 44
+            elif mw == 600:
+                return 40
+            logging.warning("Unable to set milliwatt to %s! Setting gain to the same as 25 milliwatts." % mw)
+            return 58
+
+        if self.milliwatts:
+            gain = calc_gain(self.milliwatts)
+            data.append(self.laprf.build_FOR("RF_GAIN", gain))
+            msg.append("%s: %s" % ('gain', gain))
+
         if band is not None:
             data.append(self.laprf.build_FOR("RF_BAND", band))
             msg.append("%s: %s" % ('band', band))
         if freq is not None:
             data.append(self.laprf.build_FOR("RF_FREQUENCY", freq))
             msg.append("%s: %s" % ('freq', freq))
-        if gain is not None:
-            data.append(self.laprf.build_FOR("RF_GAIN", gain))
-            msg.append("%s: %s" % ('gain', gain))
         if channel is not None:
             data.append(self.laprf.build_FOR("RF_CHANNEL", channel))
             msg.append("%s: %s" % ('channel', channel))

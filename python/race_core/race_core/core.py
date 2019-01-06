@@ -46,11 +46,12 @@ class RaceCore:
         # race settings
         self.race_settings = {
             'amount_laps': 4,
-            'min_lap_time': 10,
-            'start_delay': 5,
+            'min_lap_time_in_seconds': 10,
+            'start_delay_in_seconds': 5,
+            'race_mw': 25,
         }
 
-        self.milliwatts = [25, 200, 600, 800]
+        self.milliwatts = [25, 200, 600]
 
         atexit.register(self.exit_handler)
 
@@ -73,7 +74,7 @@ class RaceCore:
         self.mqtt_client.message_callback_add("/OpenRace/events/#", self.on_events_message)
         self.mqtt_client.message_callback_add("/OpenRace/pilots/#", self.on_pilots_message)
         # self.mqtt_client.message_callback_add("/OpenRace/race", self.on_race_message)
-        self.mqtt_client.message_callback_add("/OpenRace/settings/race_core/#", self.on_settings_message)
+        self.mqtt_client.message_callback_add("/OpenRace/race/settings/#", self.on_settings_message)
 
         self.mqtt_connected = True
 
@@ -81,13 +82,14 @@ class RaceCore:
     #     logging.debug("Recieved MQTT message: <%s> <%s>" % (msg.topic, msg.payload))
 
     # internal race methods
-    def race_start(self, start_delay):
-        self.mqtt_client.publish("/OpenRace/race/start", self.race_settings['start_delay'], qos=2)
-        self.current_race = time.time() + self.race_settings['start_delay']
+    def race_start(self):
+        self.mqtt_client.publish("/OpenRace/race/start", self.race_settings['start_delay_in_seconds'], qos=2)
+        self.current_race = time.time() + self.race_settings['start_delay_in_seconds']
         self.race[self.current_race] = {}
+        self.race[self.current_race]['race_mw'] = self.race_settings['race_mw']
         self.race[self.current_race]['amount_laps'] = self.race_settings['amount_laps']
-        self.race[self.current_race]['min_lap_time'] = self.race_settings['min_lap_time']
-        self.race[self.current_race]['start_delay'] = self.race_settings['start_delay']
+        self.race[self.current_race]['min_lap_time_in_seconds'] = self.race_settings['min_lap_time_in_seconds']
+        self.race[self.current_race]['start_delay_in_seconds'] = self.race_settings['start_delay_in_seconds']
         for pilot in self.pilots.keys():
             self.pilots[pilot].laps = []
             self.pilots[pilot].lastlap = 0
@@ -114,8 +116,8 @@ class RaceCore:
         logging.debug("Recieved MQTT event message: <%s> <%s>" % (msg.topic, msg.payload))
 
         if msg.topic == '/OpenRace/events/request_start':
-            logging.info("Race will start in %s seconds!" % self.race_settings['start_delay'])
-            self.race_start(int(msg.payload))
+            logging.info("Race will start in %s seconds!" % self.race_settings['start_delay_in_seconds'])
+            self.race_start()
         elif msg.topic == '/OpenRace/events/request_stop':
             logging.info("Race ended")
             self.race_stop()
@@ -128,15 +130,19 @@ class RaceCore:
     def on_settings_message(self, client, userdata, msg):
         logging.debug("OpenRace MQTT settings message received: <%s> <%s>" % (msg.topic, msg.payload))
 
-        if msg.topic == '/OpenRace/settings/race_core/amount_laps':
+        if msg.topic == '/OpenRace/race/settings/amount_laps':
             logging.info("Setting amount of laps to %s" % int(msg.payload))
             self.race_settings['amount_laps'] = int(msg.payload)
-        elif msg.topic == '/OpenRace/settings/race_core/min_lap_time':
+        elif msg.topic == '/OpenRace/race/settings/min_lap_time_in_seconds':
             logging.info("Setting minimal lap time to %s" % int(msg.payload))
-            self.race_settings['min_lap_time'] = int(msg.payload)
-        elif msg.topic == '/OpenRace/settings/race_core/start_delay':
+            self.race_settings['min_lap_time_in_seconds'] = int(msg.payload)
+        elif msg.topic == '/OpenRace/race/settings/start_delay_in_seconds':
             logging.info("Setting race start delay %s" % int(msg.payload))
-            self.race_settings['start_delay'] = int(msg.payload)
+            self.race_settings['start_delay_in_seconds'] = int(msg.payload)
+        elif msg.topic == '/OpenRace/race/settings/race_mw':
+            logging.info("Setting milli watts to %s" % int(msg.payload))
+            self.race_settings['race_mw'] = int(msg.payload)
+            self.tracker.milliwatts = int(msg.payload)
 
     def on_pilots_message(self, client, userdata, msg):
         logging.debug("OpenRace MQTT pilot message received: <%s> <%s>" % (msg.topic, msg.payload))
@@ -268,16 +274,20 @@ class RaceCore:
             self.tracker.read_data(stop_if_no_data=True)
 
             if first_run:
-                # publishing retained race_core settings, after the first loop if there are already
-                # retained setting from somewhere else or a earlier run
-                self.mqtt_client.publish("/OpenRace/settings/race_core/amount_laps",
-                                         self.race_settings['amount_laps'], qos=1, retain=True)
-                self.mqtt_client.publish("/OpenRace/settings/race_core/min_lap_time",
-                                         self.race_settings['min_lap_time'], qos=1, retain=True)
-                self.mqtt_client.publish("/OpenRace/settings/race_core/start_delay",
-                                         self.race_settings['start_delay'], qos=1, retain=True)
+                # providing infos
                 self.mqtt_client.publish("/OpenRace/provide/race_mw",
                                          ",".join(str(mw) for mw in self.milliwatts), qos=1, retain=True)
+
+                # publishing retained race_core settings, after the first loop if there are already
+                # retained setting from somewhere else or a earlier run
+                self.mqtt_client.publish("/OpenRace/race/settings/amount_laps",
+                                         self.race_settings['amount_laps'], qos=1, retain=True)
+                self.mqtt_client.publish("/OpenRace/race/settings/min_lap_time_in_seconds",
+                                         self.race_settings['min_lap_time_in_seconds'], qos=1, retain=True)
+                self.mqtt_client.publish("/OpenRace/race/settings/start_delay_in_seconds",
+                                         self.race_settings['start_delay_in_seconds'], qos=1, retain=True)
+                self.mqtt_client.publish("/OpenRace/race/settings/race_mw",
+                                         self.race_settings['race_mw'], qos=1, retain=True)
 
                 first_run = False
 
@@ -296,13 +306,13 @@ class RaceCore:
         self.race_stop()
         # logging.debug("Removing retained settings")
         # self.mqtt_client.publish("/OpenRace/settings/race_core/amount_laps", None, qos=1, retain=True)
-        # self.mqtt_client.publish("/OpenRace/settings/race_core/min_lap_time", None, qos=1, retain=True)
-        # self.mqtt_client.publish("/OpenRace/settings/race_core/start_delay", None, qos=1, retain=True)
-        for pilot in self.pilots.keys():
-            self.mqtt_client.publish("/OpenRace/pilots/%s/enabled" % pilot, None, qos=1, retain=True)
-            self.mqtt_client.publish("/OpenRace/pilots/%s/frequency" % pilot, None, qos=1, retain=True)
-            self.mqtt_client.publish("/OpenRace/pilots/%s/band" % pilot, None, qos=1, retain=True)
-            self.mqtt_client.publish("/OpenRace/pilots/%s/channel" % pilot, None, qos=1, retain=True)
+        # self.mqtt_client.publish("/OpenRace/settings/race_core/min_lap_time_in_seconds", None, qos=1, retain=True)
+        # self.mqtt_client.publish("/OpenRace/settings/race_core/start_delay_in_seconds", None, qos=1, retain=True)
+        # for pilot in self.pilots.keys():
+        #     self.mqtt_client.publish("/OpenRace/pilots/%s/enabled" % pilot, None, qos=1, retain=True)
+        #     self.mqtt_client.publish("/OpenRace/pilots/%s/frequency" % pilot, None, qos=1, retain=True)
+        #     self.mqtt_client.publish("/OpenRace/pilots/%s/band" % pilot, None, qos=1, retain=True)
+        #     self.mqtt_client.publish("/OpenRace/pilots/%s/channel" % pilot, None, qos=1, retain=True)
 
 
 @click.command()
