@@ -54,6 +54,10 @@ export class LedStripsService {
     }
   }
 
+  testFlashLedStrip(letStripId: string) {
+    this.messageQueueClientService.publishToTopicUnretained(`${'/d1ws2812/' + letStripId}`, '6;0;0;255');
+  }
+
   private updateLedStripFromMessage(ledStripId: string, property: string, value: string) {
     console.log(`Updating property ${property} of LedStrip with ledStripId ${ledStripId}`);
 
