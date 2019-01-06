@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { LedStrip } from '../led-strip';
 import { LedStripsService } from '../led-strips.service';
+import { LedStripCategoriesService } from '../led-strip-categories.service';
 
 @Component({
   selector: 'app-edit-led-strip',
@@ -12,7 +13,8 @@ export class EditLedStripComponent implements OnInit {
 
   stripCategories: string[] = ['gate', 'strips_run_forward', 'strips_run_backward', 'start_pod', 'pilot_chip'];
 
-  constructor(private ledStripService: LedStripsService) {
+  constructor(private ledStripService: LedStripsService, private ledStripCategoriesService: LedStripCategoriesService) {
+    this.ledStripCategoriesService.ledStripCategories.subscribe(next => this.stripCategories = next);
   }
 
   ngOnInit() {
