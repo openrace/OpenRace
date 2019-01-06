@@ -48,7 +48,7 @@ export class LedStripsService {
   private processLedStripMessage(message: QueueMessage) {
     console.log(`Received message ${message.message} Topic ${message.topic}`);
 
-    const topicParts = /\/OpenRace\/led\/([a-fA-F0-9:]{17})\/([a-zA-Z0-9]*)/.exec(message.topic);
+    const topicParts = /\/OpenRace\/led\/([a-fA-F0-9:]*)\/([a-zA-Z0-9]*)/.exec(message.topic);
     if (topicParts != null) {
       this.updateLedStripFromMessage(topicParts[1].toString(), topicParts[2].toString(), message.message);
     }
