@@ -50,6 +50,8 @@ class RaceCore:
             'start_delay': 5,
         }
 
+        self.milliwatts = [25, 200, 600, 800]
+
         atexit.register(self.exit_handler)
 
     def mqtt_connect(self):
@@ -88,6 +90,7 @@ class RaceCore:
         self.race[self.current_race]['start_delay'] = self.race_settings['start_delay']
         for pilot in self.pilots.keys():
             self.pilots[pilot].laps = []
+            self.pilots[pilot].lastlap = 0
         self.tracker.request_start_race()
 
     def race_stop(self):
@@ -165,6 +168,12 @@ class RaceCore:
 
     # RaceTracker Events callback
     def on_pilot_passed(self, pilot_id, seconds):
+        now = time.time()
+
+        pilot_name = pilot_id
+        if self.pilots[pilot_id].name:
+            pilot_name = self.pilots[pilot_id].name
+
         # check if pilot is configured
         if pilot_id not in self.pilots.keys():
             logging.warning("Unknown Pilot with ID %s detected" % pilot_id)
@@ -173,30 +182,38 @@ class RaceCore:
         # check if a race is currently happening
         if self.current_race not in self.race.keys():
             # no active race
-            self.mqtt_client.publish("/OpenRace/race/passing", self.pilots[pilot_id].frequency, qos=1)
+            lap_time = now - self.pilots[pilot_id].lastlap
+            self.mqtt_client.publish("/OpenRace/race/passing/%s" % pilot_id, lap_time, qos=1)
             logging.info("Pilot %s (%s) passed the gate with %s seconds" %
-                         (pilot_id, self.pilots[pilot_id].frequency, seconds))
+                         (pilot_name, self.pilots[pilot_id].frequency, lap_time))
+            self.pilots[pilot_id].lastlap = now
+
         else:
             # active race
 
-            # check if the pilot went trough the start gate too soon
+            # check if the pilot went trough the start gate too soon and do not count it
             if self.current_race > 0 and self.current_race > time.time():
-                logging.info("Pilot %s (%s) passed too soon!" % (pilot_id, self.pilots[pilot_id].frequency))
+                logging.info("Pilot %s (%s) passed too soon!" % (pilot_name, self.pilots[pilot_id].frequency))
                 return False
 
-            # check for minimal lap time (and also register the laptime on success)
+            # check for minimal lap time (and also register the lap time on success)
             if self.pilots[pilot_id].passed():
-                self.mqtt_client.publish("/OpenRace/race/passing", self.pilots[pilot_id].frequency, qos=1)
+                lap_time = now - self.pilots[pilot_id].laps[-1]
+                if lap_time < 0:
+                    lap_time = 0
+                # Todo: Use seconds provided by race tracker!
+                self.mqtt_client.publish("/OpenRace/race/passing/%s" % pilot_id, lap_time, qos=1)
                 logging.info("Pilot %s (%s) passed the gate with %s seconds (%s/%s)" %
-                             (pilot_id, self.pilots[pilot_id].frequency, seconds,
+                             (pilot_name, self.pilots[pilot_id].frequency, lap_time,
                               len(self.pilots[pilot_id].laps), self.race[self.current_race]['amount_laps']))
 
                 if self.race[self.current_race]['amount_laps'] == len(self.pilots[pilot_id].laps):
                     # race finished
-                    logging.info("Pilot %s finished the race" % self.pilots[pilot_id].name)
+                    race_time = self.pilots[pilot_id].laps[-1] - self.current_race
+                    logging.info("Pilot %s finished the race with %s seconds" % (self.pilots[pilot_id].name, race_time))
                 elif (self.race[self.current_race]['amount_laps'] - 1) == len(self.pilots[pilot_id].laps):
                     # last lap
-                    logging.info("Last lap for pilot %s" % self.pilots[pilot_id].name)
+                    logging.info("Last lap for pilot %s" % pilot_name)
                     self.mqtt_client.publish("/OpenRace/race/lastlap", self.pilots[pilot_id].frequency, qos=1)
 
                 # checking if the race is over
@@ -259,6 +276,8 @@ class RaceCore:
                                          self.race_settings['min_lap_time'], qos=1, retain=True)
                 self.mqtt_client.publish("/OpenRace/settings/race_core/start_delay",
                                          self.race_settings['start_delay'], qos=1, retain=True)
+                self.mqtt_client.publish("/OpenRace/provide/race_mw",
+                                         ",".join(str(mw) for mw in self.milliwatts), qos=1, retain=True)
 
                 first_run = False
 

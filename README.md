@@ -57,13 +57,15 @@ After entering your password for SUDO, the installation continues.
 To start and stop races.
 ### /OpenRace/pilots/[ID]/[enabled, frequency, band, channel, name]
 To set and get the configured pilots.
-### /OpenRace/race/[passing, lastlap, start, stop]
+### /OpenRace/race/passing/[ID]
+The pilot ID passed the gate. The lap time is the message payload.
+### /OpenRace/race/[lastlap, start, stop]
 Race events like pilots passing the finish line and such.
 ### /OpenRace/status/[tracker_voltage, RSSI/1..8, led_strips]
 Status information mostly from the race tracker
 ### /OpenRace/settings/race_core/[amount_laps, min_lap_time, start_delay]
 Race settings like for the race_core.
-### /OpenRace/settings/led_control/[start_go_effect, start_countdown_effect, stop_effect, lastlap_effect, lastlap_gate]
+### /OpenRace/settings/led_control/[start_go_effect, start_countdown_effect, stop_effect, lastlap_effect, passing_wave_delay]
 Race settings like for the led_controller.
 ### /OpenRace/provide/
 This topic is for providing information between components.
@@ -71,9 +73,14 @@ This topic is for providing information between components.
 The led_controller provides types of LED strips as a comma separated string. See [LED strip categories table](#led-strip-categories).
 #### /OpenRace/provide/race_mw
 The available milliwatt settings like 25, 200, 600 or 800...
-### /OpenRace/led/[ID]/[category]
+### /OpenRace/led/[ID]/category
+**Attention:** ID is the MAC address of the LED strip.
+
 Set LED strip category enum: gate, strips_run_forward, strips_run_backward, start_pod, pilot_chip
-### /OpenRace/led/[ID]/[order]
+
+### /OpenRace/led/[ID]/order
+**Attention:** ID is the MAC address of the LED strip.
+
 Set LED strip order
 
 
