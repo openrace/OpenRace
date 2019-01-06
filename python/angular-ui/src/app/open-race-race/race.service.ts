@@ -30,4 +30,8 @@ export class RaceService {
   setAmountOfLaps(amountOfLaps: number) {
     this.messageQueueClientService.publishToTopicUnretained('/OpenRace/race/settings/amount_laps', amountOfLaps.toString());
   }
+
+  setRaceMw(raceMw: number) {
+    this.messageQueueClientService.publishToTopicUnretained('/OpenRace/race/settings/race_mw', raceMw.toString());
+  }
 }

@@ -5,6 +5,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { OpenRacePilotsModule } from './open-race-pilots/open-race-pilots.module';
 import { MaterialModule } from './material/material.module';
 import { OpenRaceLedStripsModule } from './open-race-led-strips/open-race-led-strips.module';
+import { OpenRaceRaceModule } from './open-race-race/open-race-race.module';
 
 
 @NgModule({
@@ -15,7 +16,8 @@ import { OpenRaceLedStripsModule } from './open-race-led-strips/open-race-led-st
     FlexLayoutModule,
     MaterialModule,
     OpenRacePilotsModule,
-    OpenRaceLedStripsModule
+    OpenRaceLedStripsModule,
+    OpenRaceRaceModule
   ],
   providers: [],
   bootstrap: [AppComponent]
