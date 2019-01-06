@@ -160,7 +160,11 @@ class LedController:
 
     def on_pilot_frequency(self, client, userdata, msg):
         pilot_id = int(msg.topic.split("/")[-2])
-        frequency = int(msg.payload)
+        try:
+            frequency = int(msg.payload)
+        except ValueError:
+            logging.warning("No frequency was reported for pilot %s" % pilot_id)
+            return False
         if pilot_id not in self.pilots.keys():
             self.pilots[pilot_id] = 0
         self.pilots[pilot_id] = frequency

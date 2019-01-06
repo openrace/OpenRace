@@ -11,8 +11,6 @@ services:
       - "9001:9001"
     volumes:
       - "/srv/mqtt/config/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro"
-      - "/srv/mqtt/log:/mosquitto/log:rw"
-      - "/srv/mqtt/data:/mosquitto/data:rw"
 
   race_core:
     restart: always
