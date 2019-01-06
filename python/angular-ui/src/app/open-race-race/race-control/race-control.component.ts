@@ -1,12 +1,7 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { RaceService } from '../race.service';
-
-class RaceSettings {
-  amountOfLaps: number;
-  startDelayInSeconds: number;
-  minLapTimeInSeconds: number;
-  raceMw: number;
-}
+import { RaceMwSettingsService } from '../race-mw-settings.service';
+import { RaceSettings } from './race.settings';
 
 @Component({
   selector: 'app-race-control',
@@ -15,11 +10,12 @@ class RaceSettings {
 })
 export class RaceControlComponent implements OnInit {
 
-  raceMwSettings: number[] = [25, 40, 400];
+  raceMwSettings: number[];
 
   private raceSettings: RaceSettings = new RaceSettings();
 
-  constructor(private raceService: RaceService) {
+  constructor(private raceService: RaceService, private raceMwSettingsService: RaceMwSettingsService) {
+    this.raceMwSettingsService.raceMwSettings.subscribe(next => this.raceMwSettings = next);
   }
 
   ngOnInit() {
