@@ -10,11 +10,11 @@ export class RaceService {
   }
 
   startRace() {
-    this.messageQueueClientService.publishToTopicUnretained('/OpenRace/race/start', '1');
+    this.messageQueueClientService.publishToTopicUnretained('/OpenRace/events/request_start', '1');
   }
 
   stopRace() {
-    this.messageQueueClientService.publishToTopicUnretained('/OpenRace/race/stop', '1');
+    this.messageQueueClientService.publishToTopicUnretained('/OpenRace/events/request_stop', '1');
   }
 
   setMinLapTime(minLapTimeInSeconds: number) {
