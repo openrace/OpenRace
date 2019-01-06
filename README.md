@@ -61,10 +61,10 @@ To set and get the configured pilots.
 The pilot ID passed the gate. The lap time is the message payload.
 ### /OpenRace/race/[lastlap, start, stop]
 Race events like pilots passing the finish line and such.
+### /OpenRace/race/settings/[amount_laps, min_lap_time_in_seconds, start_delay_in_seconds, race_mw]
+Race settings like for the race_core.
 ### /OpenRace/status/[tracker_voltage, RSSI/1..8, led_strips]
 Status information mostly from the race tracker
-### /OpenRace/settings/race_core/[amount_laps, min_lap_time, start_delay]
-Race settings like for the race_core.
 ### /OpenRace/settings/led_control/[start_go_effect, start_countdown_effect, stop_effect, lastlap_effect, passing_wave_delay]
 Race settings like for the led_controller.
 ### /OpenRace/provide/

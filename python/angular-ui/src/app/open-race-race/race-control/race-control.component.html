@@ -1,0 +1,27 @@
+<form (ngSubmit)="applyRaceSettings()">
+  <mat-card>
+    <mat-card-title>Race Control</mat-card-title>
+    <mat-card-content fxLayoutGap="1em">
+      <mat-form-field>
+        <input type="number" matInput placeholder="Amount of laps" name="amountOfLaps" [(ngModel)]="raceSettings.amountOfLaps"/>
+      </mat-form-field>
+      <mat-form-field>
+        <input type="number" matInput placeholder="Start delay in seconds" name="startDelayInSeconds" [(ngModel)]="raceSettings.startDelayInSeconds"/>
+      </mat-form-field>
+      <mat-form-field>
+        <input type="number" matInput placeholder="Min lap time in seconds" name="minLapTimeInSeconds" [(ngModel)]="raceSettings.minLapTimeInSeconds"/>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-select placeholder="Milliwatt" name="raceMw" [(ngModel)]="raceSettings.raceMw">
+          <mat-option *ngFor="let raceMwSetting of raceMwSettings" [value]="raceMwSetting">{{raceMwSetting}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </mat-card-content>
+    <mat-card-actions fxLayoutGap="1em" fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign="start center"
+                      fxLayoutAlign.lt-md="start stretch">
+      <button type="submit" mat-flat-button color="primary">Apply settings</button>
+      <button type="button" mat-flat-button color="primary" (click)="stopRace()">Stop Race</button>
+      <button type="button" mat-flat-button color="primary" (click)="startRace()">Start Race</button>
+    </mat-card-actions>
+  </mat-card>
+</form>
