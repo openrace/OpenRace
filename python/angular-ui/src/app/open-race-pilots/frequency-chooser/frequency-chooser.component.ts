@@ -41,6 +41,6 @@ export class FrequencyChooserComponent implements OnInit {
 
   updateFrequency() {
     console.log(`Updating frequency with band ${this.pilot.band} and channel ${this.pilot.channel}`);
-    this.pilot.frequency = this.frequencies[this.pilot.band][this.pilot.channel].toString();
+    this.pilot.frequency = this.frequencies[this.pilot.band][this.pilot.channel - 1].toString();
   }
 }
