@@ -1,7 +1,7 @@
 <div fxLayoutGap="1em">
   <mat-form-field>
     <mat-select placeholder="Band" [(ngModel)]="pilot.band" (selectionChange)="updateFrequency()">
-      <mat-option *ngFor="let band of bands" value="{{band}}">{{band}}</mat-option>
+      <mat-option *ngFor="let band of bands" value="{{band.id}}">{{band.name}}</mat-option>
     </mat-select>
   </mat-form-field>
 

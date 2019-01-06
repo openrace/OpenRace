@@ -6,7 +6,7 @@ export class Pilot {
   name: string;
   enabled: boolean;
   band: string;
-  channel: string;
+  channel: number;
   frequency: string;
   gain: number;
 }

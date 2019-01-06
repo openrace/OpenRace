@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Pilot } from '../pilot';
+import { Band } from './band';
 
 @Component({
   selector: 'app-frequency-chooser',
@@ -8,49 +9,29 @@ import { Pilot } from '../pilot';
 })
 export class FrequencyChooserComponent implements OnInit {
 
-  bands: string[] = ['A', 'B', 'E', 'Fatshark', 'Raceband'];
-  channels: string[] = ['1', '2', '3', '4', '5', '6', '7', '8'];
-  frequencies: { [id: string]: string } = {
-    'A1': '5865',
-    'A2': '5845',
-    'A3': '5825',
-    'A4': '5805',
-    'A5': '5785',
-    'A6': '5765',
-    'A7': '5745',
-    'A8': '5725',
-    'B1': '5733',
-    'B2': '5752',
-    'B3': '5771',
-    'B4': '5790',
-    'B5': '5809',
-    'B6': '5828',
-    'B7': '5847',
-    'B8': '5866',
-    'E1': '5705',
-    'E2': '5685',
-    'E3': '5665',
-    'E4': '5645',
-    'E5': '5885',
-    'E6': '5905',
-    'E7': '5925',
-    'E8': '5945',
-    'Fatshark1': '5740',
-    'Fatshark2': '5760',
-    'Fatshark3': '5780',
-    'Fatshark4': '5800',
-    'Fatshark5': '5820',
-    'Fatshark6': '5840',
-    'Fatshark7': '5860',
-    'Fatshark8': '5880',
-    'Raceband1': '5658',
-    'Raceband2': '5695',
-    'Raceband3': '5732',
-    'Raceband4': '5769',
-    'Raceband5': '5806',
-    'Raceband6': '5843',
-    'Raceband7': '5880',
-    'Raceband8': '5917',
+  bands: Band[] = [
+    new Band('1', 'Low Race / Diatone'),
+    new Band('2', 'IRC / Fatshark / Airwave/ F'),
+    new Band('3', 'Race Band / r'),
+    new Band('4', 'Boscam E Lumenier / DJI / E'),
+    new Band('5', 'Boscam B'),
+    new Band('6', 'Boscam A / Team Black Sheep / A'),
+    new Band('7', 'U'),
+    new Band('8', 'O'),
+    new Band('9', 'L'),
+    new Band('10', 'Raceband V2 / H')];
+  channels: number[] = [1, 2, 3, 4, 5, 6, 7, 8];
+  frequencies: { [id: string]: number[] } = {
+    '1': [5362, 5399, 5436, 5473, 5510, 5547, 5584, 5621],
+    '2': [5740, 5760, 5780, 5800, 5820, 5840, 5860, 5880],
+    '3': [5658, 5695, 5732, 5769, 5806, 5843, 5880, 5917],
+    '4': [5705, 5685, 5665, 5645, 5885, 5905, 5925, 5945],
+    '5': [5733, 5752, 5771, 5790, 5809, 5828, 5847, 5866],
+    '6': [5865, 5845, 5825, 5805, 5785, 5765, 5745, 5725],
+    '7': [5325, 5348, 5366, 5384, 5402, 5420, 5438, 5456],
+    '8': [5474, 5492, 5510, 5528, 5546, 5564, 5582, 5600],
+    '9': [5333, 5373, 5413, 5453, 5493, 5533, 5573, 5613],
+    '10': [5653, 5693, 5733, 5773, 5813, 5853, 5893, 5933],
   };
 
   @Input() private pilot: Pilot;
@@ -60,6 +41,6 @@ export class FrequencyChooserComponent implements OnInit {
 
   updateFrequency() {
     console.log(`Updating frequency with band ${this.pilot.band} and channel ${this.pilot.channel}`);
-    this.pilot.frequency = this.frequencies[this.pilot.band + this.pilot.channel];
+    this.pilot.frequency = this.frequencies[this.pilot.band][this.pilot.channel].toString();
   }
 }
