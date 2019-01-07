@@ -16,6 +16,7 @@ export class RaceControlComponent implements OnInit {
 
   constructor(private raceService: RaceService, private raceMwSettingsService: RaceMwSettingsService) {
     this.raceMwSettingsService.raceMwSettings.subscribe(next => this.raceMwSettings = next);
+    this.raceService.raceSettings.subscribe(next => this.raceSettings = next);
   }
 
   ngOnInit() {
