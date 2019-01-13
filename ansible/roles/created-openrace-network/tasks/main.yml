@@ -1,0 +1,5 @@
+---
+- name: Create an openrace docker network
+  docker_network:
+    name: openrace
+  become: true

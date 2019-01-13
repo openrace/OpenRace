@@ -1,0 +1,20 @@
+---
+- name: Create race_core image
+  docker_image:
+    name: race_core
+    path: /home/pi/OpenRace/python/race_core
+  become: true
+
+- name: Create led_control image
+  docker_image:
+    name: led_control
+    path: /home/pi/OpenRace/python/led_control
+  become: true
+
+- name: Create angular-ui image
+  docker_image:
+    name: angular-ui
+    path: /home/pi/OpenRace/python/angular-ui
+  become: true
+
+

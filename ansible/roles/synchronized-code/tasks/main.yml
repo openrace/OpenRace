@@ -1,0 +1,19 @@
+---
+- name: Create OpenRace Directory
+  file:
+    path: /home/pi/OpenRace2
+    state: directory
+    owner: pi
+    group: pi
+    mode: 0777
+  become: true
+
+- name: Synchronize code
+  synchronize:
+    src: ../../../../python
+    dest: /home/pi/OpenRace2
+    use_ssh_args: yes
+    rsync_opts:
+      - "--exclude=angular-ui/node_modules"
+  become: true
+

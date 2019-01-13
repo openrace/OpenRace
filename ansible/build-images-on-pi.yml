@@ -1,0 +1,4 @@
+- hosts: all
+  roles:
+    - { role: synchronized-code }
+    - { role: build-images }
