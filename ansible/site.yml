@@ -6,4 +6,5 @@
     - { role: accesspoint }       # setup system as access point
     - { role: python }            # setup python things
     - { role: started-mqtt }
+    - { role: build-images }
     - { role: started-openrace }
