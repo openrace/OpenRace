@@ -1,0 +1,4 @@
+- hosts: all
+  roles:
+    - { role: created-openrace-network }
+    - { role: started-mqtt }

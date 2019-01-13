@@ -1,0 +1,63 @@
+---
+- name: Create an angular-ui container
+  docker_container:
+    name: angular-ui
+    image: angular-ui
+    networks:
+      - name: openrace
+    ports:
+      "5001:80"
+    env:
+      MQTT_WEBSOCKETS_HOST: mqtt:9001
+  become: true
+
+- name: Create OpenRace log directory
+  file:
+    path: /srv/openrace/log/
+    state: directory
+    owner: pi
+    group: pi
+    mode: 0777
+  become: true
+
+- name: Create OpenRace race archive directory
+  file:
+    path: /srv/openrace/archive/
+    state: directory
+    owner: pi
+    group: pi
+    mode: 0777
+  become: true
+
+- name: Create a led_control container
+  docker_container:
+    name: led_control
+    image: led_control
+    networks:
+      - name: openrace
+    volumes:
+      - "/srv/openrace/log:/app/log/:rw"
+    env:
+      MQTT_HOST: mqtt
+      MQTT_USER: openrace
+      MQTT_PASS: PASSWORD
+      DEBUG: false
+  become: true
+
+- name: Create a race_core container
+  docker_container:
+    name: race_core
+    image: race_core
+    networks:
+      - name: openrace
+    volumes:
+      - "/srv/openrace/log:/app/log/:rw"
+      - "/srv/openrace/archive:/app/archive/:rw"
+    devices:
+      - "/dev/ttyACM0:/dev/ttyACM0"
+    env:
+      MQTT_HOST: mqtt
+      MQTT_USER: openrace
+      MQTT_PASS: PASSWORD
+      DEBUG: false
+  become: true

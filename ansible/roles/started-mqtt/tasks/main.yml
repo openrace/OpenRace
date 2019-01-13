@@ -1,0 +1,60 @@
+---
+- name: Create mqtt config directory
+  file:
+    path: /srv/mqtt/config/
+    state: directory
+    owner: pi
+    group: pi
+    mode: 0777
+  become: true
+
+- name: Create mqtt data directory
+  file:
+    path: /srv/mqtt/data/
+    state: directory
+    owner: pi
+    group: pi
+    mode: 0777
+  become: true
+
+- name: Create mqtt log directory
+  file:
+    path: /srv/mqtt/log/
+    state: directory
+    owner: pi
+    group: pi
+    mode: 0777
+  become: true
+
+- name: create empty mqtt users file
+  copy:
+    src: mqtt-users.txt
+    dest: /srv/mqtt/data/mqtt-users.txt
+  changed_when: false
+
+- name: copy mosquitto.conf
+  copy:
+    src: mosquitto.conf
+    dest: /srv/mqtt/config/mosquitto.conf
+  become: true
+
+- name: run mqtt container
+  docker_container:
+    name: 'mqtt'
+    image: 'eclipse-mosquitto'
+    networks:
+      - name: openrace
+    state: 'started'
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    volumes:
+      - "/srv/mqtt/config/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro"
+      - "/srv/mqtt/log:/mosquitto/log:rw"
+      - "/srv/mqtt/data:/mosquitto/data:rw"
+  become: true
+
+- name: creating mqtt user
+  shell: docker exec -d mqtt /usr/bin/mosquitto_passwd -b /mosquitto/data/mqtt-users.txt openrace PASSWORD
+  changed_when: false
+  become: true

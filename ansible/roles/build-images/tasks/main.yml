@@ -1,15 +1,4 @@
 ---
-- name: installing python 2 pip for ansible
-  package:
-    name: python-pip
-    state: present
-  become: true
-
-- name: install dependency
-  pip:
-    name: docker-py
-  become: true
-
 - name: Create race_core image
   docker_image:
     name: race_core

@@ -73,3 +73,14 @@
     append: yes
   notify: restart docker
   become: true
+
+- name: installing python 2 pip for ansible
+  package:
+    name: python-pip
+    state: present
+  become: true
+
+- name: install dependency
+  pip:
+    name: docker-py
+  become: true
