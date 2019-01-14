@@ -1,12 +1,6 @@
-<div fxLayout="column" fxLayoutGap="1em" cdkDropListGroup>
-  <mat-card fxLayout="column" fxLayoutGap="1em" cdkDropList>
-    <div class="mat-title">Obstacle</div>
+<div fxLayout="column" fxLayoutGap="1em" cdkDropList (cdkDropListDropped)="drop($event)">
     <mat-card *ngFor="let ledStrip of ledStrips" class="mat-elevation-z15" cdkDrag>
       <div class="mat-title">LED Strip {{ledStrip.id}}</div>
       <app-edit-led-strip [ledStrip]="ledStrip"></app-edit-led-strip>
     </mat-card>
-  </mat-card>
-  <mat-card cdkDropList>
-    <div class="mat-title">New Obstacle</div>
-  </mat-card>
 </div>

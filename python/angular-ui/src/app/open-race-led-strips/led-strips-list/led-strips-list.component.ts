@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { LedStrip } from '../led-strip';
 import { LedStripsService } from '../led-strips.service';
+import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-led-strips-list',
@@ -17,4 +18,11 @@ export class LedStripsListComponent implements OnInit {
   ngOnInit() {
   }
 
+  drop(event: CdkDragDrop<string[]>) {
+    moveItemInArray(this.ledStrips, event.previousIndex, event.currentIndex);
+    for (let i = 0; i < this.ledStrips.length; i++) {
+      this.ledStrips[i].order = i.toString();
+      this.ledStripsService.updateLedStripOrder(this.ledStrips[i]);
+    }
+  }
 }
