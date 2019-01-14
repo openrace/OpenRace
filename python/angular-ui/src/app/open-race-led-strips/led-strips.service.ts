@@ -30,10 +30,15 @@ export class LedStripsService {
     }
   }
 
-  updateLedStrips(ledStrip: LedStrip) {
+  updateLedStripCategory(ledStrip: LedStrip) {
     const ledStripId = ledStrip.id;
 
     this.publishLedStripMessage(ledStripId, 'category', ledStrip.category);
+  }
+
+  updateLedStripOrder(ledStrip: LedStrip) {
+    const ledStripId = ledStrip.id;
+
     this.publishLedStripMessage(ledStripId, 'order', ledStrip.order);
   }
 
@@ -64,7 +69,7 @@ export class LedStripsService {
     LedStripsService.applyLedStripUpdate(property, this.safeGetLedStrip(ledStripId), value);
 
     console.log(Array.from(this.ledStripsStore.values()));
-    this._ledStrips.next(Array.from(this.ledStripsStore.values()).sort((a: LedStrip, b: LedStrip) => a.id >= b.id ? 1 : -1));
+    this._ledStrips.next(Array.from(this.ledStripsStore.values()).sort((a: LedStrip, b: LedStrip) => a.order >= b.order ? 1 : -1));
   }
 
   private safeGetLedStrip(ledStripId: string) {
