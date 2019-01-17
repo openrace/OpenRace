@@ -1,15 +1,24 @@
-import { Injectable } from '@angular/core';
-import { MqttService } from 'ngx-mqtt';
+import { Inject, Injectable } from '@angular/core';
+import { IMqttServiceOptions, MqttService } from 'ngx-mqtt';
 import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { QueueMessage } from './queue-message';
+import { WINDOW } from './window-provider';
 
 @Injectable({
   providedIn: 'root'
 })
 export class MessageQueueClientService {
 
-  constructor(private mqttService: MqttService) {
+  constructor(@Inject(WINDOW) private window: Window, private mqttService: MqttService) {
+    const options: IMqttServiceOptions = {
+      hostname: window.location.hostname,
+      port: Number(window.location.port),
+      path: '/mqtt/'
+    };
+
+    this.mqttService.connect(options);
+
   }
 
   publishToTopic(topic: string, message: string) {
