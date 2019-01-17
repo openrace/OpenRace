@@ -3,6 +3,7 @@
   docker_container:
     name: angular-ui
     image: angular-ui
+    recreate: yes
     networks:
       - name: openrace
     ports:
@@ -33,6 +34,7 @@
   docker_container:
     name: led_control
     image: led_control
+    recreate: yes
     networks:
       - name: openrace
     volumes:
@@ -48,6 +50,7 @@
   docker_container:
     name: race_core
     image: race_core
+    recreate: yes
     networks:
       - name: openrace
     volumes:
