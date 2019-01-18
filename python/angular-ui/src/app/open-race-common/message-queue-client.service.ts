@@ -14,8 +14,12 @@ export class MessageQueueClientService {
     const options: IMqttServiceOptions = {
       hostname: window.location.hostname,
       port: Number(window.location.port),
-      path: '/mqtt/'
+      path: '/mqtt/',
+      username: 'openrace',
+      password: 'PASSWORD'
     };
+
+    console.log('Trying to connect to ' + window.location.hostname + ':' + window.location.port + '/mqtt/');
 
     this.mqttService.connect(options);
 
