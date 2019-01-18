@@ -1,13 +1,10 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IMqttServiceOptions, MqttModule } from 'ngx-mqtt';
+import { WINDOW_PROVIDERS } from './window-provider';
 
 export const MQTT_SERVICE_OPTIONS: IMqttServiceOptions = {
-  hostname: 'localhost',
-  port: 5001,
-  path: '/mqtt/',
-  username: 'openrace',
-  password: 'PASSWORD'
+  connectOnCreate: false
 };
 
 @NgModule({
@@ -16,7 +13,10 @@ export const MQTT_SERVICE_OPTIONS: IMqttServiceOptions = {
     CommonModule,
     MqttModule.forRoot(MQTT_SERVICE_OPTIONS)
   ],
-  exports: []
+  exports: [],
+  providers: [
+    WINDOW_PROVIDERS
+  ]
 })
 
 export class OpenRaceCommonModule {
