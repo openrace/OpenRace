@@ -66,7 +66,7 @@ class LedController:
             'start_countdown_effect': "6;255;0;0",
             'stop_effect': "6;255;255;255",
             'lastlap_effect': "Z;7;3;100;0;255;255;255;0;0;0",
-            'passing_wave_delay': 1.0
+            'passing_wave_delay': 0.5
         }
 
         # led strip categories
@@ -117,6 +117,7 @@ class LedController:
             strip = LedStrip()
             strip.mac = client_mac
             strip.version = client_version
+            strip.order = len(self.led_strips)
             self.led_strips.append(strip)
 
             # publishing new strips for the frontend
@@ -203,7 +204,7 @@ class LedController:
                 strip.category = msg.payload.decode("utf-8")
 
     def on_strip_order(self, client, userdata, msg):
-        strip_mac = msg.topic.split("/")[-1]
+        strip_mac = msg.topic.split("/")[-2]
         logging.debug("Recieved LED strip order <%s> for <%s>" % (msg.payload, strip_mac))
         for strip in self.led_strips:
             if strip.mac == strip_mac:
