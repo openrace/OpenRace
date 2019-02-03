@@ -246,14 +246,25 @@ class RaceCore:
     def on_rf_settings(self, pilots):
         logging.debug("OpenRace tracker pilot message received: %s" % pilots)
         for pilot in pilots:
-            self.mqtt_client.publish("/OpenRace/pilots/%s/enabled" % pilot['id'],
-                                     pilot['enabled'], qos=1, retain=True)
-            self.mqtt_client.publish("/OpenRace/pilots/%s/frequency" % pilot['id'],
-                                     pilot['frequency'], qos=1, retain=True)
-            self.mqtt_client.publish("/OpenRace/pilots/%s/band" % pilot['id'],
-                                     pilot['band'], qos=1, retain=True)
-            self.mqtt_client.publish("/OpenRace/pilots/%s/channel" % pilot['id'],
-                                     pilot['channel'], qos=1, retain=True)
+            if pilot['id'] not in self.pilots.keys():
+                self.pilots[id] = Pilot()
+
+            if self.pilots[pilot['id']].enabled != pilot['enabled']:
+                self.mqtt_client.publish("/OpenRace/pilots/%s/enabled" % pilot['id'],
+                                         pilot['enabled'], qos=1, retain=True)
+
+            if self.pilots[pilot['id']].frequency != pilot['frequency']:
+                self.mqtt_client.publish("/OpenRace/pilots/%s/frequency" % pilot['id'],
+                                         pilot['frequency'], qos=1, retain=True)
+
+            if self.pilots[pilot['id']].band != pilot['band']:
+                self.mqtt_client.publish("/OpenRace/pilots/%s/band" % pilot['id'],
+                                         pilot['band'], qos=1, retain=True)
+
+            if self.pilots[pilot['id']].channel != pilot['channel']:
+                self.mqtt_client.publish("/OpenRace/pilots/%s/channel" % pilot['id'],
+                                         pilot['channel'], qos=1, retain=True)
+
             # remember: the name is set trough the webinterface or will be get trough the retain message
 
     def run(self):

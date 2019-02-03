@@ -45,15 +45,15 @@ services:
       - MQTT_PASS=${MQTT_PASS}
       - DEBUG=${DEBUG}
 
-  angular-ui:
-    restart: always
-    build:
-      context: "angular-ui/"
-    depends_on:
-        - "mqtt"
-    links:
-        - "mqtt"
-    ports:
-      - "5001:80"
-    environment:
-      - MQTT_WEBSOCKETS_HOST=mqtt:9001
+#  angular-ui:
+#    restart: always
+#    build:
+#      context: "angular-ui/"
+#    depends_on:
+#        - "mqtt"
+#    links:
+#        - "mqtt"
+#    ports:
+#      - "5001:80"
+#    environment:
+#      - MQTT_WEBSOCKETS_HOST=mqtt:9001
