@@ -247,7 +247,7 @@ class RaceCore:
         logging.debug("OpenRace tracker pilot message received: %s" % pilots)
         for pilot in pilots:
             if pilot['id'] not in self.pilots.keys():
-                self.pilots[id] = Pilot()
+                self.pilots[pilot['id']] = Pilot()
 
             if self.pilots[pilot['id']].enabled != pilot['enabled']:
                 self.mqtt_client.publish("/OpenRace/pilots/%s/enabled" % pilot['id'],
