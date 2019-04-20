@@ -117,7 +117,13 @@ class LedController:
             strip = LedStrip()
             strip.mac = client_mac
             strip.version = client_version
-            strip.order = len(self.led_strips)
+
+            max = -1
+            for s in self.led_strips:
+                if s.order > max:
+                    max = s.order
+            strip.order = max + 1
+
             self.led_strips.append(strip)
 
             # publishing new strips for the frontend
