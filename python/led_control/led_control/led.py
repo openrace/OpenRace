@@ -66,7 +66,7 @@ class LedController:
             'start_countdown_effect': "6;255;0;0",
             'stop_effect': "6;255;255;255",
             'lastlap_effect': "Z;7;3;100;0;255;255;255;0;0;0",
-            'passing_wave_delay': 0.5
+            'passing_wave_delay': 0.2
         }
 
         # led strip categories
