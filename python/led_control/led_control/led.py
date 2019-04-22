@@ -66,7 +66,8 @@ class LedController:
             'start_countdown_effect': "6;255;0;0",
             'stop_effect': "6;255;255;255",
             'lastlap_effect': "Z;7;3;100;0;255;255;255;0;0;0",
-            'passing_wave_delay': 0.2
+            'passing_wave_delay': 0.2,
+            'freeflight': "9;100;10"
         }
 
         # led strip categories
@@ -97,6 +98,7 @@ class LedController:
         self.client.message_callback_add("/OpenRace/race/start/#", self.on_race_start)
         self.client.message_callback_add("/OpenRace/race/passing/#", self.on_pilot_passing)
         self.client.message_callback_add("/OpenRace/race/lastlap", self.on_last_lap)
+        self.client.message_callback_add("/OpenRace/race/freeflight", self.on_freeflight)
 
         self.client.subscribe("/OpenRace/pilots/#")
         self.client.message_callback_add("/OpenRace/pilots/+/frequency", self.on_pilot_frequency)
@@ -176,6 +178,12 @@ class LedController:
             self.pilots[pilot_id] = 0
         self.pilots[pilot_id] = frequency
         logging.debug("Setting pilot %s to frequency %s" % (pilot_id, frequency))
+
+    def on_freeflight(self, client, userdata, msg):
+        logging.info("Starting freeflight mode")
+
+        self.add_led_event("all", "Z;%s" % self.led_settings['freeflight'], delay=0, comment="Freeflight set default")
+        self.add_led_event("all", self.led_settings['freeflight'], delay=0, comment="Freeflight start effect")
 
     def on_message(self, client, userdata, msg):
         logging.debug("Recieved MQTT message: <%s> <%s>" % (msg.topic, msg.payload.decode("utf-8")))

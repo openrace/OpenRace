@@ -121,6 +121,10 @@ class RaceCore:
         elif msg.topic == '/OpenRace/events/request_stop':
             logging.info("Race ended")
             self.race_stop()
+        elif msg.topic == '/OpenRace/events/request_freeflight':
+            logging.info("Race ending, starting freeflight")
+            self.race_stop()
+            self.mqtt_client.publish("/OpenRace/race/freeflight", None, qos=2)
 
         # TODO: handle race timeout (dnf) / max lap time?
 

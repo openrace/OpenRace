@@ -53,13 +53,13 @@ After entering your password for SUDO, the installation continues.
 
 # MQTT Topics
 ## OpenRace topics
-### /OpenRace/events/[request_start, request_stop]
+### /OpenRace/events/[request_start, request_stop, request_freeflight]
 To start and stop races.
 ### /OpenRace/pilots/[ID]/[enabled, frequency, band, channel, name]
 To set and get the configured pilots.
 ### /OpenRace/race/passing/[ID]
 The pilot ID passed the gate. The lap time is the message payload.
-### /OpenRace/race/[lastlap, start, stop]
+### /OpenRace/race/[lastlap, start, stop, passing, freeflight]
 Race events like pilots passing the finish line and such.
 ### /OpenRace/race/settings/[amount_laps, min_lap_time_in_seconds, start_delay_in_seconds, race_mw]
 Race settings like for the race_core.
