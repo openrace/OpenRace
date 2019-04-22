@@ -93,6 +93,9 @@ class LedController:
         self.client.subscribe("/d1ws2812/discovery/#")
         self.client.message_callback_add("/d1ws2812/discovery/#", self.on_discovery_message)
 
+        self.client.subscribe("/OpenRace/events/#")
+        self.client.message_callback_add("/OpenRace/events/request_led_wave", self.on_request_led_wave)
+
         self.client.subscribe("/OpenRace/race/#")
         self.client.message_callback_add("/OpenRace/race/stop", self.on_race_stop)
         self.client.message_callback_add("/OpenRace/race/start/#", self.on_race_start)
@@ -203,6 +206,18 @@ class LedController:
         for strip in self.led_strips:
             if strip.order == 0:
                 self.add_led_event(strip.mac, self.led_settings['lastlap_effect'], comment="Last lap")
+
+    def on_request_led_wave(self, client, userdata, msg):
+        logging.info("Emitting LED Wave")
+
+        for strip in self.led_strips:
+            delay = float(strip.order) * self.led_settings['passing_wave_delay']
+            if delay < 0:
+                delay = 0
+            self.add_led_event(strip.mac, "6;100;100;100",
+                               delay=delay,
+                               comment="Pilot passing")
+
 
     def on_strip_category(self, client, userdata, msg):
         strip_mac = msg.topic.split("/")[-1]
