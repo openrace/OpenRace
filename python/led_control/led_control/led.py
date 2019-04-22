@@ -179,12 +179,6 @@ class LedController:
         self.pilots[pilot_id] = frequency
         logging.debug("Setting pilot %s to frequency %s" % (pilot_id, frequency))
 
-    def on_freeflight(self, client, userdata, msg):
-        logging.info("Starting freeflight mode")
-
-        self.add_led_event("all", "Z;%s" % self.led_settings['freeflight'], delay=0, comment="Freeflight set default")
-        self.add_led_event("all", self.led_settings['freeflight'], delay=0, comment="Freeflight start effect")
-
     def on_message(self, client, userdata, msg):
         logging.debug("Recieved MQTT message: <%s> <%s>" % (msg.topic, msg.payload.decode("utf-8")))
 
@@ -224,6 +218,12 @@ class LedController:
             if strip.mac == strip_mac:
                 strip.order = int(msg.payload)
 
+    def on_freeflight(self, client, userdata, msg):
+        logging.info("Starting freeflight mode")
+
+        self.add_led_event("all", "Z;%s" % self.led_settings['freeflight'], delay=0, comment="Freeflight set default")
+        self.add_led_event("all", self.led_settings['freeflight'], delay=0, comment="Freeflight start effect")
+
     def on_settings(self, client, userdata, msg):
         logging.debug("Recieved settings: <%s> <%s>" % (msg.topic, msg.payload))
 
@@ -242,6 +242,9 @@ class LedController:
         elif msg.topic == '/OpenRace/settings/led_control/passing_wave_delay':
             logging.info("Setting passing wave delay to %s" % msg.payload.decode("utf-8"))
             self.led_settings['passing_wave_delay'] = msg.payload.decode("utf-8")
+        elif msg.topic == '/OpenRace/settings/led_control/freeflight':
+            logging.info("Setting freeflight effect to %s" % msg.payload.decode("utf-8"))
+            self.led_settings['freeflight'] = msg.payload.decode("utf-8")
 
     # internal helper methods
     def led_cleanup(self):
