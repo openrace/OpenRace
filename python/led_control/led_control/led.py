@@ -290,7 +290,7 @@ class LedController:
         while True:
             self.now = time.time()
 
-            self.led_cleanup()
+            # self.led_cleanup() # disabling led cleanup, since it should not be required
             self.status_update()
 
             # LED event handling
