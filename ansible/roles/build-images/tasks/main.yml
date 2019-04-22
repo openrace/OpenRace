@@ -19,5 +19,5 @@
     path: /home/pi/OpenRace/python/angular-ui
     force: yes
   become: true
-
-
+  tags:
+     - ui

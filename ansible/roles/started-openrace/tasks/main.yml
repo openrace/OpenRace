@@ -11,6 +11,8 @@
     env:
       MQTT_WEBSOCKETS_HOST: mqtt:9001
   become: true
+  tags:
+     - ui
 
 - name: Create OpenRace log directory
   file:
