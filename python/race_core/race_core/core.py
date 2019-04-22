@@ -58,12 +58,8 @@ class RaceCore:
     def mqtt_connect(self):
         logging.info("Connecting to MQTT server <%s>" % (self.mqtt_server))
         self.mqtt_client = mqtt.Client()
-
         self.mqtt_client.on_connect = self.on_connect
-        # self.mqtt_client.on_message = self.on_message
-
         self.mqtt_client.username_pw_set(self.mqtt_user, self.mqtt_password)
-
         self.mqtt_client.connect(self.mqtt_server, 1883, 60)
 
     def on_connect(self, client, userdata, flags, rc):
@@ -123,7 +119,8 @@ class RaceCore:
             self.race_stop()
         elif msg.topic == '/OpenRace/events/request_freeflight':
             logging.info("Race ending, starting freeflight")
-            self.race_stop()
+            if self.current_race:
+                self.race_stop()
             self.mqtt_client.publish("/OpenRace/race/freeflight", None, qos=2)
 
         # TODO: handle race timeout (dnf) / max lap time?

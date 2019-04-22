@@ -65,7 +65,7 @@ Race events like pilots passing the finish line and such.
 Race settings like for the race_core.
 ### /OpenRace/status/[tracker_voltage, RSSI/1..8, led_strips]
 Status information mostly from the race tracker
-### /OpenRace/settings/led_control/[start_go_effect, start_countdown_effect, stop_effect, lastlap_effect, passing_wave_delay]
+### /OpenRace/settings/led_control/[start_go_effect, start_countdown_effect, stop_effect, lastlap_effect, passing_wave_delay, wave_color, gate_effect, run_forward_effect, run_backward_effect]
 Race settings like for the led_controller.
 ### /OpenRace/provide/
 This topic is for providing information between components.
