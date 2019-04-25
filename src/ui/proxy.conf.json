@@ -1,0 +1,7 @@
+{
+  "/mqtt": {
+    "target": "ws://localhost:9001/mqtt",
+    "secure": false,
+    "ws": true
+  }
+}
