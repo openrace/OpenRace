@@ -22,7 +22,7 @@ services:
      - "/srv/openrace/log:/app/log/:rw"
      - "/srv/openrace/archive:/app/archive/:rw"
     devices:
-     - "/dev/ttyACM0:/dev/ttyACM0"
+     - "/dev/racetracker:/dev/racetracker"
     environment:
       - MQTT_HOST=${MQTT_HOST}
       - MQTT_USER=${MQTT_USER}

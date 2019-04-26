@@ -15,4 +15,4 @@ RUN pip install -e .
 # EXPOSE 80
 
 # Run app.py when the container launches
-CMD ["race_core", "--device", "/dev/ttyACM0"]
+CMD ["race_core", "--device", "/dev/racetracker"]

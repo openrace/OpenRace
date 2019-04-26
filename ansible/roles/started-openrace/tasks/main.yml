@@ -48,7 +48,14 @@
       DEBUG: false
   become: true
 
-- name: Create a race_core container
+- name: Check if LapRF is plugged in
+  stat:
+    path:  "{{ racerf_device }}"
+  register: device
+  tags:
+     - core
+
+- name: Create a race_core container with LapRF
   docker_container:
     name: race_core
     image: race_core
@@ -59,10 +66,33 @@
       - "/srv/openrace/log:/app/log/:rw"
       - "/srv/openrace/archive:/app/archive/:rw"
     devices:
-      - "/dev/ttyACM0:/dev/ttyACM0"
+      - "/dev/racetracker:/dev/racetracker"
     env:
       MQTT_HOST: mqtt
       MQTT_USER: openrace
       MQTT_PASS: PASSWORD
       DEBUG: false
   become: true
+  when: device.stat.islnk is defined and device.stat.islnk
+  tags:
+     - core
+
+- name: Create a race_core container without LapRF
+  docker_container:
+    name: race_core
+    image: race_core
+    recreate: yes
+    networks:
+      - name: openrace
+    volumes:
+      - "/srv/openrace/log:/app/log/:rw"
+      - "/srv/openrace/archive:/app/archive/:rw"
+    env:
+      MQTT_HOST: mqtt
+      MQTT_USER: openrace
+      MQTT_PASS: PASSWORD
+      DEBUG: false
+  become: true
+  when: device.stat.islnk is not defined
+  tags:
+     - core

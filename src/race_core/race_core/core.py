@@ -328,7 +328,7 @@ class RaceCore:
 
 
 @click.command()
-@click.option('--device', prompt='Device?', default="/dev/ttyACM0")
+@click.option('--device', prompt='Device?', default="/dev/racetracker")
 def main(device):
     logging.info("starting up")
 

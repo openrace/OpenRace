@@ -4,6 +4,7 @@
   roles:
     - { role: docker-install }    # install docker
     - { role: accesspoint }       # setup system as access point
+    - { role: udev-rules }        # setup udev rules
     - { role: python }            # setup python things
     - { role: started-mqtt }
     - { role: build-images }
