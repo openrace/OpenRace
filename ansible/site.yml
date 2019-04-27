@@ -1,6 +1,7 @@
 ## Ansible execution
 # ansible-playbook site.yml
 # --tags or --skip-tags
+# depending on your setup, you need to use --ask-become-pass
 
 ## Available tags:
 # build
