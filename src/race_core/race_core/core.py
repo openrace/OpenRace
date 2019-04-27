@@ -337,7 +337,7 @@ def main(device):
     if os.path.isfile(device):
         tracker = LapRFRaceTracker(os.environ.get('TRACKER_DEVICE', device))
     else:
-        tracker = SimulatorRaceTracker()
+        tracker = SimulatorRaceTracker(None)
 
     rc = RaceCore(
         tracker,

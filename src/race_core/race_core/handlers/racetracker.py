@@ -180,7 +180,9 @@ class LapRFRaceTracker(RaceTracker):
         # logging.info("Request race stop")
         # self.laprf.request_stop_race()
 
-class SimulatorRaceTracker():
+import random
+
+class SimulatorRaceTracker(RaceTracker):
     def __init__(self, device):
         super().__init__("Openrace Tracker Simulator")
 
@@ -188,27 +190,22 @@ class SimulatorRaceTracker():
         self.on_status_packet = Emitter()
         self.on_rf_settings = Emitter()
 
-        self.trigger_timeout = 2
+        self.trigger_timeout = 0.5
         self.min_lap_time = 25
-        self.lastrun = 0
+        self.lastrun = 0.0
 
         self.pilots = {}
 
         # ToDo: Save available pilots to make them fly by from time to time
 
-    def pilot_passed(self):
-        self.on_passing_packet(
-            # pilot_id = pilot_id,
-            # seconds = rtc_time / 1000000.0  #  - (time.time() - self.device_offset),
-        )
-
-    def read_data(self):
+    def read_data(self, stop_if_no_data=False):
         if self.lastrun + self.trigger_timeout > time.time():
             self.lastrun = time.time()
             logging.info("Triggered!")
 
             for pilot in self.pilots.keys():
-                pass
+                if pilot['last_flyby'] > self.min_lap_time and random.randint(0,21) == 1:
+                    self.on_passing_packet(pilot['id'], time.time() + random.random())
 
     def set_pilot(self, id, band=None, freq=None, channel=None, enabled=None, threshold=None):
         if id not in self.pilots.keys():
@@ -230,3 +227,12 @@ class SimulatorRaceTracker():
             self.pilots[id]['enabled'] = enabled
         if threshold is not None:
             self.pilots[id]['threshold'] = threshold
+
+    def request_start_race(self):
+        pass
+
+    def request_stop_race(self):
+        pass
+
+    def request_pilots(self, start, end):
+        pass
