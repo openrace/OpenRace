@@ -8,8 +8,10 @@ from ..common import mklog
 
 
 class RaceTracker:
-    def __init__(self):
+    def __init__(self, tracker_name = "Openrace base class"):
         self.milliwatts = 0
+        self.tracker_name = tracker_name
+        logging.info("Tracker <%s> loading" % self.tracker_name)
         pass
 
     def request_start_race(self):
@@ -31,7 +33,7 @@ from .serialinterface import SerialInterfaceHandler
 
 class LapRFRaceTracker(RaceTracker):
     def __init__(self, device):
-        super().__init__()
+        super().__init__("Immersion RC LapRF")
         self.serial_dev = SerialInterfaceHandler(device)
         self.laprf = lapRFprotocol(self.serial_dev)
         self.serial_dev.data_available.connect(self.laprf.receive_data)

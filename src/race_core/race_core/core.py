@@ -300,6 +300,8 @@ class RaceCore:
                                          self.race_settings['start_delay_in_seconds'], qos=1, retain=True)
                 self.mqtt_client.publish("/OpenRace/race/settings/race_mw",
                                          self.race_settings['race_mw'], qos=1, retain=True)
+                self.mqtt_client.publish("/OpenRace/provide/tracker_name",
+                                         self.tracker.tracker_name, qos=1, retain=True)
 
                 first_run = False
 
@@ -332,8 +334,13 @@ class RaceCore:
 def main(device):
     logging.info("starting up")
 
+    if os.path.isfile(device):
+        tracker = LapRFRaceTracker(os.environ.get('TRACKER_DEVICE', device))
+    else:
+        tracker = SimulatorRaceTracker()
+
     rc = RaceCore(
-        LapRFRaceTracker(os.environ.get('TRACKER_DEVICE', device)),
+        tracker,
         os.environ.get('MQTT_HOST', "mqtt"),
         os.environ.get('MQTT_USER', "openrace"),
         os.environ.get('MQTT_PASS', "PASSWORD"))

@@ -71,6 +71,8 @@ Race settings like for the led_controller.
 This topic is for providing information between components.
 #### /OpenRace/provide/led_strip_categories
 The led_controller provides types of LED strips as a comma separated string. See [LED strip categories table](#led-strip-categories).
+#### /OpenRace/provide/tracker_name
+The currently active race tracker.
 #### /OpenRace/provide/race_mw
 The available milliwatt settings like 25, 200, 600 or 800...
 ### /OpenRace/led/[ID]/category
