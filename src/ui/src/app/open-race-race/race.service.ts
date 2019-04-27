@@ -21,6 +21,10 @@ export class RaceService {
     this.messageQueueClientService.publishToTopicUnretained('/OpenRace/events/request_start', '1');
   }
 
+  startFreeflight() {
+    this.messageQueueClientService.publishToTopicUnretained('/OpenRace/events/request_freeflight', '1');
+  }
+
   stopRace() {
     this.messageQueueClientService.publishToTopicUnretained('/OpenRace/events/request_stop', '1');
   }

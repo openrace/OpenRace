@@ -3,16 +3,18 @@ import { CommonModule } from '@angular/common';
 import { RaceControlComponent } from './race-control/race-control.component';
 import { MaterialModule } from '../material/material.module';
 import { FormsModule } from '@angular/forms';
+import { FreeflightControlComponent } from './freeflight-control/freeflight-control.component';
 
 @NgModule({
-  declarations: [RaceControlComponent],
+  declarations: [RaceControlComponent, FreeflightControlComponent],
   imports: [
     CommonModule,
     MaterialModule,
     FormsModule
   ],
   exports: [
-    RaceControlComponent
+    RaceControlComponent,
+    FreeflightControlComponent
   ]
 })
 export class OpenRaceRaceModule { }
