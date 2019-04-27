@@ -2,6 +2,7 @@
 # vim: set filencoding=utf-8
 
 import logging
+import time
 
 from ..common import Emitter
 from ..common import mklog
@@ -178,3 +179,54 @@ class LapRFRaceTracker(RaceTracker):
         # since we can handle everything ourselves in the core, this is probably not needed
         # logging.info("Request race stop")
         # self.laprf.request_stop_race()
+
+class SimulatorRaceTracker():
+    def __init__(self, device):
+        super().__init__("Openrace Tracker Simulator")
+
+        self.on_passing_packet = Emitter()
+        self.on_status_packet = Emitter()
+        self.on_rf_settings = Emitter()
+
+        self.trigger_timeout = 2
+        self.min_lap_time = 25
+        self.lastrun = 0
+
+        self.pilots = {}
+
+        # ToDo: Save available pilots to make them fly by from time to time
+
+    def pilot_passed(self):
+        self.on_passing_packet(
+            # pilot_id = pilot_id,
+            # seconds = rtc_time / 1000000.0  #  - (time.time() - self.device_offset),
+        )
+
+    def read_data(self):
+        if self.lastrun + self.trigger_timeout > time.time():
+            self.lastrun = time.time()
+            logging.info("Triggered!")
+
+            for pilot in self.pilots.keys():
+                pass
+
+    def set_pilot(self, id, band=None, freq=None, channel=None, enabled=None, threshold=None):
+        if id not in self.pilots.keys():
+            self.pilots[id] = { 'band': None,
+                                'freq': None,
+                                'channel': None,
+                                'enabled': None,
+                                'threshold': None,
+                                'last_flyby': 0
+                                }
+
+        if band is not None:
+            self.pilots[id]['band'] = band
+        if freq is not None:
+            self.pilots[id]['freq'] = freq
+        if channel is not None:
+            self.pilots[id]['band'] = channel
+        if enabled is not None:
+            self.pilots[id]['enabled'] = enabled
+        if threshold is not None:
+            self.pilots[id]['threshold'] = threshold
