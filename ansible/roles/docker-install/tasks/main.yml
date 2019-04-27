@@ -66,9 +66,9 @@
   notify: restart docker
   become: true
 
-- name: Add user pi to the docker group
+- name: "Add user {{ ansible_user_id }} to the docker group"
   user:
-    name: pi
+    name: "{{ ansible_user_id }}"
     groups: docker
     append: yes
   notify: restart docker

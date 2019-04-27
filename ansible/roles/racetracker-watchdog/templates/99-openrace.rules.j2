@@ -1,0 +1,2 @@
+ACTION=="add", SUBSYSTEM=="tty", ATTRS{idVendor}=="04d8", ATTRS{idProduct}=="000a", SYMLINK+="racetracker", RUN+="/usr/bin/install -m 666 -o {{ ansible_user_id }} /dev/null /tmp/racetracker_watchdog.trigger"
+ACTION=="remove", SUBSYSTEM=="tty", ATTRS{idVendor}=="04d8", ATTRS{idProduct}=="000a", RUN+="/usr/bin/install -m 666 -o {{ ansible_user_id }} /dev/null /tmp/racetracker_watchdog.trigger"

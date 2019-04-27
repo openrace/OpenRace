@@ -60,5 +60,6 @@
     regexp: '^#DAEMON_CONF='
     line: 'DAEMON_CONF="/etc/hostapd/hostapd.conf"'
   notify: restart hostapd
+  changed_when: False
   become: true
 

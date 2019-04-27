@@ -8,13 +8,18 @@
 
 - name: adding user pi to group dialout (for the serial connection)
   user:
-    name: pi
+    name: "{{ ansible_user_id }}"
     groups: dialout
     append: yes
   become: true
 
-- name: installing virtual environment and dependencies
-  pip:
-    requirements: /home/pi/OpenRace/requirements.txt
-    virtualenv: /home/pi/OpenRace/venv
-    virtualenv_python: python3
+#- name: installing virtual environment and dependencies
+#  pip:
+#    requirements: "{{ playbook_dir }}/../requirements.txt"
+#    virtualenv: "{{ playbook_dir }}/../venv"
+#    virtualenv_python: python3
+#- name: installing virtual environment and dependencies
+#  pip:
+#    requirements: "{{ playbook_dir }}/../requirements.txt"
+#    virtualenv: "{{ playbook_dir }}/../venv"
+#    virtualenv_python: python3

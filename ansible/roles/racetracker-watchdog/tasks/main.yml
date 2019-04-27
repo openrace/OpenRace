@@ -1,0 +1,25 @@
+---
+
+- name: install openrace racetracker watchdog service
+  template:
+    src: or-rt-watchdog.service.j2
+    dest: /etc/systemd/system/or-rt-watchdog.service
+    owner: root
+    group: root
+    mode: 0644
+  become: True
+
+- name: enable openrace racetracker watchdog service
+  systemd:
+    name: or-rt-watchdog.service
+    state: started
+    enabled: yes
+    daemon-reload: yes
+  become: True
+
+- name: ensuring udev rules
+  template:
+    src: 99-openrace.rules.j2
+    dest: /etc/udev/rules.d/99-openrace.rules
+  become: True
+  notify: reload udev rules

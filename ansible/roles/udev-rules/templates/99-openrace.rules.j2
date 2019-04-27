@@ -1,6 +1,0 @@
-#ACTION=="add", SUBSYSTEM=="tty", ATTRS{idVendor}=="04d8", ATTRS{idProduct}=="000a", SYMLINK+="racetracker", RUN+="/bin/bash {{ playbook_dir  }}/../tools/racetracker_watchdog_trigger.sh"
-#ACTION=="remove", SUBSYSTEM=="tty", ATTRS{idVendor}=="04d8", ATTRS{idProduct}=="000a", RUN+="/bin/bash {{ playbook_dir  }}/../tools/racetracker_watchdog_trigger.sh"
-
-
-ACTION=="add", SUBSYSTEM=="tty", ATTRS{idVendor}=="04d8", ATTRS{idProduct}=="000a", SYMLINK+="racetracker", RUN+="/usr/bin/install -m 666 -o pi -g pi /dev/null /tmp/racetracker_watchdog.trigger"
-ACTION=="remove", SUBSYSTEM=="tty", ATTRS{idVendor}=="04d8", ATTRS{idProduct}=="000a", RUN+="/usr/bin/install -m 666 -o pi -g pi /dev/null /tmp/racetracker_watchdog.trigger"

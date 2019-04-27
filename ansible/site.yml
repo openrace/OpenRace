@@ -1,11 +1,36 @@
+## Ansible execution
+# ansible-playbook site.yml
+# --tags or --skip-tags
+
+## Available tags:
+# build
+# start
+# os
+# mqtt
+# ui
+# led
+# core
+
 ### BASIC
 # basic system updates, packages and settings
 - hosts: all
   roles:
-    - { role: docker-install }    # install docker
-    - { role: accesspoint }       # setup system as access point
-    - { role: udev-rules }        # setup udev rules
-    - { role: python }            # setup python things
-    - { role: started-mqtt }
-    - { role: build-images }
-    - { role: started-openrace }
+    - { role: docker-install,        # install docker
+        tags: ['os'] }
+    - { role: accesspoint,           # setup system as access point only on raspberry pi
+        tags: ['os'],
+        when: ansible_lsb.id|lower() == "raspbian" }
+    - { role: python,
+        tags: ['os'] }               # setup python requirements
+    - { role: synchronized-code,
+        tags: ['build'] }
+    - { role: build-images,
+        tags: ['build'] }
+    - { role: created-openrace-network,
+        tags: ['start'] }
+    - { role: started-mqtt,
+        tags: ['mqtt'] }
+    - { role: started-openrace,
+        tags: ['start'] }
+    - { role: racetracker-watchdog,  # setup udev rules and watchdog
+        tags: ['os'] }

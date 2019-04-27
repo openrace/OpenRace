@@ -1,19 +1,18 @@
 ---
 - name: Create OpenRace Directory
   file:
-    path: /home/pi/OpenRace
+    path: "{{ playbook_dir }}/.."
     state: directory
-    owner: pi
-    group: pi
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_id }}"
     mode: 0777
   become: true
 
 - name: Synchronize code
   synchronize:
     src: ../../../../src
-    dest: /home/pi/OpenRace
+    dest: "{{ playbook_dir }}/.."
     use_ssh_args: yes
     rsync_opts:
       - "--exclude=angular-ui/node_modules"
   become: true
-

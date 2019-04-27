@@ -3,3 +3,8 @@
   docker_network:
     name: openrace
   become: true
+  tags:
+    - ui
+    - mqtt
+    - led
+    - core
