@@ -10,7 +10,7 @@ import atexit
 import paho.mqtt.client as mqtt
 from .common import Pilot
 
-from .handlers.racetracker import LapRFRaceTracker
+from .handlers.racetracker import LapRFRaceTracker, SimulatorRaceTracker
 
 level = logging.INFO
 if os.environ.get("DEBUG", "true").lower() == "true":
