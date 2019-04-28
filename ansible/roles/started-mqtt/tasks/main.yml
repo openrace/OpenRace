@@ -42,6 +42,7 @@
   docker_container:
     name: 'mqtt'
     image: 'eclipse-mosquitto'
+    restart: always
     networks:
       - name: openrace
     state: 'started'

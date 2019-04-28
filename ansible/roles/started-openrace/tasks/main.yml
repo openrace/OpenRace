@@ -38,6 +38,7 @@
     name: led_control
     image: led_control
     recreate: yes
+    restart: always
     networks:
       - name: openrace
     volumes:
@@ -61,6 +62,7 @@
     name: race_core
     image: race_core
     recreate: yes
+    restart: always
     networks:
       - name: openrace
     volumes:
@@ -83,6 +85,7 @@
     name: race_core
     image: race_core
     recreate: yes
+    restart: always
     networks:
       - name: openrace
     volumes:
