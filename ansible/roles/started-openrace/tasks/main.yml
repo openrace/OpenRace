@@ -5,6 +5,7 @@
     name: angular-ui
     image: angular-ui
     recreate: yes
+    restart_policy: "{{ openrace.restart_policy }}"
     networks:
       - name: openrace
     ports:
@@ -38,7 +39,7 @@
     name: led_control
     image: led_control
     recreate: yes
-    restart: always
+    restart_policy: "{{ openrace.restart_policy }}"
     networks:
       - name: openrace
     volumes:
@@ -62,7 +63,7 @@
     name: race_core
     image: race_core
     recreate: yes
-    restart: always
+    restart_policy: "{{ openrace.restart_policy }}"
     networks:
       - name: openrace
     volumes:
@@ -85,7 +86,7 @@
     name: race_core
     image: race_core
     recreate: yes
-    restart: always
+    restart_policy: "{{ openrace.restart_policy }}"
     networks:
       - name: openrace
     volumes:

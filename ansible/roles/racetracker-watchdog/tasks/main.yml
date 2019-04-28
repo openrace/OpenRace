@@ -1,5 +1,15 @@
 ---
 
+- name: install openrace udev restart service
+  template:
+    src: or-udev.service.j2
+    dest: /etc/systemd/system/or-udev.service
+    owner: root
+    group: root
+    mode: 0644
+  become: True
+  when: ansible_lsb.id|lower() == "raspbian"
+
 - name: install openrace racetracker watchdog service
   template:
     src: or-rt-watchdog.service.j2

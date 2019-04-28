@@ -1,0 +1,12 @@
+[Unit]
+Description=Openrace RaceTracker udev restarter
+
+[Service]
+Type=oneshot
+RemainAfterExit=true
+User=root
+Group=root
+ExecStart=/bin/systemctl restart udev.service
+
+[Install]
+WantedBy=multi-user.target
