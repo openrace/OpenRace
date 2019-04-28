@@ -199,13 +199,16 @@ class SimulatorRaceTracker(RaceTracker):
         # ToDo: Save available pilots to make them fly by from time to time
 
     def read_data(self, stop_if_no_data=False):
-        if self.lastrun + self.trigger_timeout > time.time():
+        if self.lastrun + self.trigger_timeout < time.time():
             self.lastrun = time.time()
-            logging.info("Triggered!")
+            logging.debug("Triggered!")
 
-            for pilot in self.pilots.keys():
-                if pilot['last_flyby'] > self.min_lap_time and random.randint(0,21) == 1:
-                    self.on_passing_packet(pilot['id'], time.time() + random.random())
+            for id in self.pilots.keys():
+                if 'enabled' in self.pilots[id].keys():
+                    if self.pilots[id]['enabled']:
+                        if self.pilots[id]['last_flyby'] < self.min_lap_time + time.time() and random.randint(0,21) == 1:
+                            self.pilots[id]['last_flyby'] = time.time()
+                            self.on_passing_packet(id, time.time() + random.random())
 
     def set_pilot(self, id, band=None, freq=None, channel=None, enabled=None, threshold=None):
         if id not in self.pilots.keys():
@@ -214,7 +217,7 @@ class SimulatorRaceTracker(RaceTracker):
                                 'channel': None,
                                 'enabled': None,
                                 'threshold': None,
-                                'last_flyby': 0
+                                'last_flyby': 0.0
                                 }
 
         if band is not None:
@@ -235,4 +238,27 @@ class SimulatorRaceTracker(RaceTracker):
         pass
 
     def request_pilots(self, start, end):
-        pass
+
+        ret_pilots = [{'id': 1,
+                       'frequency': 5740,
+                       'enabled': 1,
+                       'band': 2,
+                       'channel': 1},
+                      {'id': 2,
+                       'frequency': 5780,
+                       'enabled': 1,
+                       'band': 2,
+                       'channel': 3},
+                      {'id': 3,
+                       'frequency': 5820,
+                       'enabled': 1,
+                       'band': 2,
+                       'channel': 5},
+                      {'id': 4,
+                       'frequency': 5860,
+                       'enabled': 1,
+                       'band': 2,
+                       'channel': 7}
+                      ]
+
+        self.on_rf_settings(pilots=ret_pilots)
