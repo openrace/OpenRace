@@ -4,6 +4,7 @@ openrace:
   ip: 192.168.199.1
   dhcp_from: 192.168.199.10
   dhcp_to: 192.168.199.200
+  build_images: False
 
 hostapd:
   ssid: OpenRace
