@@ -1,9 +1,9 @@
 ---
 
-- name: Create an angular-ui container
+- name: Create an ui container
   docker_container:
-    name: angular-ui
-    image: angular-ui
+    name: ui
+    image: openrace/ui:1.0.0
     recreate: yes
     restart_policy: "{{ openrace.restart_policy }}"
     networks:
