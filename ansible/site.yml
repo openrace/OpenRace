@@ -4,7 +4,6 @@
 # depending on your setup, you need to use --ask-become-pass
 
 ## Available tags:
-# build
 # start
 # os
 # mqtt
@@ -24,9 +23,9 @@
     - { role: python,
         tags: ['os'] }               # setup python requirements
     - { role: synchronized-code,
-        tags: ['build'] }
+        when: openrace.build_images == True }
     - { role: build-images,
-        tags: ['build'] }
+        when: openrace.build_images == True }
     - { role: created-openrace-network,
         tags: ['start'] }
     - { role: started-mqtt,
