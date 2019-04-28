@@ -332,9 +332,9 @@ class RaceCore:
 @click.command()
 @click.option('--device', prompt='Device?', default="/dev/racetracker")
 def main(device):
-    logging.info("starting up")
+    logging.info("OpenRace core starting up")
 
-    if os.path.isfile(device):
+    if os.path.exists(device):
         tracker = LapRFRaceTracker(os.environ.get('TRACKER_DEVICE', device))
     else:
         tracker = SimulatorRaceTracker(None)
