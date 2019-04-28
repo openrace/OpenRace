@@ -204,11 +204,11 @@ class SimulatorRaceTracker(RaceTracker):
             logging.debug("Triggered!")
 
             for id in self.pilots.keys():
-                if 'enabled' in self.pilots[id].keys():
-                    if self.pilots[id]['enabled']:
-                        if self.pilots[id]['last_flyby'] < self.min_lap_time + time.time() and random.randint(0,21) == 1:
-                            self.pilots[id]['last_flyby'] = time.time()
-                            self.on_passing_packet(id, time.time() + random.random())
+                if self.pilots[id]['enabled']:
+                    if self.pilots[id]['last_flyby'] + self.min_lap_time < time.time():
+                        if random.randint(0,10) == 1:
+                            self.pilots[id]['last_flyby'] = time.time() + random.random() * 2
+                            self.on_passing_packet(id, time.time())
 
     def set_pilot(self, id, band=None, freq=None, channel=None, enabled=None, threshold=None):
         if id not in self.pilots.keys():
