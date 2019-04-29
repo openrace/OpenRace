@@ -74,13 +74,40 @@
   notify: restart docker
   become: true
 
-- name: installing python 2 pip for ansible
+- name: installing python 2 pip for ansible and dependencies
   package:
-    name: python-pip
+    name: "{{ item }}"
     state: present
+  with_items:
+    - python-pip
+    - docker-py
   become: true
 
-- name: install dependency
-  pip:
-    name: docker-py
-  become: true
+- name: starting and enabling docker-ce service
+  systemd:
+    name: docker.service
+    state: started
+    enabled: yes
+
+- name: copy docker prune service
+  template:
+    src: docker-prune.service.j2
+    dest: /etc/systemd/system/docker-prune.service
+    owner: root
+    group: root
+    mode: 0644
+
+- name: copy docker prune timer
+  template:
+    src: docker-prune.timer.j2
+    dest: /etc/systemd/system/docker-prune.timer
+    owner: root
+    group: root
+    mode: 0644
+
+- name: enable docker prune timer
+  systemd:
+    name: docker-prune.timer
+    state: started
+    enabled: yes
+    daemon_reload: yes
