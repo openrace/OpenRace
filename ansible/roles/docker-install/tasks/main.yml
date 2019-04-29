@@ -87,6 +87,7 @@
     name: docker.service
     state: started
     enabled: yes
+  become: true
 
 - name: copy docker prune service
   template:
@@ -95,6 +96,7 @@
     owner: root
     group: root
     mode: 0644
+  become: true
 
 - name: copy docker prune timer
   template:
@@ -103,6 +105,7 @@
     owner: root
     group: root
     mode: 0644
+  become: true
 
 - name: enable docker prune timer
   systemd:
@@ -110,3 +113,6 @@
     state: started
     enabled: yes
     daemon_reload: yes
+  become: true
+
+
