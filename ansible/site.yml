@@ -19,7 +19,7 @@
         tags: ['os'] }
     - { role: accesspoint,           # setup system as access point only on raspberry pi
         tags: ['os'],
-        when: ansible_lsb.id|lower() == "raspbian" }
+        when: '"wlan0" in ansible_interfaces' }
     - { role: python,
         tags: ['os'] }               # setup python requirements
     - { role: synchronized-code,
