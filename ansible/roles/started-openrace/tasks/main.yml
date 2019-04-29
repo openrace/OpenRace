@@ -9,7 +9,7 @@
     networks:
       - name: openrace
     ports:
-      "5001:80"
+      "80:80"
     env:
       MQTT_WEBSOCKETS_HOST: mqtt:9001
   become: true
