@@ -69,7 +69,7 @@ class LedController:
             'lastlap_effect': "Z;7;3;100;0;255;255;255;0;0;0",
             'passing_wave_delay': 0.2,
             'wave_color': "100;100;100",
-            'gate_effect': "a;100;10",
+            'gate_effect': "9;100;10",
             'run_forward_effect': "7;3;100;0;105;0;0;0;0;0",
             'run_backward_effect': "7;3;100;1;105;0;0;0;0;0"
         }
@@ -225,7 +225,7 @@ class LedController:
         self.led_wave(self.led_settings['wave_color'], "Manual LED Wave")
 
     def on_strip_category(self, client, userdata, msg):
-        strip_mac = msg.topic.split("/")[-1]
+        strip_mac = msg.topic.split("/")[-2]
         logging.debug("Recieved LED strip category <%s> for <%s>" % (msg.payload, strip_mac))
         for strip in self.led_strips:
             if strip.mac == strip_mac:
