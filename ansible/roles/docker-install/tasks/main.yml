@@ -80,7 +80,6 @@
     state: present
   with_items:
     - python-pip
-    - docker-py
   become: true
 
 - name: starting and enabling docker-ce service
