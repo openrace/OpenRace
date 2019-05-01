@@ -1,18 +1,18 @@
 # Use an official Python runtime as a parent image
-FROM python:3-slim
+FROM python:3-slim as builder
 
-# Set the working directory to /app
-WORKDIR /app
+RUN mkdir /install
+WORKDIR /install
 
-# Copy the current directory contents into the container at /app
-COPY . /app
+COPY requirements.txt /requirements.txt
 
 # Install any needed packages specified in requirements.txt
-RUN pip install --trusted-host pypi.python.org -r requirements.txt
-RUN pip install -e .
+RUN pip install --trusted-host pypi.python.org --install-option="--prefix=/install" -r /requirements.txt
 
-# Make port 80 available to the world outside this container
-# EXPOSE 80
+FROM python:3-alpine
 
-# Run app.py when the container launches
-CMD ["race_core", "--device", "/dev/racetracker"]
+COPY --from=builder /install /usr/local
+COPY race_core /race_core
+WORKDIR /
+
+CMD ["python", "-m", "race_core.core", "--device", "/dev/racetracker"]
