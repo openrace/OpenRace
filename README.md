@@ -374,6 +374,17 @@ provide the service names together with the `no-deps` flag. Example:
 docker-compose up --no-deps ui race_core
 ```
 
+## Pushing cross-platform images
+To support bath amd64 and arm32v7 we create both images and then create and push a manifest list image as well.
+The generation is scripted in tools/publish_docker_images.sh and one can use the following command on a Windows
+development machine (without sh support) to run the shell script within a container.
+```
+sudo docker run -it --rm  --privileged \
+    -v ~/Source/private/OpenRace:/OpenRace/ -w /OpenRace/tools/ \
+    -v /var/run/docker.sock:/var/run/docker.sock \
+    docker sh /OpenRace/tools/publish_docker_images.sh
+```
+
 # Questions and answers
 * **Q:** Why do you use docker?
 
