@@ -10,8 +10,8 @@ COPY . .
 
 RUN npm run build
 
-# Stage 2
-FROM amd64/nginx:1.15.12-alpine
+# IMPORTANT: naming 'as base' is used by cross-platform image publication
+FROM nginx:1.15.12-alpine as base
 
 COPY --from=node /usr/src/app/dist/angular-ui /usr/share/nginx/html
 
