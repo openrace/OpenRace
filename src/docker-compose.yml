@@ -16,13 +16,11 @@ services:
       context: "race_core/"
     depends_on:
       - "mqtt"
-    links:
-      - "mqtt"
     volumes:
      - "/srv/openrace/log:/app/log/:rw"
      - "/srv/openrace/archive:/app/archive/:rw"
-    devices:
-     - "/dev/racetracker:/dev/racetracker"
+#    devices:
+#     - "/dev/racetracker:/dev/racetracker"
     environment:
       - MQTT_HOST=${MQTT_HOST}
       - MQTT_USER=${MQTT_USER}
@@ -35,8 +33,6 @@ services:
       context: "led_control/"
     depends_on:
       - "mqtt"
-    links:
-      - "mqtt"
     volumes:
      - "/srv/openrace/log:/app/log/:rw"
     environment:
@@ -45,15 +41,13 @@ services:
       - MQTT_PASS=${MQTT_PASS}
       - DEBUG=${DEBUG}
 
-#  angular-ui:
-#    restart: always
-#    build:
-#      context: "angular-ui/"
-#    depends_on:
-#        - "mqtt"
-#    links:
-#        - "mqtt"
-#    ports:
-#      - "5001:80"
-#    environment:
-#      - MQTT_WEBSOCKETS_HOST=mqtt:9001
+ ui:
+    restart: always
+    build:
+      context: "ui/"
+    depends_on:
+        - "mqtt"
+    ports:
+      - "5001:80"
+    environment:
+      - MQTT_WEBSOCKETS_HOST=${MQTT_HOST}:9001

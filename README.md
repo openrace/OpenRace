@@ -367,6 +367,13 @@ You have to give the Bluetooth device to the container:
 **Notice:** Thanks to Yann Oeffner, we where provided with the official protocol implementation for LapRF. Thank you
 very much!
 
+# Development
+By default `docker-compose up` will bring up all the service. To run only selected services via docker-compose one can 
+provide the service names together with the `no-deps` flag. Example:
+```
+docker-compose up --no-deps ui race_core
+```
+
 # Questions and answers
 * **Q:** Why do you use docker?
 
