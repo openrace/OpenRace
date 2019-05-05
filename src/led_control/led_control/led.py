@@ -70,8 +70,8 @@ class LedController:
             'passing_wave_delay': 0.2,
             'wave_color': "100;100;100",
             'gate_effect': "9;100;10",
-            'run_forward_effect': "b;3;100;0;100;10",
-            'run_backward_effect': "b;3;100;1;100;10"
+            'run_forward_effect': "b;3;100;0;100;30",
+            'run_backward_effect': "b;3;100;1;100;30"
         }
 
         # led strip categories
