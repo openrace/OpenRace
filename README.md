@@ -96,6 +96,33 @@ Each LED strip is listening to his own topic here. See the
 ### /d1ws2812/discovery/[LED strip MAC]
 All strips reporting in are publishing here
 
+# Development environment
+By default `docker-compose up` will bring up all the service. To run only selected services via docker-compose one can 
+provide the service names together with the `no-deps` flag. Example:
+```
+docker-compose up --no-deps ui race_core
+```
+
+## Pushing cross-platform images
+To support bath amd64 and arm32v7 we create both images and then create and push a manifest list image as well.
+The generation is scripted in tools/publish_docker_images.sh and one can use the following command on a Windows
+development machine (without sh support) to run the shell script within a container.
+```
+sudo docker run -it --rm  --privileged \
+    -v ~/Source/private/OpenRace:/OpenRace/ -w /OpenRace/tools/ \
+    -v /var/run/docker.sock:/var/run/docker.sock \
+    docker sh /OpenRace/tools/publish_docker_images.sh
+```
+
+# Questions and answers
+* **Q:** Why do you use docker?
+
+  **A:** The aim of this project is, to provide a simple solution to everyone wanting to organize FPV (fun) races.
+  Docker makes it easy for everyone to use this project.
+
+* **Q:** Where can I see all DHCP leases?
+
+  **A:** `cat /var/lib/misc/dnsmasq.leases`
 
 # Tables
 ## LED strip categories
@@ -195,202 +222,8 @@ The ID is the internally used value in MQTT.
 * SETTINGS_MIN_LAP_TIME
 * SETTINGS_ENABLED_MODULES
 
-# Manual Setup (Legacy documentation, please ignore!)
 
-The basis for this project is a  RaspberryPi 3 B+ with a updated [Raspbian](http://www.raspbian.org/).
+### Thanks
 
-## Install docker on RaspberryPi
-*Based on [freecodecamp.org](https://medium.freecodecamp.org/the-easy-way-to-set-up-docker-on-a-raspberry-pi-7d24ced073ef)*
-
-```bash
-curl -fsSL get.docker.com -o get-docker.sh && sh get-docker.sh
-sudo groupadd docker
-sudo gpasswd -a pi docker
-```
-
-Test the setup with:
-```bash
-docker run hello-world
-```
-
-## Configure the RaspberryPi as a access point
-*Based on [thepi.io](https://thepi.io/how-to-use-your-raspberry-pi-as-a-wireless-access-point/)*
-
-
-Install required packages:
-
-```bash
-sudo apt install hostapd dnsmasq
-```
-
-Stop the services to edit the configuration files:
-```bash
-sudo systemctl stop hostapd
-sudo systemctl stop dnsmasq
-```
-
-Configure the RaspberryPis network by editing the file `/etc/dhcpcd.conf`
-```bash
-sudo nano /etc/dhcpcd.conf
-```
-and adding the following block at the end
-```
-interface wlan0
-static ip_address=192.168.0.10/24
-denyinterfaces eth0
-denyinterfaces wlan0
-```
-
-Configure the DHCP server (dnsmasq) by editing the file `/etc/dnsmasq.conf`
-```bash
-sudo mv /etc/dnsmasq.conf /etc/dnsmasq.conf.orig
-sudo nano /etc/dnsmasq.conf
-```
-and add the following block to it
-```
-interface=wlan0
-  dhcp-range=192.168.0.11,192.168.0.30,255.255.255.0,24h
-```
-
-Configure the access point (hostapd)
-```bash
-sudo nano /etc/hostapd/hostapd.conf
-```
-and add the following block to it
-```
-interface=wlan0
-bridge=br0
-hw_mode=g
-channel=7
-wmm_enabled=0
-macaddr_acl=0
-auth_algs=1
-ignore_broadcast_ssid=0
-wpa=2
-wpa_key_mgmt=WPA-PSK
-wpa_pairwise=TKIP
-rsn_pairwise=CCMP
-ssid=OpenRace
-wpa_passphrase=PASSWORD
-```
-**Attention**: You have to change the `PASSWORD` to something only you know. You will have to use the same one for the
-d1ws2812mqtt!
-
-Tell hostapd where to find our configuration file by editing its configuration `/etc/default/hostapd`
-```bash
-sudo nano /etc/default/hostapd
-```
-file and look for the line `#DAEMON_CONF=””`and change it to:
-```
-DAEMON_CONF="/etc/hostapd/hostapd.conf"
-```
-
-### Optional
-
-The following configuration is only required, if you want to use the RaspberryPis WiFi for internet connectivity over
-the LAN cable. For example if you use a tablet or phone (which requires internet) to control the system. OpenRace and
-d1ws2812mqtt are not depending on internet access.
-
-Configure traffic forwarding by editing the file `/etc/sysctl.conf`
-```bash
-sudo nano /etc/sysctl.conf
-```
-and replace
-```
-#net.ipv4.ip_forward=1
-```
-with
-```
-net.ipv4.ip_forward=1
-```
-
-Now you need to add a iptable rule to forward the traffic
-```bash
-sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
-```
-and save it to a file
-```bash
-sudo sh -c "iptables-save > /etc/iptables.ipv4.nat"
-```
-finall ymake it persistent by adding this in `/etc/rc.local` before the line `exit 0`
-```
-iptables-restore < /etc/iptables.ipv4.nat
-```
-
-
-Finally, configure the network bridge by first installing `bridge-utils`
-```bash
-sudo apt install bridge-utils
-```
-by creating the bridge interface
-```bash
-sudo brctl addbr br0
-```
-and connecting the `eth0` interface to the bridge
-```bash
-sudo brctl addif br0 eth0
-```
-At last, the bridge needs to be added to the network configuration by editing `/etc/network/interfaces` with
-```bash
-sudo nano /etc/network/interfaces
-```
-and adding this block at the end
-```
-auto br0
-iface br0 inet manual
-bridge_ports eth0 wlan0
-```
-
-To enable the internet up link, reboot your RaspberryPi with
-```bash
-sudo reboot
-```
-
-
-## Mosquitto
-*Based on and using [pascaldevink/rpi-mosquitto](https://github.com/pascaldevink/rpi-mosquitto)*
-
-```bash
-docker run -tip 1883:1883 -p 9001:9001 pascaldevink/rpi-mosquitto
-```
-
-**Notice:** MQTT should be configured with a password for better security. See the source how to do this.
-
-
-## Race controller
-
-You have to give the Bluetooth device to the container:
-[Source](https://stackoverflow.com/questions/24225647/docker-a-way-to-give-access-to-a-host-usb-or-serial-device/24231872#24231872)
-
-### LapRF
-
-**Notice:** Thanks to Yann Oeffner, we where provided with the official protocol implementation for LapRF. Thank you
+**Notice:** Thanks to Yann Oeffner, we where provided with parts of the official protocol implementation for LapRF. Thank you
 very much!
-
-# Development
-By default `docker-compose up` will bring up all the service. To run only selected services via docker-compose one can 
-provide the service names together with the `no-deps` flag. Example:
-```
-docker-compose up --no-deps ui race_core
-```
-
-## Pushing cross-platform images
-To support bath amd64 and arm32v7 we create both images and then create and push a manifest list image as well.
-The generation is scripted in tools/publish_docker_images.sh and one can use the following command on a Windows
-development machine (without sh support) to run the shell script within a container.
-```
-sudo docker run -it --rm  --privileged \
-    -v ~/Source/private/OpenRace:/OpenRace/ -w /OpenRace/tools/ \
-    -v /var/run/docker.sock:/var/run/docker.sock \
-    docker sh /OpenRace/tools/publish_docker_images.sh
-```
-
-# Questions and answers
-* **Q:** Why do you use docker?
-
-  **A:** The aim of this project is, to provide a simple solution to everyone wanting to organize FPV (fun) races.
-  Docker makes it easy for everyone to use this project.
-
-* **Q:** Where can I see all DHCP leases?
-
-  **A:** `cat /var/lib/misc/dnsmasq.leases`
