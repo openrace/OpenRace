@@ -7,8 +7,8 @@ services:
       - "1883:1883"
       - "9001:9001"
     volumes:
-      - "/srv/mqtt/config/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro"
-      - "/srv/mqtt/data:/mosquitto/data:rw"
+      - "./dev-environment/mqtt/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro"
+      - "./dev-environment/mqtt/mqtt-users.txt:/mosquitto/data/mqtt-users.txt:ro"
 
   race_core:
     restart: always
