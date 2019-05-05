@@ -41,7 +41,7 @@ services:
       - MQTT_PASS=${MQTT_PASS}
       - DEBUG=${DEBUG}
 
- ui:
+  ui:
     restart: always
     build:
       context: "ui/"
