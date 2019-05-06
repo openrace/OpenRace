@@ -23,8 +23,4 @@ export class EditLedStripComponent implements OnInit {
   updateLedStrip() {
     this.ledStripService.updateLedStripCategory(this.ledStrip);
   }
-
-  testFlashLedStrip() {
-    this.ledStripService.testFlashLedStrip(this.ledStrip.id);
-  }
 }
