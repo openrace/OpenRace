@@ -1,9 +1,23 @@
 ---
 
+- name: selecting self built images
+  set_fact:
+   ui_image: "openrace/ui:{{ openrace.version }}"
+   led_image: led_control
+   core_image: race_core
+  when: openrace.build_images
+
+- name: selecting dockerhub images
+  set_fact:
+   ui_image: "openrace/ui:{{ openrace.version }}"
+   led_image: "openrace/led_control:{{ openrace.version }}"
+   core_image: "openrace/race_core:{{ openrace.version }}"
+  when: not openrace.build_images
+
 - name: Create an ui container
   docker_container:
     name: ui
-    image: openrace/ui:1.0.0
+    image: "{{ ui_image }}"
     recreate: yes
     restart_policy: "{{ openrace.restart_policy }}"
     networks:
@@ -37,7 +51,7 @@
 - name: Create a led_control container
   docker_container:
     name: led_control
-    image: led_control
+    image: "{{ led_image }}"
     recreate: yes
     restart_policy: "{{ openrace.restart_policy }}"
     networks:
@@ -53,7 +67,7 @@
 
 - name: Check if LapRF is plugged in
   stat:
-    path:  "{{ racerf_device }}"
+    path:  "{{ openrace.racerf_device }}"
   register: device
   tags:
      - core
@@ -61,7 +75,7 @@
 - name: Create a race_core container with LapRF
   docker_container:
     name: race_core
-    image: race_core
+    image: "{{ core_image }}"
     recreate: yes
     restart_policy: "{{ openrace.restart_policy }}"
     networks:
@@ -70,7 +84,7 @@
       - "/srv/openrace/log:/app/log/:rw"
       - "/srv/openrace/archive:/app/archive/:rw"
     devices:
-      - "{{ racerf_device }}:{{ racerf_device }}"
+      - "{{ openrace.racerf_device }}:{{ openrace.racerf_device }}"
     env:
       MQTT_HOST: mqtt
       MQTT_USER: openrace
@@ -84,7 +98,7 @@
 - name: Create a race_core container without LapRF
   docker_container:
     name: race_core
-    image: race_core
+    image: "{{ core_image }}"
     recreate: yes
     restart_policy: "{{ openrace.restart_policy }}"
     networks:

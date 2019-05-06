@@ -23,9 +23,9 @@
     - { role: python,
         tags: ['os'] }               # setup python requirements
     - { role: synchronized-code,
-        when: openrace.build_images == True }
+        when: openrace.build_images }
     - { role: build-images,
-        when: openrace.build_images == True }
+        when: openrace.build_images }
     - { role: created-openrace-network,
         tags: ['start'] }
     - { role: started-mqtt,
