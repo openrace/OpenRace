@@ -7,7 +7,7 @@ openrace:
   build_images: false
   restart_policy: always
   racerf_device: /dev/racetracker
-  version: 1.0.0
+  version: 1.0.1
 
 hostapd:
   ssid: OpenRace

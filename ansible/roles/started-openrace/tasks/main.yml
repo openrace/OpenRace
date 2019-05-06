@@ -3,18 +3,18 @@
 - name: selecting self built images
   set_fact:
    ui_image: "openrace/ui:{{ openrace.version }}"
-   led_image: led_control
-   core_image: race_core
+   led_control_image: led_control
+   race_core_image: race_core
   when: openrace.build_images
 
-- name: selecting dockerhub images
+- name: "selecting dockerhub images with version {{ openrace.version }}"
   set_fact:
    ui_image: "openrace/ui:{{ openrace.version }}"
-   led_image: "openrace/led_control:{{ openrace.version }}"
-   core_image: "openrace/race_core:{{ openrace.version }}"
+   led_control_image: "openrace/led_control:{{ openrace.version }}"
+   race_core_image: "openrace/race_core:{{ openrace.version }}"
   when: not openrace.build_images
 
-- name: Create an ui container
+- name: "Create ui container from {{ ui_image }}"
   docker_container:
     name: ui
     image: "{{ ui_image }}"
@@ -48,10 +48,10 @@
     mode: 0777
   become: true
 
-- name: Create a led_control container
+- name: "Create led_control container from {{ led_control_image }}"
   docker_container:
     name: led_control
-    image: "{{ led_image }}"
+    image: "{{ led_control_image }}"
     recreate: yes
     restart_policy: "{{ openrace.restart_policy }}"
     networks:
@@ -72,10 +72,10 @@
   tags:
      - core
 
-- name: Create a race_core container with LapRF
+- name: "Create race_core container with LapRF from {{ race_core_image }}"
   docker_container:
     name: race_core
-    image: "{{ core_image }}"
+    image: "{{ race_core_image }}"
     recreate: yes
     restart_policy: "{{ openrace.restart_policy }}"
     networks:
@@ -95,10 +95,10 @@
   tags:
      - core
 
-- name: Create a race_core container without LapRF
+- name: "Create race_core container without LapRF from {{ race_core_image }}"
   docker_container:
     name: race_core
-    image: "{{ core_image }}"
+    image: "{{ race_core_image }}"
     recreate: yes
     restart_policy: "{{ openrace.restart_policy }}"
     networks:
