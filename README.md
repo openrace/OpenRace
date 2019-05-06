@@ -105,20 +105,20 @@ docker-compose up --no-deps ui race_core
 Please keep in mind, that some settings are set to development defaults like the MQTT user and password.
 
 ## Pushing cross-platform images
-To support bath amd64 and arm32v7 we create both images and then create and push a manifest list image as well.
-The generation is scripted in `tools/publish_docker_images.sh` and one can use the following command on a Windows
-development machine (without sh support) to run the shell script within a container. To use this, you need to install
-Docker and need to be logged in to docker hub. If you like to use another MQTT service/container, you have to
-edit the `.env` file.
-```
-$ORPath = Get-Location
-docker run -it --rm  --privileged -v ${ORPath}:/OpenRace/ -w /OpenRace/tools/ -v /var/run/docker.sock:/var/run/docker.sock docker sh /OpenRace/tools/publish_docker_images.sh
-```
-Depending on your cli version, you need to enable experimantal cli features. For Windows, the file is in
-`%userprofile%\.docker\config.json` on linux in `~/.docker/config.json`. You have to add the option:
-```
-"experimental": "enabled"
-```
+To support bath amd64 and arm32v7 we create both images and then create and push a manifest list image as well. The
+generation is scripted in `tools/publish_docker_images.sh`. The following configurations might be necessary:
+* Logging in to DockerHub to publish images with `docker login`
+* Depending on your cli version, you need to enable experimental cli features by adding `"experimental": "enabled"` to
+your `~/.docker/config.json`.
+
+### Windows dev environment
+For Windows, the Linux Subsystem for Windows is the
+easiest way to use this script.  To prepare your Windows, follow the following two Links:
+* [Windows Subsystem for Linux Installation Guide for Windows 10](https://docs.microsoft.com/en-us/windows/wsl/install-win10)
+* [Installing the Docker client on Windows Subsystem for Linux (Ubuntu)](https://medium.com/@sebagomez/installing-the-docker-client-on-ubuntus-windows-subsystem-for-linux-612b392a44c4)
+
+### Different MQTT
+If you like to use another MQTT service/container, you can edit the `src/.env` file.
 
 # Questions and answers
 * **Q:** Why do you use docker?
