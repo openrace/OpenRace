@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -e
+
 IMAGE_VERSION="1.0.1"
 
 for SERVICE in ui race_core led_control
@@ -10,7 +12,7 @@ do
     # https://github.com/gliderlabs/docker-alpine/issues/298
     # https://github.com/gliderlabs/docker-alpine/pull/484
     # thanks alpine linux for arm32v6 -.-
-    cat ../src/${SERVICE}/Dockerfile | sed '/as base/ s/FROM /FROM arm32v6\//g' | docker build -f - -t openrace/${SERVICE}:${IMAGE_VERSION}-arm32v7 ../src/${SERVICE}/
+    cat ../src/${SERVICE}/Dockerfile | sed '/as base/ s/FROM /FROM arm32v7\//g' | docker build -f - -t openrace/${SERVICE}:${IMAGE_VERSION}-arm32v7 ../src/${SERVICE}/
     docker push openrace/${SERVICE}:${IMAGE_VERSION}-arm32v7
 
     docker manifest create openrace/${SERVICE}:${IMAGE_VERSION} openrace/${SERVICE}:${IMAGE_VERSION}-amd64 openrace/${SERVICE}:${IMAGE_VERSION}-arm32v7

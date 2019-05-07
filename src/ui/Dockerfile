@@ -11,7 +11,7 @@ COPY . .
 RUN npm run build
 
 # IMPORTANT: naming 'as base' is used by cross-platform image publication
-FROM nginx:1.15.12-alpine as base
+FROM nginx:1.15.12 as base
 
 COPY --from=node /usr/src/app/dist/angular-ui /usr/share/nginx/html
 
