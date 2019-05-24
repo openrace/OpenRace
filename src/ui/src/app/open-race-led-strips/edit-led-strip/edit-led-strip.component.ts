@@ -6,7 +6,7 @@ import { LedStripCategoriesService } from '../led-strip-categories.service';
 @Component({
   selector: 'app-edit-led-strip',
   templateUrl: './edit-led-strip.component.html',
-  styleUrls: ['./edit-led-strip.component.css']
+  styleUrls: ['./edit-led-strip.component.scss']
 })
 export class EditLedStripComponent implements OnInit {
   @Input() private ledStrip: LedStrip;

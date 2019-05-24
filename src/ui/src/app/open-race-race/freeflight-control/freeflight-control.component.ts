@@ -6,7 +6,7 @@ import { RaceMwSettingsService } from '../race-mw-settings.service';
 @Component({
   selector: 'app-freeflight-control',
   templateUrl: './freeflight-control.component.html',
-  styleUrls: ['./freeflight-control.component.css']
+  styleUrls: ['./freeflight-control.component.scss']
 })
 export class FreeflightControlComponent implements OnInit {
 

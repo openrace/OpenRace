@@ -6,7 +6,7 @@ import { Pilot } from '../pilot';
 @Component({
   selector: 'app-pilots-list',
   templateUrl: './pilots-list.component.html',
-  styleUrls: ['./pilots-list.component.css']
+  styleUrls: ['./pilots-list.component.scss']
 })
 export class PilotsListComponent implements OnInit {
   private pilots: Pilot[];
