@@ -1,1 +1,4 @@
-@import "~@angular/material/prebuilt-themes/pink-bluegrey.css";
+@import "theme.scss";
+
+@include mat-core();
+@include angular-material-theme($my-theme);
