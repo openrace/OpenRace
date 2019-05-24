@@ -5,7 +5,7 @@ import { Band } from './band';
 @Component({
   selector: 'app-frequency-chooser',
   templateUrl: './frequency-chooser.component.html',
-  styleUrls: ['./frequency-chooser.component.css']
+  styleUrls: ['./frequency-chooser.component.scss']
 })
 export class FrequencyChooserComponent implements OnInit {
 

@@ -7,7 +7,7 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 @Component({
   selector: 'app-led-strips-list',
   templateUrl: './led-strips-list.component.html',
-  styleUrls: ['./led-strips-list.component.css']
+  styleUrls: ['./led-strips-list.component.scss']
 })
 export class LedStripsListComponent implements OnInit {
   ledStrips: LedStrip[] = [];

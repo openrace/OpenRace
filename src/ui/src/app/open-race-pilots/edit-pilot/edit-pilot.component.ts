@@ -5,7 +5,7 @@ import { Pilot } from '../pilot';
 @Component({
   selector: 'app-edit-pilot',
   templateUrl: './edit-pilot.component.html',
-  styleUrls: ['./edit-pilot.component.css']
+  styleUrls: ['./edit-pilot.component.scss']
 })
 export class EditPilotComponent implements OnInit {
   @Input() private pilot: Pilot;
