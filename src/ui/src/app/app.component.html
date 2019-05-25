@@ -1,19 +1,13 @@
-<div fxLayout="column" fxLayoutGap="1em">
+<div fxLayout="column">
   <mat-toolbar color="primary" role="heading">
-    <img src="assets/openrace-logo.png" class="header-logo"/>
+    <div fxLayout fxLayoutGap="24px" fxLayoutAlign="baseline center">
+      <img src="assets/openrace-logo.png" class="header-logo"/>
+        <a mat-button routerLink="/fly"><mat-icon>play_arrow</mat-icon>Fly</a>
+        <a mat-button routerLink="/pilots"><mat-icon>people</mat-icon>Pilots</a>
+      <a mat-button routerLink="/ledstrips"><mat-icon>flare</mat-icon>LED Strips</a>
+    </div>
   </mat-toolbar>
-  <mat-tab-group class="mat-elevation-z8">
-    <mat-tab label="Pilots">
-      <app-pilots-list></app-pilots-list>
-    </mat-tab>
-    <mat-tab label="LED Strips">
-      <app-led-strips-list></app-led-strips-list>
-    </mat-tab>
-    <mat-tab label="Race">
-      <app-race-control></app-race-control>
-    </mat-tab>
-    <mat-tab label="Freeflight">
-      <app-freeflight-control></app-freeflight-control>
-    </mat-tab>
-  </mat-tab-group>
+  <div style="max-width: 768px; padding: 24px;">
+    <router-outlet></router-outlet>
+  </div>
 </div>

@@ -5,7 +5,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {
   MatButtonModule,
   MatCardModule, MatDividerModule, MatExpansionModule,
-  MatFormFieldModule,
+  MatFormFieldModule, MatIconModule,
   MatInputModule,
   MatSelectModule, MatSliderModule, MatSlideToggleModule,
   MatTabsModule,
@@ -13,6 +13,7 @@ import {
 } from '@angular/material';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { FlexLayoutModule } from '@angular/flex-layout';
+
 
 @NgModule({
   declarations: [],
@@ -33,6 +34,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
     DragDropModule,
     MatSlideToggleModule,
     MatSliderModule,
+    MatIconModule,
     FlexLayoutModule,
   ]
 })
