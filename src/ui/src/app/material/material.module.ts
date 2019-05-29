@@ -7,7 +7,7 @@ import {
   MatCardModule, MatDividerModule, MatExpansionModule,
   MatFormFieldModule, MatIconModule,
   MatInputModule,
-  MatSelectModule, MatSliderModule, MatSlideToggleModule,
+  MatSelectModule, MatSidenavModule, MatSliderModule, MatSlideToggleModule,
   MatTabsModule,
   MatToolbarModule
 } from '@angular/material';
@@ -32,6 +32,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
     MatDividerModule,
     MatButtonModule,
     DragDropModule,
+    MatSidenavModule,
     MatSlideToggleModule,
     MatSliderModule,
     MatIconModule,

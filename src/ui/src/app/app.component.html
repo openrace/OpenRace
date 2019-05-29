@@ -1,9 +1,10 @@
 <div fxLayout="column">
-  <mat-toolbar color="primary" role="heading" id="toolbar">
-    <div fxLayout fxLayoutGap="24px" fxLayoutAlign="baseline center">
-      <img src="assets/openrace-logo.png" class="header-logo"/>
-      <h1>OpenRace</h1>
+  <mat-toolbar color="primary" role="heading" id="toolbar" fxLayout fxLayoutGap="24px" fxLayoutAlign="baseline center">
 
+    <img src="assets/openrace-logo.png" class="header-logo" alt="OpenRace"/>
+    <h1>OpenRace</h1>
+
+    <div fxFlex fxHide.lt-sm="true">
       <a mat-button routerLink="/fly" class="main-nav-item">
         <div fxLayout="row" fxLayoutGap="12px" fxLayoutAlign="baseline center">
           <mat-icon>play_arrow</mat-icon>
@@ -23,8 +24,37 @@
         </div>
       </a>
     </div>
+
+    <mat-icon id="responsive-menu" fxHide.gt-xs="true" (click)="sidenav.toggle()">menu</mat-icon>
+
   </mat-toolbar>
-  <div style="max-width: 768px; padding: 24px;">
-    <router-outlet></router-outlet>
-  </div>
+  <mat-sidenav-container fxFlexFill>
+    <mat-sidenav #sidenav position="end" fxLayout="column" opened="false">
+      <div fxLayout="column">
+        <a (click)="sidenav.toggle()" mat-button routerLink="/fly" class="main-nav-item">
+          <div fxLayout="row" fxLayoutGap="12px" fxLayoutAlign="baseline center">
+            <mat-icon>play_arrow</mat-icon>
+            <span>Fly</span>
+          </div>
+        </a>
+        <a (click)="sidenav.toggle()" mat-button routerLink="/pilots" class="main-nav-item">
+          <div fxLayout="row" fxLayoutGap="12px" fxLayoutAlign="baseline center">
+            <mat-icon>people</mat-icon>
+            <span>Pilots</span>
+          </div>
+        </a>
+        <a (click)="sidenav.toggle()" mat-button routerLink="/ledstrips" class="main-nav-item">
+          <div fxLayout="row" fxLayoutGap="12px" fxLayoutAlign="baseline center">
+            <mat-icon>flare</mat-icon>
+            <span>LED Strips</span>
+          </div>
+        </a>
+      </div>
+    </mat-sidenav>
+    <mat-sidenav-content fxFlexFill>
+      <div style="max-width: 768px; padding: 24px;">
+        <router-outlet></router-outlet>
+      </div>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
 </div>
