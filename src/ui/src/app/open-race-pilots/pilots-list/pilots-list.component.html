@@ -1,16 +1,21 @@
-<div fxLayout="column" fxLayoutGap="1em">
-  <mat-expansion-panel *ngFor="let pilot of pilots" class="mat-elevation-z15">
-    <mat-expansion-panel-header >
-      <mat-panel-title fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="start center">
-        <h2>{{pilot.name}} </h2> <div class="mat-caption">(Frequency: {{pilot.frequency}} MHz)</div>
-      </mat-panel-title>
-      <mat-panel-description fxLayout="row-reverse" fxLayoutAlign="start center">
-        <mat-slide-toggle [id]="pilot.id" [checked]="pilot.enabled" color="primary"
-                          (click)="$event.stopPropagation();" (change)="pilotStatusToggled($event)"></mat-slide-toggle>
-      </mat-panel-description>
-    </mat-expansion-panel-header>
+<div fxLayout="column">
+  <h1 fxFlex="grow" class="mat-display-1">Pilots</h1>
+  <div fxLayout="column" fxLayoutGap="1em">
+    <mat-expansion-panel *ngFor="let pilot of pilots" class="mat-elevation-z15">
+      <mat-expansion-panel-header>
+        <mat-panel-title fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="start center">
+          <h2>{{pilot.name}} </h2>
+          <div class="mat-caption">(Frequency: {{pilot.frequency}} MHz)</div>
+        </mat-panel-title>
+        <mat-panel-description fxLayout="row-reverse" fxLayoutAlign="start center">
+          <mat-slide-toggle [id]="pilot.id" [checked]="pilot.enabled" color="primary"
+                            (click)="$event.stopPropagation();"
+                            (change)="pilotStatusToggled($event)"></mat-slide-toggle>
+        </mat-panel-description>
+      </mat-expansion-panel-header>
 
-    <app-edit-pilot [pilot]="pilot"></app-edit-pilot>
-  </mat-expansion-panel>
+      <app-edit-pilot [pilot]="pilot"></app-edit-pilot>
+    </mat-expansion-panel>
+  </div>
 </div>
 
