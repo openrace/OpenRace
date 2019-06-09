@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {
-  MatButtonModule,
+  MatButtonModule, MatButtonToggleModule,
   MatCardModule, MatDividerModule, MatExpansionModule,
   MatFormFieldModule, MatIconModule,
   MatInputModule,
@@ -22,6 +22,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
     CommonModule,
     BrowserModule,
     BrowserAnimationsModule,
+    MatButtonToggleModule,
     MatToolbarModule,
     MatTabsModule,
     MatCardModule,
