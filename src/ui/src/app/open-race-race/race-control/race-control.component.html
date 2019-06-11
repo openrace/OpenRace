@@ -2,29 +2,15 @@
   <div fxLayout="column" fxLayoutGap="8px">
     <div fxLayout="row" fxAlign="center baseline">
       <h1 fxFlex="grow" class="mat-display-1">Fly</h1>
-      <mat-icon fxFlex="auto" fxFlexAlign="baseline">settings</mat-icon>
+      <button mat-icon-button>
+        <mat-icon (click)="openSettings()" fxFlex="auto" fxFlexAlign="baseline">settings</mat-icon>
+      </button>
     </div>
     <span class="mat-subheading-2">Choose your flight mode</span>
     <mat-button-toggle-group name="mode" appearance="legacy" fxLayout="row">
       <mat-button-toggle value="race" checked fxFlex="50%">Race</mat-button-toggle>
       <mat-button-toggle value="freeflight" fxFlex="50%">Freeflight</mat-button-toggle>
     </mat-button-toggle-group>
-    <!--      <mat-form-field>-->
-    <!--        <input type="number" matInput placeholder="Amount of laps" name="amountOfLaps" [(ngModel)]="raceSettings.amountOfLaps"/>-->
-    <!--      </mat-form-field>-->
-    <!--      <mat-form-field>-->
-    <!--        <input type="number" matInput placeholder="Start delay in seconds" name="startDelayInSeconds" [(ngModel)]="raceSettings.startDelayInSeconds"/>-->
-    <!--      </mat-form-field>-->
-    <!--      <mat-form-field>-->
-    <!--        <input type="number" matInput placeholder="Min lap time in seconds" name="minLapTimeInSeconds" [(ngModel)]="raceSettings.minLapTimeInSeconds"/>-->
-    <!--      </mat-form-field>-->
-    <!--      <mat-form-field>-->
-    <!--        <mat-select placeholder="Milliwatt" name="raceMw" [(ngModel)]="raceSettings.raceMw">-->
-    <!--          <mat-option *ngFor="let raceMwSetting of raceMwSettings" [value]="raceMwSetting">{{raceMwSetting}}</mat-option>-->
-    <!--        </mat-select>-->
-    <!--      </mat-form-field>-->
-
-    <!--      <button type="submit" mat-flat-button color="primary">Apply settings</button>-->
 
     <button type="button" mat-raised-button color="primary" (click)="startRace()" fxFlexOffset="24px">Start</button>
   </div>
