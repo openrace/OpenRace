@@ -11,15 +11,19 @@ import { RaceSettingsComponent } from '../race-settings/race-settings.component'
 export class RaceControlComponent implements OnInit {
 
 
-
-  constructor(private raceService: RaceService,  private dialog: MatDialog) {
+  constructor(private raceService: RaceService, private dialog: MatDialog) {
   }
 
   ngOnInit() {
   }
 
   openSettings() {
-    this.dialog.open(RaceSettingsComponent, {});
+    this.dialog.open(RaceSettingsComponent, {
+      width: '600px',
+      position: {
+        top: '96px',
+      }
+    });
   }
 
   startRace() {

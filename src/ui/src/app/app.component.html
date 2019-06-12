@@ -1,7 +1,8 @@
 <div fxLayout="column">
   <mat-toolbar color="primary" role="heading" id="toolbar" fxLayout fxLayoutAlign="baseline center">
     <mat-icon fxHide.gt-xs="true" (click)="sidenav.toggle()">menu</mat-icon>
-    <img src="assets/openrace-logo.png" class="header-logo" alt="OpenRace" fxFlexOffset="56px" fxFlexOffset.lt-sm="32px"  />
+    <img src="assets/openrace-logo.png" class="header-logo" alt="OpenRace" fxFlexOffset="56px"
+         fxFlexOffset.lt-sm="32px"/>
     <span fxFlexOffset="16px">OpenRace</span>
 
     <div fxFlex fxHide.lt-sm="true" fxFlexOffset="70px">
@@ -24,11 +25,9 @@
         </div>
       </a>
     </div>
-
-
   </mat-toolbar>
   <mat-sidenav-container fxFlexFill>
-    <mat-sidenav #sidenav fxLayout="column" opened="false" (click)="sidenav.toggle()" >
+    <mat-sidenav #sidenav fxLayout="column" opened="false" (click)="sidenav.toggle()">
       <div fxLayout="column">
         <a mat-button routerLink="/fly" class="main-nav-item">
           <div fxLayout="row" fxLayoutGap="12px" fxLayoutAlign="baseline center">
@@ -52,7 +51,8 @@
     </mat-sidenav>
     <mat-sidenav-content fxFlexFill>
       <div ngClass="main-content" ngClass.lt-sm="main-content-small">
-        <router-outlet></router-outlet></div>
+        <router-outlet></router-outlet>
+      </div>
     </mat-sidenav-content>
   </mat-sidenav-container>
 </div>
