@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { RaceSettings } from '../race-control/race.settings';
+import { RaceSettings } from './race.settings';
 import { RaceMwSettingsService } from '../race-mw-settings.service';
 import { RaceService } from '../race.service';
 import { MatDialogRef } from '@angular/material';

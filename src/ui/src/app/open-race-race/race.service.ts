@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { MessageQueueClientService } from '../open-race-common/message-queue-client.service';
-import { RaceSettings } from './race-control/race.settings';
+import { RaceSettings } from './race-settings/race.settings';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { QueueMessage } from '../open-race-common/queue-message';
 
