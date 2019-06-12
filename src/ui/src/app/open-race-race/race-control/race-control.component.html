@@ -1,17 +1,15 @@
-<form (ngSubmit)="applyRaceSettings()">
-  <div fxLayout="column" fxLayoutGap="8px">
-    <div fxLayout="row" fxAlign="center baseline">
-      <h1 fxFlex="grow" class="mat-display-1">Fly</h1>
-      <button mat-icon-button>
-        <mat-icon (click)="openSettings()" fxFlex="auto" fxFlexAlign="baseline">settings</mat-icon>
-      </button>
-    </div>
-    <span class="mat-subheading-2">Choose your flight mode</span>
-    <mat-button-toggle-group name="mode" appearance="legacy" fxLayout="row">
-      <mat-button-toggle value="race" checked fxFlex="50%">Race</mat-button-toggle>
-      <mat-button-toggle value="freeflight" fxFlex="50%">Freeflight</mat-button-toggle>
-    </mat-button-toggle-group>
-
-    <button type="button" mat-raised-button color="primary" (click)="startRace()" fxFlexOffset="24px">Start</button>
+<div fxLayout="column" fxLayoutGap="8px">
+  <div fxLayout="row" fxAlign="center baseline">
+    <h1 fxFlex="grow" class="mat-display-1">Fly</h1>
+    <button mat-icon-button>
+      <mat-icon (click)="openSettings()" fxFlex="auto" fxFlexAlign="baseline">settings</mat-icon>
+    </button>
   </div>
-</form>
+  <span class="mat-subheading-2">Choose your flight mode</span>
+  <mat-button-toggle-group name="mode" appearance="legacy" fxLayout="row">
+    <mat-button-toggle value="race" checked fxFlex="50%">Race</mat-button-toggle>
+    <mat-button-toggle value="freeflight" fxFlex="50%">Freeflight</mat-button-toggle>
+  </mat-button-toggle-group>
+
+  <button type="button" mat-raised-button color="primary" (click)="startRace()" fxFlexOffset="24px">Start</button>
+</div>

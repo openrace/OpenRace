@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { RaceService } from '../race.service';
-import { RaceMwSettingsService } from '../race-mw-settings.service';
-import { RaceSettings } from './race.settings';
+import { MatDialog } from '@angular/material';
+import { RaceSettingsComponent } from '../race-settings/race-settings.component';
 
 @Component({
   selector: 'app-race-control',
@@ -10,31 +10,16 @@ import { RaceSettings } from './race.settings';
 })
 export class RaceControlComponent implements OnInit {
 
-  raceMwSettings: number[];
 
-  private raceSettings: RaceSettings = new RaceSettings();
 
-  constructor(private raceService: RaceService, private raceMwSettingsService: RaceMwSettingsService) {
-    this.raceMwSettingsService.raceMwSettings.subscribe(next => this.raceMwSettings = next);
-    this.raceService.raceSettings.subscribe(next => this.raceSettings = next);
+  constructor(private raceService: RaceService,  private dialog: MatDialog) {
   }
 
   ngOnInit() {
   }
 
-  applyRaceSettings() {
-    if (this.raceSettings.amountOfLaps !== undefined) {
-      this.raceService.setAmountOfLaps(this.raceSettings.amountOfLaps);
-    }
-    if (this.raceSettings.minLapTimeInSeconds !== undefined) {
-      this.raceService.setMinLapTime(this.raceSettings.minLapTimeInSeconds);
-    }
-    if (this.raceSettings.startDelayInSeconds !== undefined) {
-      this.raceService.setStartDelay(this.raceSettings.startDelayInSeconds);
-    }
-    if (this.raceSettings.raceMw !== undefined) {
-      this.raceService.setRaceMw(this.raceSettings.raceMw);
-    }
+  openSettings() {
+    this.dialog.open(RaceSettingsComponent, {});
   }
 
   startRace() {

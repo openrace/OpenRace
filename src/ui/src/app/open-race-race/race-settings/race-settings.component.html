@@ -1,0 +1,26 @@
+<h1 mat-dialog-title>Fly settings</h1>
+
+<mat-dialog-content fxLayout="column">
+  <mat-form-field>
+    <input type="number" matInput placeholder="Amount of laps" name="amountOfLaps"
+           [(ngModel)]="raceSettings.amountOfLaps"/>
+  </mat-form-field>
+  <mat-form-field>
+    <input type="number" matInput placeholder="Start delay in seconds" name="startDelayInSeconds"
+           [(ngModel)]="raceSettings.startDelayInSeconds"/>
+  </mat-form-field>
+  <mat-form-field>
+    <input type="number" matInput placeholder="Min lap time in seconds" name="minLapTimeInSeconds"
+           [(ngModel)]="raceSettings.minLapTimeInSeconds"/>
+  </mat-form-field>
+  <mat-form-field>
+    <mat-select placeholder="Milliwatt" name="raceMw" [(ngModel)]="raceSettings.raceMw">
+      <mat-option *ngFor="let raceMwSetting of raceMwSettings" [value]="raceMwSetting">{{raceMwSetting}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <button mat-button mat-dialog-close>Cancel</button>
+  <button mat-raised-button color="primary" (click)="applyRaceSettings()">Apply settings</button>
+</mat-dialog-actions>

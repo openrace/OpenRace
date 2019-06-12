@@ -4,7 +4,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {
   MatButtonModule, MatButtonToggleModule,
-  MatCardModule, MatDividerModule, MatExpansionModule,
+  MatCardModule, MatDialogModule, MatDividerModule, MatExpansionModule,
   MatFormFieldModule, MatIconModule,
   MatInputModule,
   MatSelectModule, MatSidenavModule, MatSliderModule, MatSlideToggleModule,
@@ -23,6 +23,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
     BrowserModule,
     BrowserAnimationsModule,
     MatButtonToggleModule,
+    MatDialogModule,
     MatToolbarModule,
     MatTabsModule,
     MatCardModule,
