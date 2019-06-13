@@ -3,9 +3,9 @@
   <div fxLayout="column" fxLayoutGap="1em">
     <mat-expansion-panel *ngFor="let pilot of pilots" class="mat-elevation-z15">
       <mat-expansion-panel-header>
-        <mat-panel-title fxLayout="row" fxLayoutGap="1em" fxLayoutAlign="start center">
+        <mat-panel-title fxLayout="row" fxLayoutGap="8px" fxLayoutAlign="start center">
           <h2>{{pilot.name}} </h2>
-          <div class="mat-caption">(Frequency: {{pilot.frequency}} MHz)</div>
+          <div class="mat-caption">({{pilot.frequency}} MHz)</div>
         </mat-panel-title>
         <mat-panel-description fxLayout="row-reverse" fxLayoutAlign="start center">
           <mat-slide-toggle [id]="pilot.id" [checked]="pilot.enabled" color="primary"

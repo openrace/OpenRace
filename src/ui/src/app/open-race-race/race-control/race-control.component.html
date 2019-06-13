@@ -1,15 +1,17 @@
 <div fxLayout="column" fxLayoutGap="8px">
-  <div fxLayout="row" fxAlign="center baseline">
-    <h1 fxFlex="grow" class="mat-display-1">Fly</h1>
-    <button mat-icon-button>
-      <mat-icon (click)="openSettings()" fxFlex="auto" fxFlexAlign="baseline">settings</mat-icon>
-    </button>
-  </div>
-  <span class="mat-subheading-2">Choose your flight mode</span>
-  <mat-button-toggle-group name="mode" appearance="legacy" fxLayout="row">
+  <h1 class="mat-display-1">Fly</h1>
+  <span class="mat-subheading-2" fxFlexOffset="32px">Choose your flight mode</span>
+  <mat-button-toggle-group name="mode" fxLayout="row">
     <mat-button-toggle value="race" checked fxFlex="50%">Race</mat-button-toggle>
     <mat-button-toggle value="freeflight" fxFlex="50%">Freeflight</mat-button-toggle>
   </mat-button-toggle-group>
-
+  <mat-expansion-panel fxFlexOffset="8px">
+    <mat-expansion-panel-header>
+      <mat-panel-title fxLayout="row" fxAlign="center baseline" fxLayoutGap="8px">
+        <span>Settings</span>
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+    <app-race-settings></app-race-settings>
+  </mat-expansion-panel>
   <button type="button" mat-raised-button color="primary" (click)="startRace()" fxFlexOffset="24px">Start</button>
 </div>

@@ -1,6 +1,4 @@
-<h1 mat-dialog-title>Fly settings</h1>
-
-<mat-dialog-content fxLayout="column">
+<div fxLayout="column">
   <mat-form-field>
     <input type="number" matInput placeholder="Amount of laps" name="amountOfLaps"
            [(ngModel)]="raceSettings.amountOfLaps"/>
@@ -18,9 +16,6 @@
       <mat-option *ngFor="let raceMwSetting of raceMwSettings" [value]="raceMwSetting">{{raceMwSetting}}</mat-option>
     </mat-select>
   </mat-form-field>
-</mat-dialog-content>
 
-<mat-dialog-actions>
-  <button mat-button mat-dialog-close>Cancel</button>
-  <button mat-raised-button color="primary" (click)="applyRaceSettings()">Apply settings</button>
-</mat-dialog-actions>
+  <button mat-button (click)="applyRaceSettings()">Apply settings</button>
+</div>

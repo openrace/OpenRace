@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { RaceSettings } from './race.settings';
 import { RaceMwSettingsService } from '../race-mw-settings.service';
 import { RaceService } from '../race.service';
-import { MatDialogRef } from '@angular/material';
 
 @Component({
   selector: 'app-race-settings',
@@ -13,7 +12,7 @@ export class RaceSettingsComponent implements OnInit {
   raceSettings: RaceSettings = new RaceSettings();
   raceMwSettings: number[];
 
-  constructor(private raceService: RaceService, private raceMwSettingsService: RaceMwSettingsService, private dialogRef: MatDialogRef<RaceSettingsComponent> ) {
+  constructor(private raceService: RaceService, private raceMwSettingsService: RaceMwSettingsService ) {
     this.raceService.raceSettings.subscribe(next => this.raceSettings = next);
     this.raceMwSettingsService.raceMwSettings.subscribe(next => this.raceMwSettings = next);
   }
@@ -31,8 +30,6 @@ export class RaceSettingsComponent implements OnInit {
     if (this.raceSettings.raceMw !== undefined) {
       this.raceService.setRaceMw(this.raceSettings.raceMw);
     }
-
-    this.dialogRef.close();
   }
 
   ngOnInit() {

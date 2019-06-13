@@ -1,7 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { RaceService } from '../race.service';
-import { MatDialog } from '@angular/material';
-import { RaceSettingsComponent } from '../race-settings/race-settings.component';
 
 @Component({
   selector: 'app-race-control',
@@ -11,19 +9,10 @@ import { RaceSettingsComponent } from '../race-settings/race-settings.component'
 export class RaceControlComponent implements OnInit {
 
 
-  constructor(private raceService: RaceService, private dialog: MatDialog) {
+  constructor(private raceService: RaceService) {
   }
 
   ngOnInit() {
-  }
-
-  openSettings() {
-    this.dialog.open(RaceSettingsComponent, {
-      width: '600px',
-      position: {
-        top: '96px',
-      }
-    });
   }
 
   startRace() {
