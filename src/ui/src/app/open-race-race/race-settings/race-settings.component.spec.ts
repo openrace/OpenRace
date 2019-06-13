@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { FreeflightControlComponent } from './freeflight-control.component';
+import { RaceSettingsComponent } from './race-settings.component';
 
-describe('FreeflightControlComponent', () => {
-  let component: FreeflightControlComponent;
-  let fixture: ComponentFixture<FreeflightControlComponent>;
+describe('RaceSettingsComponent', () => {
+  let component: RaceSettingsComponent;
+  let fixture: ComponentFixture<RaceSettingsComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ FreeflightControlComponent ]
+      declarations: [ RaceSettingsComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(FreeflightControlComponent);
+    fixture = TestBed.createComponent(RaceSettingsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

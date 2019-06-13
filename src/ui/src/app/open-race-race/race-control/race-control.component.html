@@ -1,27 +1,17 @@
-<form (ngSubmit)="applyRaceSettings()">
-  <mat-card>
-    <mat-card-title>Race Control</mat-card-title>
-    <mat-card-content fxLayoutGap="1em">
-      <mat-form-field>
-        <input type="number" matInput placeholder="Amount of laps" name="amountOfLaps" [(ngModel)]="raceSettings.amountOfLaps"/>
-      </mat-form-field>
-      <mat-form-field>
-        <input type="number" matInput placeholder="Start delay in seconds" name="startDelayInSeconds" [(ngModel)]="raceSettings.startDelayInSeconds"/>
-      </mat-form-field>
-      <mat-form-field>
-        <input type="number" matInput placeholder="Min lap time in seconds" name="minLapTimeInSeconds" [(ngModel)]="raceSettings.minLapTimeInSeconds"/>
-      </mat-form-field>
-      <mat-form-field>
-        <mat-select placeholder="Milliwatt" name="raceMw" [(ngModel)]="raceSettings.raceMw">
-          <mat-option *ngFor="let raceMwSetting of raceMwSettings" [value]="raceMwSetting">{{raceMwSetting}}</mat-option>
-        </mat-select>
-      </mat-form-field>
-    </mat-card-content>
-    <mat-card-actions fxLayoutGap="1em" fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign="start center"
-                      fxLayoutAlign.lt-md="start stretch">
-      <button type="submit" mat-flat-button color="primary">Apply settings</button>
-      <button type="button" mat-flat-button color="primary" (click)="stopRace()">Stop Race</button>
-      <button type="button" mat-flat-button color="primary" (click)="startRace()">Start Race</button>
-    </mat-card-actions>
-  </mat-card>
-</form>
+<div fxLayout="column" fxLayoutGap="8px">
+  <h1 class="mat-display-1">Fly</h1>
+  <span class="mat-subheading-2" fxFlexOffset="32px">Choose your flight mode</span>
+  <mat-button-toggle-group name="mode" fxLayout="row">
+    <mat-button-toggle value="race" checked fxFlex="50%">Race</mat-button-toggle>
+    <mat-button-toggle value="freeflight" fxFlex="50%">Freeflight</mat-button-toggle>
+  </mat-button-toggle-group>
+  <mat-expansion-panel fxFlexOffset="8px">
+    <mat-expansion-panel-header>
+      <mat-panel-title fxLayout="row" fxAlign="center baseline" fxLayoutGap="8px">
+        <span>Settings</span>
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+    <app-race-settings></app-race-settings>
+  </mat-expansion-panel>
+  <button type="button" mat-raised-button color="primary" (click)="startRace()" fxFlexOffset="24px">Start</button>
+</div>

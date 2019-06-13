@@ -3,16 +3,17 @@ import { CommonModule } from '@angular/common';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {
-  MatButtonModule,
-  MatCardModule, MatDividerModule, MatExpansionModule,
-  MatFormFieldModule,
+  MatButtonModule, MatButtonToggleModule,
+  MatCardModule, MatDialogModule, MatDividerModule, MatExpansionModule,
+  MatFormFieldModule, MatIconModule,
   MatInputModule,
-  MatSelectModule, MatSliderModule, MatSlideToggleModule,
+  MatSelectModule, MatSidenavModule, MatSliderModule, MatSlideToggleModule,
   MatTabsModule,
   MatToolbarModule
 } from '@angular/material';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { FlexLayoutModule } from '@angular/flex-layout';
+
 
 @NgModule({
   declarations: [],
@@ -21,6 +22,8 @@ import { FlexLayoutModule } from '@angular/flex-layout';
     CommonModule,
     BrowserModule,
     BrowserAnimationsModule,
+    MatButtonToggleModule,
+    MatDialogModule,
     MatToolbarModule,
     MatTabsModule,
     MatCardModule,
@@ -31,8 +34,10 @@ import { FlexLayoutModule } from '@angular/flex-layout';
     MatDividerModule,
     MatButtonModule,
     DragDropModule,
+    MatSidenavModule,
     MatSlideToggleModule,
     MatSliderModule,
+    MatIconModule,
     FlexLayoutModule,
   ]
 })
