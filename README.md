@@ -95,6 +95,8 @@ Each LED strip is listening to his own topic here. See the
 [d1ws2812 project documentation](https://github.com/oxivanisher/d1ws2812mqtt) for more information.
 ### /d1ws2812/discovery/[LED strip MAC]
 All strips reporting in are publishing here
+### /d1ws2812/voltage/[LED strip MAC]
+The strips with attached voltage board publish the battery voltage here
 
 # Development environment
 By default `docker-compose up` will bring up all the service. To run only selected services via docker-compose one can 
