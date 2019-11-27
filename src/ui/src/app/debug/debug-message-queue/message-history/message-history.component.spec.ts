@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { MqttComponent } from './mqtt.component';
+import { MessageHistoryComponent } from './message-history.component';
 
-describe('MqttComponent', () => {
-  let component: MqttComponent;
-  let fixture: ComponentFixture<MqttComponent>;
+describe('MessageHistoryComponent', () => {
+  let component: MessageHistoryComponent;
+  let fixture: ComponentFixture<MessageHistoryComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ MqttComponent ]
+      declarations: [ MessageHistoryComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(MqttComponent);
+    fixture = TestBed.createComponent(MessageHistoryComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

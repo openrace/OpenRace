@@ -3,8 +3,8 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { RouterModule } from '@angular/router';
 
 import { AppComponent } from './app.component';
+import { DebugMessageQueueComponent } from './debug/debug-message-queue/debug-message-queue.component';
 import { DebugModule } from './debug/debug.module';
-import { MqttComponent } from './debug/mqtt/mqtt.component';
 import { MaterialModule } from './material/material.module';
 import { LedStripsListComponent } from './open-race-led-strips/led-strips-list/led-strips-list.component';
 import { OpenRaceLedStripsModule } from './open-race-led-strips/open-race-led-strips.module';
@@ -28,7 +28,7 @@ import { RaceControlComponent } from './open-race-race/race-control/race-control
       {path: 'fly', component: RaceControlComponent},
       {path: 'pilots', component: PilotsListComponent},
       {path: 'ledstrips', component: LedStripsListComponent},
-      {path: 'debug', component: MqttComponent},
+      {path: 'debug', component: DebugMessageQueueComponent},
       {path: '', redirectTo: '/fly', pathMatch: 'full'}
     ])
   ],
