@@ -32,18 +32,14 @@
     dest: /etc/apt/sources.list.d/{{ item.category }}.list
     line: "{{ item.url }}"
   with_items:
-    - { url: 'deb [arch=armhf] https://download.docker.com/linux/raspbian stretch stable', category: 'docker' }
+    - { url: "deb [arch=armhf] https://download.docker.com/linux/raspbian {{ansible_distribution_release|lower}} stable", category: 'docker' }
   become: true
   changed_when: false
 
 - name: Install packages to allow apt to use HTTPS repositories
   apt:
-    name: "{{ item }}"
+    name: ['apt-transport-https', 'ca-certificates', 'software-properties-common']
     state: present
-  with_items:
-    - apt-transport-https
-    - ca-certificates
-    - software-properties-common
   become: true
 
 - name: Update list of available repositories
@@ -59,10 +55,8 @@
 
 - name: Install Docker
   apt:
-    name: "{{ item }}"
+    name: ['docker-ce']
     state: present
-  with_items:
-    - docker-ce
   notify: restart docker
   become: true
 
