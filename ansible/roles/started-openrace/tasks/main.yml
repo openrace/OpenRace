@@ -62,7 +62,7 @@
       MQTT_HOST: mqtt
       MQTT_USER: openrace
       MQTT_PASS: PASSWORD
-      DEBUG: false
+      DEBUG: "false"
   become: true
 
 - name: Check if LapRF is plugged in
