@@ -89,7 +89,7 @@
       MQTT_HOST: mqtt
       MQTT_USER: openrace
       MQTT_PASS: PASSWORD
-      DEBUG: false
+      DEBUG: "false"
   become: true
   when: device.stat.islnk is defined and device.stat.islnk
   tags:
@@ -110,7 +110,7 @@
       MQTT_HOST: mqtt
       MQTT_USER: openrace
       MQTT_PASS: PASSWORD
-      DEBUG: false
+      DEBUG: "false"
   become: true
   when: device.stat.islnk is not defined
   tags:
