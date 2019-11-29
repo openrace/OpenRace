@@ -18,3 +18,7 @@ rsn_pairwise=CCMP
 ssid={{ hostapd.ssid }}
 wpa_passphrase={{ hostapd.pass }}
 country_code={{ hostapd.country_code }}
+ctrl_interface=/var/run/hostapd
+ctrl_interface_group=0
+skip_inactivity_poll=1
+disassoc_low_ack=1
