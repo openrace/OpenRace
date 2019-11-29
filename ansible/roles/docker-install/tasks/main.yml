@@ -109,4 +109,12 @@
     daemon_reload: yes
   become: true
 
+- name: disabling ipv6
+  copy:
+    src: 99-disable-ipv6.conf
+    dest: /etc/sysctl.d/99-disable-ipv6.conf
+    owner: root
+    group: root
+    mode: '0644'
+
 # ToDo: enable experimental cli mode!
