@@ -1,5 +1,7 @@
 ---
 
+raspberry_ap: true
+
 openrace:
   ip: 192.168.199.1
   dhcp_from: 192.168.199.10

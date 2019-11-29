@@ -85,7 +85,7 @@
 
 - name: copy docker prune service
   template:
-    src: docker-prune.service.j2
+    src: docker-prune.service.jinja2
     dest: /etc/systemd/system/docker-prune.service
     owner: root
     group: root
@@ -94,7 +94,7 @@
 
 - name: copy docker prune timer
   template:
-    src: docker-prune.timer.j2
+    src: docker-prune.timer.jinja2
     dest: /etc/systemd/system/docker-prune.timer
     owner: root
     group: root
@@ -116,5 +116,6 @@
     owner: root
     group: root
     mode: '0644'
+  become: true
 
 # ToDo: enable experimental cli mode!

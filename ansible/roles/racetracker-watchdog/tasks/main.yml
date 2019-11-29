@@ -2,7 +2,7 @@
 
 - name: install openrace udev restart service
   template:
-    src: or-udev.service.j2
+    src: or-udev.service.jinja2
     dest: /etc/systemd/system/or-udev.service
     owner: root
     group: root
@@ -12,7 +12,7 @@
 
 - name: install openrace racetracker watchdog service
   template:
-    src: or-rt-watchdog.service.j2
+    src: or-rt-watchdog.service.jinja2
     dest: /etc/systemd/system/or-rt-watchdog.service
     owner: root
     group: root
@@ -29,7 +29,7 @@
 
 - name: ensuring udev rules
   template:
-    src: 99-openrace.rules.j2
+    src: 99-openrace.rules.jinja2
     dest: /etc/udev/rules.d/99-openrace.rules
   become: True
   notify: reload udev rules

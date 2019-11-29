@@ -11,3 +11,9 @@
     name: hostapd
     state: restarted
   become: true
+
+- name: restart dhcpcd
+  service:
+    name: dhcpcd
+    state: restarted
+  become: true

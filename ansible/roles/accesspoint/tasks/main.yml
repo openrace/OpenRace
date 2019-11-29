@@ -1,11 +1,12 @@
 ---
 - name: configure dhcpcd
   template:
-    src: dhcpcd.j2
+    src: dhcpcd.jinja2
     dest: /etc/dhcpcd.conf
     owner: root
     group: root
     mode: 0644
+  notify: restart dhcpcd
   become: true
 
 - name: installing dnsmasq
@@ -23,7 +24,7 @@
 
 - name: configure dnsmasq
   template:
-    src: dnsmasq.j2
+    src: dnsmasq.jinja2
     dest: /etc/dnsmasq.conf
     owner: root
     group: root
@@ -42,16 +43,26 @@
    name: hostapd
    state: started
    enabled: yes
+  when: raspberry_ap
+  become: true
+
+- name: disabling hostapd
+  service:
+   name: hostapd
+   state: stopped
+   enabled: no
+  when: not raspberry_ap
   become: true
 
 - name: configure hostapd
   template:
-    src: hostapd.j2
+    src: hostapd.jinja2
     dest: /etc/hostapd/hostapd.conf
     owner: root
     group: root
     mode: 0644
   notify: restart hostapd
+  when: raspberry_ap
   become: true
 
 - name: configure hostapd daemon
@@ -60,6 +71,6 @@
     regexp: '^#DAEMON_CONF='
     line: 'DAEMON_CONF="/etc/hostapd/hostapd.conf"'
   notify: restart hostapd
+  when: raspberry_ap
   changed_when: False
   become: true
-

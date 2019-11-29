@@ -1,2 +1,3 @@
-interface=wlan0
+interface={% if raspberry_ap %}wlan0{% else %}eth0{% endif %}
+
 dhcp-range={{ openrace.dhcp_from }},{{ openrace.dhcp_to }},255.255.255.0,24h

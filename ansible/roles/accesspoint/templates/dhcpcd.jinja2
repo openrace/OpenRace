@@ -29,6 +29,7 @@ require dhcp_server_identifier
 # Generate Stable Private IPv6 Addresses instead of hardware based ones
 slaac private
 
-interface wlan0
+interface{% if raspberry_ap == true %} wlan0{% else %} eth0{% endif %}
+
 static ip_address={{ openrace.ip }}/24
-denyinterfaces eth0
+{% if raspberry_ap == true %}denyinterfaces eth0{% endif %}
