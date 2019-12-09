@@ -9,14 +9,17 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./message-history.component.scss']
 })
 export class MessageHistoryComponent implements OnInit {
-  public messages = new Array<QueueMessage>();
+  public messages = new Array<[Date, QueueMessage]>();
 
   constructor(private readonly messageQueueClientService: MessageQueueClientService) { }
 
   ngOnInit() {
     this.messageQueueClientService.subscribeToTopic('/#').subscribe(message => {
-       this.messages = [message, ...this.messages];
+       this.messages = [[new Date(), message], ...this.messages];
     });
   }
 
+  clear() {
+    this.messages = new Array<[Date, QueueMessage]>();
+  }
 }

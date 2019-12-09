@@ -12,12 +12,20 @@ export class PublishMessageComponent implements OnInit {
 
   public message: string;
 
+  public retained: boolean = true;
+
   constructor(private readonly messageQueueClientService: MessageQueueClientService) { }
 
   ngOnInit() {
   }
 
   public publish() {
-    this.messageQueueClientService.publishToTopic(this.topic, this.message);
+    if (this.retained) {
+      this.messageQueueClientService.publishToTopic(this.topic, this.message);
+      console.log('retained publicatoin');
+    }
+    else {
+      this.messageQueueClientService.publishToTopicUnretained(this.topic, this.message);
+    }
   }
 }

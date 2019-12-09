@@ -1,7 +1,9 @@
-import { Inject, Injectable } from '@angular/core';
 import { IMqttServiceOptions, MqttService } from 'ngx-mqtt';
-import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+
+import { Inject, Injectable } from '@angular/core';
+
 import { QueueMessage } from './queue-message';
 import { WINDOW } from './window-provider';
 
@@ -26,7 +28,7 @@ export class MessageQueueClientService {
   }
 
   publishToTopic(topic: string, message: string) {
-    console.log(`Message ${message} send to ${topic}`);
+    console.log(`Message ${message} send to ${topic} retained`);
     this.mqttService.publish(topic, message, {qos: 1, retain: true}).subscribe();
   }
 
@@ -36,6 +38,6 @@ export class MessageQueueClientService {
   }
 
   subscribeToTopic(topic: string): Observable<QueueMessage> {
-    return this.mqttService.observe(topic).pipe(map(message => new QueueMessage(message.topic, message.payload.toString())));
+    return this.mqttService.observe(topic).pipe(map(message => new QueueMessage(message.topic, message.payload.toString(), message.retain === true)));
   }
 }

@@ -1,3 +1,4 @@
+<h1 class="mat-headline">Publish message:</h1>
 <form (ngSubmit)="publish()">
   <div fxLayoutGap="1em">
     <mat-form-field>
@@ -6,7 +7,7 @@
     <mat-form-field>
       <input matInput placeholder="Message" name="message" [(ngModel)]="message">
     </mat-form-field>
-
+    <mat-checkbox name="retained" [(ngModel)]="retained">Retained</mat-checkbox>
     <mat-action-row>
       <button type="submit" mat-flat-button color="primary">Publish</button>
     </mat-action-row>
