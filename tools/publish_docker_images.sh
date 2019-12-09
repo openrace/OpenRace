@@ -2,7 +2,7 @@
 
 set -e
 
-IMAGE_VERSION="1.0.1"
+IMAGE_VERSION="1.0.2"
 
 for SERVICE in ui race_core led_control
 do
