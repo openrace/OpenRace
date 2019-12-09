@@ -107,7 +107,7 @@ docker-compose up --no-deps ui race_core
 Please keep in mind, that some settings are set to development defaults like the MQTT user and password.
 
 ## Pushing cross-platform images
-To support bath amd64 and arm32v7 we create both images and then create and push a manifest list image as well. The
+To support both amd64 and arm32v7 we create both images and then create and push a manifest list image as well. The
 generation is scripted in `tools/publish_docker_images.sh`. The following configurations might be necessary:
 * Logging in to DockerHub to publish images with `docker login`
 * Depending on your cli version, you need to enable experimental cli features by adding `"experimental": "enabled"` to
