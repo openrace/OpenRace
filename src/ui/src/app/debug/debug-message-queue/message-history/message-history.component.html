@@ -1,0 +1,9 @@
+<h1 class="mat-headline">Message log:</h1>
+<mat-card class="messagelogwindow">
+  <div *ngFor="let message of messages" class="mat-body" [class.retained]="message[1].retained">
+   {{ message[0] | date:'shortTime' }} : {{message[1].topic}}: {{ message[1].message}} <ng-container *ngIf="message[1].retained">(retained)</ng-container>
+  </div>
+</mat-card>
+<mat-action-row>
+  <button mat-flat-button color="primary" (click)="clear()">Clear</button>
+</mat-action-row>
