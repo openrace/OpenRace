@@ -5,14 +5,14 @@
    ui_image: "openrace/ui:{{ openrace.version }}"
    led_control_image: led_control
    race_core_image: race_core
-  when: openrace.build_images
+  when: build_images
 
 - name: "selecting dockerhub images with version {{ openrace.version }}"
   set_fact:
    ui_image: "openrace/ui:{{ openrace.version }}"
    led_control_image: "openrace/led_control:{{ openrace.version }}"
    race_core_image: "openrace/race_core:{{ openrace.version }}"
-  when: not openrace.build_images
+  when: not build_images
 
 - name: "Create ui container from {{ ui_image }}"
   docker_container:
