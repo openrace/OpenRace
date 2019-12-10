@@ -1,0 +1,16 @@
+name: CI
+
+on:  
+  push:
+    branches:
+      - master
+
+jobs:
+  push-docker-images:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Build docker images
+      run: ./tools/publish_docker_images.sh
