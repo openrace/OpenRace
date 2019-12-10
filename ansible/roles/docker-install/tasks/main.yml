@@ -78,7 +78,7 @@
 
 - name: install ansible docker dependency
   pip:
-    name: docker-py
+    name: docker
     executable: pip2
 
 - name: starting and enabling docker-ce service
