@@ -11,6 +11,11 @@
 # led
 # core
 
+## Special options
+# to enable or disable the access point of the Raspberry Pi, you can
+# set the ansible variable "raspberry_ap" to true or false. The script
+# ap.sh does exactly this.
+
 ### BASIC
 # basic system updates, packages and settings
 - hosts: all
