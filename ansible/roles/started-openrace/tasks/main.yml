@@ -1,17 +1,27 @@
 ---
 
+- name: selecting arm32v7 architecture for docker containers
+  set_fact:
+    openrace_arch: "arm32v7"
+  when: ansible_architecture == "armv7l"
+
+- name: selecting amd64 architecture for docker containers
+  set_fact:
+    openrace_arch: "amd64"
+  when: ansible_architecture == "x86_64"
+
 - name: selecting self built images
   set_fact:
-   ui_image: "openrace/ui:{{ openrace.version }}"
+   ui_image: "openrace/ui:{{ openrace.version }}-{{ openrace_arch }}"
    led_control_image: led_control
    race_core_image: race_core
   when: build_images
 
 - name: "selecting dockerhub images with version {{ openrace.version }}"
   set_fact:
-   ui_image: "openrace/ui:{{ openrace.version }}"
-   led_control_image: "openrace/led_control:{{ openrace.version }}"
-   race_core_image: "openrace/race_core:{{ openrace.version }}"
+   ui_image: "openrace/ui:{{ openrace.version }}-{{ openrace_arch }}"
+   led_control_image: "openrace/led_control:{{ openrace.version }}-{{ openrace_arch }}"
+   race_core_image: "openrace/race_core:{{ openrace.version }}-{{ openrace_arch }}"
   when: not build_images
 
 - name: "Create ui container from {{ ui_image }}"
