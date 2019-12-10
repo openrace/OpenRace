@@ -76,6 +76,11 @@
     - python-pip
   become: true
 
+- name: install ansible docker dependency
+  pip:
+    name: docker-py
+    executable: pip2
+
 - name: starting and enabling docker-ce service
   systemd:
     name: docker.service
