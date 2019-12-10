@@ -20,6 +20,8 @@
 # basic system updates, packages and settings
 - hosts: all
   roles:
+    - { role: python,                # setup python requirements
+        tags: ['os'] }
     - { role: docker-install,        # install docker
         tags: ['os'] }
     - { role: accesspoint,           # setup system as access point only on raspberry pi
