@@ -9,7 +9,7 @@ openrace:
   dhcp_to: 192.168.199.200
   restart_policy: always
   racerf_device: /dev/racetracker
-  version: 1.0.1
+  version: 1.0.2
 
 hostapd:
   ssid: OpenRace
