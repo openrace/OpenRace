@@ -57,6 +57,7 @@
   apt:
     name: ['docker-ce']
     state: present
+    install_recommends: no
   notify: restart docker
   become: true
 
