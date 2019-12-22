@@ -53,6 +53,17 @@
     upgrade: dist
   become: true
 
+- name: installing python 2 pip for ansible and dependencies
+  package:
+    name: python-pip
+    state: present
+  become: true
+
+- name: install ansible docker dependency
+  pip:
+    name: docker
+    executable: pip2
+
 - name: Install Docker
   apt:
     name: ['docker-ce']
@@ -68,19 +79,6 @@
     append: yes
   notify: restart docker
   become: true
-
-- name: installing python 2 pip for ansible and dependencies
-  package:
-    name: "{{ item }}"
-    state: present
-  with_items:
-    - python-pip
-  become: true
-
-- name: install ansible docker dependency
-  pip:
-    name: docker
-    executable: pip2
 
 - name: starting and enabling docker-ce service
   systemd:
