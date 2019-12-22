@@ -1,18 +1,20 @@
 <div fxLayout="column">
   <h1 fxFlex="grow" class="mat-display-1">LED Strips</h1>
-  <div fxLayout="column" fxLayoutGap="1em" cdkDropList (cdkDropListDropped)="drop($event)">
-    <mat-expansion-panel *ngFor="let ledStrip of ledStrips" class="mat-elevation-z15" cdkDrag>
-      <mat-expansion-panel-header>
-        <mat-panel-title>
-          <h2>LED Strip {{ledStrip.id}}</h2>
-        </mat-panel-title>
-        <mat-panel-description fxLayout="row-reverse" fxLayoutAlign="start center">
-          <button type="button" (click)="testFlashLedStrip($event, ledStrip.id);" mat-stroked-button color="accent">
-            Test
-          </button>
-        </mat-panel-description>
-      </mat-expansion-panel-header>
-      <app-edit-led-strip [ledStrip]="ledStrip"></app-edit-led-strip>
-    </mat-expansion-panel>
+  <div class="led-list" fxLayout="column" fxLayoutGap="1em" cdkDropList (cdkDropListDropped)="drop($event)">
+    <div class="led-box" *ngFor="let ledStrip of ledStrips" cdkDrag>
+      <mat-expansion-panel class="mat-elevation-z15">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <h2>LED Strip {{ledStrip.id}}</h2>
+          </mat-panel-title>
+          <mat-panel-description fxLayout="row-reverse" fxLayoutAlign="start center">
+            <button type="button" (click)="testFlashLedStrip($event, ledStrip.id);" mat-stroked-button color="accent">
+              Test
+            </button>
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        <app-edit-led-strip [ledStrip]="ledStrip"></app-edit-led-strip>
+      </mat-expansion-panel>
+    </div>
   </div>
 </div>
