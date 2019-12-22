@@ -1,6 +1,8 @@
-import { Injectable } from '@angular/core';
-import { MessageQueueClientService } from '../open-race-common/message-queue-client.service';
 import { BehaviorSubject, Observable } from 'rxjs';
+
+import { Injectable } from '@angular/core';
+
+import { MessageQueueClientService } from '../open-race-common/message-queue-client.service';
 import { QueueMessage } from '../open-race-common/queue-message';
 import { LedStrip } from './led-strip';
 
@@ -25,7 +27,7 @@ export class LedStripsService {
         ledStrip.category = value;
         break;
       case 'order':
-        ledStrip.order = value;
+        ledStrip.order = +value;
         break;
     }
   }
