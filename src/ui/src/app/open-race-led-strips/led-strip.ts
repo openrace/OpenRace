@@ -2,6 +2,6 @@ export class LedStrip {
   constructor(public id: string) {
   }
 
-  order: string;
+  order: number;
   category: string;
 }
