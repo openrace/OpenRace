@@ -1,4 +1,16 @@
 ---
+
+- name: installing python 2 pip for ansible and dependencies
+  package:
+    name: python-pip
+    state: present
+  become: true
+
+- name: install ansible docker dependency
+  pip:
+    name: docker
+    executable: pip2
+
 - name: Create an openrace docker network
   docker_network:
     name: openrace
