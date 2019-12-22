@@ -43,6 +43,7 @@
    name: hostapd
    state: started
    enabled: yes
+   masked: no
   when: raspberry_ap
   become: true
 
@@ -51,6 +52,7 @@
    name: hostapd
    state: stopped
    enabled: no
+   masked: no
   when: not raspberry_ap
   become: true
 
