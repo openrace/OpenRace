@@ -1,5 +1,11 @@
 ---
 
+# see https://github.com/docker/docker-py/issues/1502
+- name: install dirty workaround for "Failed to import docker or docker-py - No module named requests.exceptions."
+  package:
+    name: python-backports.ssl-match-hostname
+    state: present
+
 - name: installing python 2 pip for ansible and dependencies
   package:
     name: python-pip
@@ -8,7 +14,9 @@
 
 - name: install ansible docker dependency
   pip:
-    name: docker
+    name:
+      - docker
+      - requests>=2.20.1
     executable: pip2
 
 - name: Create an openrace docker network
