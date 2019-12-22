@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { MatCheckbox, MatCheckboxModule } from '@angular/material';
+import { MatCheckbox, MatCheckboxModule } from '@angular/material/checkbox';
 
 import { MaterialModule } from '../material/material.module';
 import { DebugMessageQueueComponent } from './debug-message-queue/debug-message-queue.component';
