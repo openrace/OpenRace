@@ -5,6 +5,7 @@
   package:
     name: python-backports.ssl-match-hostname
     state: present
+  become: true
 
 - name: installing python 2 pip for ansible and dependencies
   package:
@@ -14,10 +15,9 @@
 
 - name: install ansible docker dependency
   pip:
-    name:
-      - docker
-      - requests>=2.20.1
+    name: docker
     executable: pip2
+  become: true
 
 - name: Create an openrace docker network
   docker_network:
