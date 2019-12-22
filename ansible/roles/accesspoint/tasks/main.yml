@@ -38,6 +38,16 @@
     state: present
   become: true
 
+- name: configure hostapd daemon
+  lineinfile:
+    dest: /etc/default/hostapd
+    regexp: '^#DAEMON_CONF='
+    line: 'DAEMON_CONF="/etc/hostapd/hostapd.conf"'
+  notify: restart hostapd
+  when: raspberry_ap
+  changed_when: False
+  become: true
+
 - name: enabling hostapd
   service:
    name: hostapd
@@ -65,14 +75,4 @@
     mode: 0644
   notify: restart hostapd
   when: raspberry_ap
-  become: true
-
-- name: configure hostapd daemon
-  lineinfile:
-    dest: /etc/default/hostapd
-    regexp: '^#DAEMON_CONF='
-    line: 'DAEMON_CONF="/etc/hostapd/hostapd.conf"'
-  notify: restart hostapd
-  when: raspberry_ap
-  changed_when: False
   become: true
