@@ -1,5 +1,7 @@
 import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
+import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterModule } from '@angular/router';
 
 import { AppComponent } from './app.component';
@@ -18,6 +20,8 @@ import { RaceControlComponent } from './open-race-race/race-control/race-control
     AppComponent
   ],
   imports: [
+    BrowserModule,
+    BrowserAnimationsModule,
     FlexLayoutModule,
     MaterialModule,
     OpenRacePilotsModule,
