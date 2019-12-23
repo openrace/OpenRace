@@ -1,0 +1,8 @@
+## Ansible execution
+# ansible-playbook rpi-ap-control.yml
+
+### BASIC
+# Install rpi ap control script
+- hosts: all
+  roles:
+    - { role: rpi-ap-control }       # when wifi0 interface is found and the os is a raspbian, install the agent

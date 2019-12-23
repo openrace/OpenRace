@@ -11,6 +11,30 @@ It makes use of the following external Projects:
 * https://github.com/fujexo/tbsracetracker
 * https://github.com/pascaldevink/rpi-mosquitto
 
+**Attention:** Per default, the Raspberry Pi will be configured as a Wifi access point. The Wifi chipset or its driver
+on the Raspberry Pi is not able to handle lots of clients. The number of clients (counting LED gates and UI clients) is
+somewhere around 7. If you experience strange disconnects, please use a standalone access point. There is a helper
+script to help switching between those two modes: `ansible/ap.sh`
+
+## Wifi AP mode on Raspberry Pi
+There are two modes in which the automated installation and configuration will configure your Raspberry Pi:
+* The **Wifi interface** of the Raspberry Pi will **act as a access point** for the default Wifi with SSID `OpenRace`
+  and password `PASSWORD`. This can be changed in `ansible/group_vars/all.yml` but remember that the d1ws2812mqtt
+  clients must be able to connect to the Wifi network. Also in this mode, the Raspberry Pi will provide its own network
+  `192.168.199.1/24` with a DHCP server for the Wifi clients only. You can connect the RPi to any **ethernet** network
+  and it will be a **normal DHCP client** allowing you to log in, make updates and so on. We call this **AP enabled**.
+* The **Wifi interface** of the Raspberry Pi is **disabled**. On the **ethernet** port it will act as a **DHCP server**
+  for its own network `192.168.199.1/24`. Please be aware, that plugging the Raspberry Pi into your local ethernet like
+  this, will most likely mess up network connectivity for the other clients, since it will give out IPs. We call this
+  **AP disabled**.
+
+Also be aware, that during the changing of the AP mode, you will most likely loose the SSH connection and because of
+this, the configuration might fail. The provided `ansible/ap.sh` ensures that the commandos are run even when loosing
+the connection.
+
+You can solder up switches and LEDs to control the switching of the AP mode and power down the Raspberry Pi. See how to
+do this in the [ansible README.md](ansible/README.md).
+
 # Module communication matrix
 All MQTT connections are running trough the Mosquitto container. But to show the dependencies a little bit better,
 some MQTT based connections are presented as direct connections.
@@ -50,6 +74,8 @@ Run the playbook:
 ./run.sh
 ```
 After entering your password for SUDO, the installation continues.
+
+More things are available in the [README.md](ansible/README.md) within the `ansible` directory.
 
 # MQTT Topics
 ## OpenRace topics

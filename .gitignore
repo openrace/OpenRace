@@ -2,6 +2,7 @@
 python/.env
 python/venv
 python/angular-ui/node-modules
+ansible/nohup.out
 
 # IDE
 .idea

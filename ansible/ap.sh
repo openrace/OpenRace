@@ -11,4 +11,5 @@ else
   OPTION="{\"raspberry_ap\": false}"
 fi
 
-ansible-playbook site.yml -e "${OPTION}" --tags ap
+echo "Switching the AP mode in background. Check the output if required in the nohup.out file."
+nohup ansible-playbook site.yml -e "${OPTION}" --tags ap
