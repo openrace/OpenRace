@@ -52,7 +52,7 @@ class RpiApControl:
 
             command = [os.path.join(ansible_path, "ansible-playbook"), "site.yml", "-e", task, "--tags", "ap"]
             logging.info("Calling %s" % " ".join(command))
-            subprocess.call([command])
+            subprocess.call(command)
 
             for i in range(5):
                 GPIO.output(self.led_pin, GPIO.HIGH)
