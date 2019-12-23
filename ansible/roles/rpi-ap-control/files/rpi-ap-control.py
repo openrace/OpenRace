@@ -5,6 +5,9 @@
 import logging
 import time
 import psutil
+import subprocess
+import sys
+import os
 
 import RPi.GPIO as GPIO
 
@@ -30,21 +33,32 @@ class RpiApControl:
         # GPIO 24 (Pin 18) - Switch - 3.3 V
         #                  | 10k ohm - gnd
 
-    def run(self):
+    def run(self, ansible_path):
+
         # check if button is pressed
         if GPIO.input(self.switch_pin):
+            for i in range(5):
+                GPIO.output(self.led_pin, GPIO.HIGH)
+                time.sleep(0.1)
+                GPIO.output(self.led_pin, GPIO.LOW)
+                time.sleep(0.1)
+
             if check_for_hostapd():
                 logging.info("Disabling hostapd")
-                # disable hostapd magic
+                task = "{\"raspberry_ap\": false}"
             else:
                 logging.info("Enabling hostapd")
-                # enable hostapd magic
+                task = "{\"raspberry_ap\": true}"
 
-            for i in range(10):
+            command = [os.path.join(ansible_path, "ansible-playbook"), "site.yml", "-e", task, "--tags", "ap"]
+            logging.info("Calling %s" % " ".join(command))
+            subprocess.call([command])
+
+            for i in range(5):
                 GPIO.output(self.led_pin, GPIO.HIGH)
-                time.sleep(0.5)
+                time.sleep(0.1)
                 GPIO.output(self.led_pin, GPIO.LOW)
-                time.sleep(0.5)
+                time.sleep(0.1)
 
         # check every 3 seconds if hostapd is running
         if self.last_hostapd_check < time.time() - 3000:
@@ -69,7 +83,7 @@ if __name__ == '__main__':
     logging.info("Staring rpi-ap-control")
     rac = RpiApControl()
     try:
-        rac.run()
+        rac.run(sys.argv[1])
     except KeyboardInterrupt:
         GPIO.cleanup()
     GPIO.cleanup()
