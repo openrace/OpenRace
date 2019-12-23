@@ -28,7 +28,7 @@
 - name: install python requirements
   pip:
     name: ['psutil', 'RPi']
-    executable: pip3
+    virtualenv_python: python3
     virtualenv: "{{ rpi_ap_control_path }}/venv"
   become: True
 
