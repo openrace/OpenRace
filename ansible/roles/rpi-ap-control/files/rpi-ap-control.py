@@ -34,49 +34,50 @@ class RpiApControl:
         #                  | 10k ohm - gnd
 
     def run(self, ansible_path):
+        while True:
 
-        # check if button is pressed
-        if GPIO.input(self.switch_pin):
-            for i in range(5):
-                GPIO.output(self.led_pin, GPIO.HIGH)
-                time.sleep(0.1)
-                GPIO.output(self.led_pin, GPIO.LOW)
-                time.sleep(0.1)
+            # check if button is pressed
+            if GPIO.input(self.switch_pin):
+                for i in range(5):
+                    GPIO.output(self.led_pin, GPIO.HIGH)
+                    time.sleep(0.1)
+                    GPIO.output(self.led_pin, GPIO.LOW)
+                    time.sleep(0.1)
 
-            if check_for_hostapd():
-                logging.info("Disabling hostapd")
-                task = "{\"raspberry_ap\": false}"
-            else:
-                logging.info("Enabling hostapd")
-                task = "{\"raspberry_ap\": true}"
+                if check_for_hostapd():
+                    logging.info("Disabling hostapd")
+                    task = "{\"raspberry_ap\": false}"
+                else:
+                    logging.info("Enabling hostapd")
+                    task = "{\"raspberry_ap\": true}"
 
-            command = ["/usr/bin/ansible-playbook", os.path.join(ansible_path, "site.yml"), "-e", task, "--tags", "ap"]
-            logging.info("Calling %s" % " ".join(command))
-            subprocess.call(command, cwd=ansible_path)
+                command = ["/usr/bin/ansible-playbook", os.path.join(ansible_path, "site.yml"), "-e", task, "--tags", "ap"]
+                logging.info("Calling %s" % " ".join(command))
+                subprocess.call(command, cwd=ansible_path)
 
-            for i in range(5):
-                GPIO.output(self.led_pin, GPIO.HIGH)
-                time.sleep(0.1)
-                GPIO.output(self.led_pin, GPIO.LOW)
-                time.sleep(0.1)
+                for i in range(5):
+                    GPIO.output(self.led_pin, GPIO.HIGH)
+                    time.sleep(0.1)
+                    GPIO.output(self.led_pin, GPIO.LOW)
+                    time.sleep(0.1)
 
-        # check every 3 seconds if hostapd is running
-        if self.last_hostapd_check < time.time() - 3000:
-            hostapd_status = check_for_hostapd()
-            if hostapd_status:
-                GPIO.output(self.led_pin, GPIO.HIGH)
-                if not self.last_hostapd_state:
-                    logging.info("Hostapd switched on")
-            else:
-                GPIO.output(self.led_pin, GPIO.LOW)
-                if self.last_hostapd_state:
-                    logging.info("Hostapd switched off")
+            # check every 3 seconds if hostapd is running
+            if self.last_hostapd_check < time.time() - 3000:
+                hostapd_status = check_for_hostapd()
+                if hostapd_status:
+                    GPIO.output(self.led_pin, GPIO.HIGH)
+                    if not self.last_hostapd_state:
+                        logging.info("Hostapd switched on")
+                else:
+                    GPIO.output(self.led_pin, GPIO.LOW)
+                    if self.last_hostapd_state:
+                        logging.info("Hostapd switched off")
 
-            self.last_hostapd_state = hostapd_status
-            self.last_hostapd_check = time.time()
+                self.last_hostapd_state = hostapd_status
+                self.last_hostapd_check = time.time()
 
-        # don't overload the cpu
-        time.sleep(0.1)
+            # don't overload the cpu
+            time.sleep(0.1)
 
 
 if __name__ == '__main__':
