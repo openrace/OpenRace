@@ -29,7 +29,6 @@
   pip:
     name: ['psutil', 'RPi']
     virtualenv: "{{ rpi_ap_control_path }}/venv"
-    virtualenv_command: virtualenv-2.7
   become: True
 
 - name: install systemd unit
