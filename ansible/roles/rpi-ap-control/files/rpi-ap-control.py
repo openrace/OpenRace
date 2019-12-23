@@ -77,7 +77,7 @@ class RpiApControl:
                     time.sleep(0.1)
 
             # check every 3 seconds if hostapd is running
-            if self.last_hostapd_check < time.time() - 3000:
+            if self.last_hostapd_check < time.time() - 3:
                 hostapd_status = check_for_hostapd()
                 if hostapd_status:
                     GPIO.output(self.ap_led_pin, GPIO.HIGH)
