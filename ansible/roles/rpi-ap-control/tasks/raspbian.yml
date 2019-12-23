@@ -21,7 +21,7 @@
 
 - name: ensure python virtualenv
   package:
-    name: python-virtualenv
+    name: python3-virtualenv
     state: present
   become: True
 
