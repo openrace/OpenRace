@@ -20,7 +20,7 @@ def check_for_hostapd():
 
 def run_command(command):
     logging.info("Calling %s" % " ".join(command))
-    # subprocess.call(command, cwd=ansible_path)
+    subprocess.call(command, cwd=ansible_path)
 
 
 class RpiApControl:
