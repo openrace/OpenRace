@@ -18,7 +18,7 @@ def check_for_hostapd():
     return "hostapd" in (p.name() for p in psutil.process_iter())
 
 
-def run_command(command):
+def run_command(command, ansible_path):
     logging.info("Calling %s" % " ".join(command))
     subprocess.call(command, cwd=ansible_path)
 
@@ -49,7 +49,7 @@ class RpiApControl:
             # check if power button is pressed
             if GPIO.input(self.power_switch_pin):
                 GPIO.output(self.power_led_pin, GPIO.LOW)
-                run_command(["shutdown", "now", "-h"])
+                run_command(["shutdown", "now", "-h"], ansible_path)
 
             # check if AP button is pressed
             if GPIO.input(self.ap_switch_pin):
@@ -68,7 +68,7 @@ class RpiApControl:
 
                 command = ["/usr/bin/ansible-playbook", os.path.join(ansible_path, "site.yml"), "-e", task, "--tags",
                            "ap"]
-                run_command(command)
+                run_command(command, ansible_path)
 
                 for i in range(5):
                     GPIO.output(self.ap_led_pin, GPIO.HIGH)
