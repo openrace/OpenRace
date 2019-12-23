@@ -47,16 +47,17 @@ class RpiApControl:
     def run(self, ansible_path):
         while True:
 
-            # enable power led when active
             if not self.powerled_control_active:
-                if time.time() > self.accept_shutdown_request_time:
-                    GPIO.output(self.power_led_pin, GPIO.HIGH)
-                    self.powerled_control_active = True
-            else:
                 # blink the power led to signal startup
                 GPIO.output(self.power_led_pin, GPIO.HIGH)
                 time.sleep(0.1)
                 GPIO.output(self.power_led_pin, GPIO.LOW)
+
+                # enable power led when active
+                if time.time() > self.accept_shutdown_request_time:
+                    time.sleep(0.1)
+                    GPIO.output(self.power_led_pin, GPIO.HIGH)
+                    self.powerled_control_active = True
 
             # check if power button is pressed
             if GPIO.input(self.power_switch_pin):
