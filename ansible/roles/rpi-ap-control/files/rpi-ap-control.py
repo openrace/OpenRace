@@ -50,7 +50,7 @@ class RpiApControl:
                 logging.info("Enabling hostapd")
                 task = "{\"raspberry_ap\": true}"
 
-            command = [os.path.join(ansible_path, "ansible-playbook"), "site.yml", "-e", task, "--tags", "ap"]
+            command = ["/usr/bin/ansible-playbook", os.path.join(ansible_path, "site.yml"), "-e", task, "--tags", "ap"]
             logging.info("Calling %s" % " ".join(command))
             subprocess.call(command)
 
