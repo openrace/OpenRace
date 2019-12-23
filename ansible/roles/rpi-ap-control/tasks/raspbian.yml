@@ -39,6 +39,7 @@
     owner: root
     group: root
     mode: 0644
+  notify: restart rpi-ap-control
   become: True
 
 - name: enable service
