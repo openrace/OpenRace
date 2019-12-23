@@ -48,7 +48,12 @@ class RpiApControl:
 
             # check if power button is pressed
             if GPIO.input(self.power_switch_pin):
-                GPIO.output(self.power_led_pin, GPIO.LOW)
+                for i in range(5):
+                    GPIO.output(self.power_led_pin, GPIO.HIGH)
+                    time.sleep(0.1)
+                    GPIO.output(self.power_led_pin, GPIO.LOW)
+                    time.sleep(0.1)
+
                 run_command(["shutdown", "now", "-h"], ansible_path)
 
             # check if AP button is pressed
