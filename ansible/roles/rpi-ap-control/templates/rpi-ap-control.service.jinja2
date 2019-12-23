@@ -1,0 +1,6 @@
+[Unit]
+Description=Raspberry Pi Accesspoint control
+
+[Service]
+# Command to execute when the service is started
+ExecStart={{ rpi_ap_control_path }}/venv/python {{ rpi_ap_control_path }}/rpi-ap-control.py

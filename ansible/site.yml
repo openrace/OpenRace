@@ -39,3 +39,4 @@
         tags: ['start'] }
     - { role: racetracker-watchdog,  # setup udev rules and watchdog
         tags: ['os'] }
+    - { role: rpi-ap-control }       # when wifi0 interface is found and the os is a raspbian, install the agent

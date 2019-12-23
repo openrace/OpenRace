@@ -1,0 +1,4 @@
+---
+
+- import_tasks: raspbian.yml
+  when: ansible_lsb.id|lower() == "raspbian" and '"wlan0" in ansible_interfaces'

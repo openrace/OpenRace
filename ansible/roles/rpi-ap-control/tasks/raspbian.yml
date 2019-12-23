@@ -1,0 +1,44 @@
+---
+
+- name: ensure directory
+  file:
+    path: "{{ rpi_ap_control_path }}"
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: put python daemon in place
+  copy:
+    src: rpi-ap-control.py
+    dest: "{{ rpi_ap_control_path }}/rpi-ap-control.py"
+    owner: root
+    group: root
+    mode: 0754
+  notify: restart rpi-ap-control
+
+- name: ensure python virtualenv
+  package:
+    name: python-virtualenv
+    state: present
+
+- name: install python requirements
+  pip:
+    name: ['psutil', 'RPi']
+    virtualenv: "{{ rpi_ap_control_path }}/venv"
+    virtualenv_command: virtualenv-2.7
+
+- name: install systemd unit
+  template:
+    src: rpi-ap-control.service.jinja2
+    dest: /etc/systemd/system/rpi-ap-control.service
+    owner: root
+    group: root
+    mode: 0644
+
+- name: enable service
+  systemd:
+    name: rpi-ap-control
+    enabled: yes
+    daemon_reload: yes
+  notify: restart rpi-ap-control

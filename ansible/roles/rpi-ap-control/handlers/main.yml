@@ -1,0 +1,6 @@
+---
+
+- name: restart rpi-ap-control
+  systemd:
+   name: rpi-ap-control
+   state: restarted
