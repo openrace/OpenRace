@@ -1,19 +1,22 @@
 ---
 
 - name: restart dnsmasq
-  service:
+  systemd:
     name: dnsmasq
     state: restarted
+    daemon_reload: yes
   become: true
 
 - name: restart hostapd
-  service:
+  systemd:
     name: hostapd
     state: restarted
+    daemon_reload: yes
   become: true
 
 - name: restart dhcpcd
-  service:
+  systemd:
     name: dhcpcd
     state: restarted
+    daemon_reload: yes
   become: true
