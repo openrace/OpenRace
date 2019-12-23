@@ -32,6 +32,7 @@ class RpiApControl:
         self.power_switch_pin = 3
         self.last_hostapd_check = 0
         self.last_hostapd_state = False
+        self.accept_shutdown_request_time = time.time() + 30
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(self.ap_led_pin, GPIO.OUT)
         GPIO.setup(self.power_led_pin, GPIO.OUT)
@@ -48,11 +49,12 @@ class RpiApControl:
 
             # check if power button is pressed
             if GPIO.input(self.power_switch_pin):
-                for i in range(5):
-                    GPIO.output(self.power_led_pin, GPIO.HIGH)
-                    time.sleep(0.1)
-                    GPIO.output(self.power_led_pin, GPIO.LOW)
-                    time.sleep(0.1)
+                if time.time() > self.accept_shutdown_request_time:
+                    for i in range(5):
+                        GPIO.output(self.power_led_pin, GPIO.HIGH)
+                        time.sleep(0.1)
+                        GPIO.output(self.power_led_pin, GPIO.LOW)
+                        time.sleep(0.1)
 
                 run_command(["shutdown", "now", "-h"], ansible_path)
 
