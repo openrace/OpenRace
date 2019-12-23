@@ -27,7 +27,7 @@
 
 - name: install python requirements
   pip:
-    name: ['psutil', 'RPi']
+    name: ['psutil', 'RPi.GPIO']
     virtualenv_python: python3
     virtualenv: "{{ rpi_ap_control_path }}/venv"
   become: True
