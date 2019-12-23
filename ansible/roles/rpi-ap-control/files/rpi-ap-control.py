@@ -18,30 +18,43 @@ def check_for_hostapd():
     return "hostapd" in (p.name() for p in psutil.process_iter())
 
 
+def run_command(command):
+    logging.info("Calling %s" % " ".join(command))
+    # subprocess.call(command, cwd=ansible_path)
+
+
 class RpiApControl:
 
     def __init__(self):
-        self.led_pin = 23
-        self.switch_pin = 24
+        self.ap_led_pin = 23
+        self.ap_switch_pin = 24
+        self.power_led_pin = 27
+        self.power_switch_pin = 22
         self.last_hostapd_check = 0
         self.last_hostapd_state = False
         GPIO.setmode(GPIO.BCM)
-        GPIO.setup(self.led_pin, GPIO.OUT)
+        GPIO.setup(self.ap_led_pin, GPIO.OUT)
         # GPIO 23 (Pin 16) - LED - 330 ohm - gnd
 
-        GPIO.setup(self.switch_pin, GPIO.IN)
+        GPIO.setup(self.ap_switch_pin, GPIO.IN)
         # GPIO 24 (Pin 18) - Switch - 3.3 V
         #                  | 10k ohm - gnd
 
     def run(self, ansible_path):
+        GPIO.output(self.power_led_pin, GPIO.HIGH)
         while True:
 
-            # check if button is pressed
-            if GPIO.input(self.switch_pin):
+            # check if power button is pressed
+            if GPIO.input(self.power_switch_pin):
+                GPIO.output(self.power_led_pin, GPIO.LOW)
+                run_command(["shutdown", "now", "-h"])
+
+            # check if AP button is pressed
+            if GPIO.input(self.ap_switch_pin):
                 for i in range(5):
-                    GPIO.output(self.led_pin, GPIO.HIGH)
+                    GPIO.output(self.ap_led_pin, GPIO.HIGH)
                     time.sleep(0.1)
-                    GPIO.output(self.led_pin, GPIO.LOW)
+                    GPIO.output(self.ap_led_pin, GPIO.LOW)
                     time.sleep(0.1)
 
                 if check_for_hostapd():
@@ -51,25 +64,25 @@ class RpiApControl:
                     logging.info("Enabling hostapd")
                     task = "{\"raspberry_ap\": true}"
 
-                command = ["/usr/bin/ansible-playbook", os.path.join(ansible_path, "site.yml"), "-e", task, "--tags", "ap"]
-                logging.info("Calling %s" % " ".join(command))
-                subprocess.call(command, cwd=ansible_path)
+                command = ["/usr/bin/ansible-playbook", os.path.join(ansible_path, "site.yml"), "-e", task, "--tags",
+                           "ap"]
+                run_command(command)
 
                 for i in range(5):
-                    GPIO.output(self.led_pin, GPIO.HIGH)
+                    GPIO.output(self.ap_led_pin, GPIO.HIGH)
                     time.sleep(0.1)
-                    GPIO.output(self.led_pin, GPIO.LOW)
+                    GPIO.output(self.ap_led_pin, GPIO.LOW)
                     time.sleep(0.1)
 
             # check every 3 seconds if hostapd is running
             if self.last_hostapd_check < time.time() - 3000:
                 hostapd_status = check_for_hostapd()
                 if hostapd_status:
-                    GPIO.output(self.led_pin, GPIO.HIGH)
+                    GPIO.output(self.ap_led_pin, GPIO.HIGH)
                     if not self.last_hostapd_state:
                         logging.info("Hostapd switched on")
                 else:
-                    GPIO.output(self.led_pin, GPIO.LOW)
+                    GPIO.output(self.ap_led_pin, GPIO.LOW)
                     if self.last_hostapd_state:
                         logging.info("Hostapd switched off")
 
