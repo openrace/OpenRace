@@ -4,3 +4,4 @@
   systemd:
    name: rpi-ap-control
    state: restarted
+  become: True

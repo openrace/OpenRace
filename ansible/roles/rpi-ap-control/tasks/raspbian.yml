@@ -7,6 +7,7 @@
     owner: root
     group: root
     mode: '0755'
+  become: True
 
 - name: put python daemon in place
   copy:
@@ -16,17 +17,20 @@
     group: root
     mode: 0754
   notify: restart rpi-ap-control
+  become: True
 
 - name: ensure python virtualenv
   package:
     name: python-virtualenv
     state: present
+  become: True
 
 - name: install python requirements
   pip:
     name: ['psutil', 'RPi']
     virtualenv: "{{ rpi_ap_control_path }}/venv"
     virtualenv_command: virtualenv-2.7
+  become: True
 
 - name: install systemd unit
   template:
@@ -35,6 +39,7 @@
     owner: root
     group: root
     mode: 0644
+  become: True
 
 - name: enable service
   systemd:
@@ -42,3 +47,4 @@
     enabled: yes
     daemon_reload: yes
   notify: restart rpi-ap-control
+  become: True
