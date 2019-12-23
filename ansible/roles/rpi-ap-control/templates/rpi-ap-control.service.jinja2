@@ -1,5 +1,9 @@
+[Install]
+WantedBy=multi-user.target
+
 [Unit]
 Description=Raspberry Pi Accesspoint control
+After=network.target
 
 [Service]
 # Command to execute when the service is started
