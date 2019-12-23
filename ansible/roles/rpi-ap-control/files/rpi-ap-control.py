@@ -29,7 +29,7 @@ class RpiApControl:
         self.ap_led_pin = 23
         self.ap_switch_pin = 24
         self.power_led_pin = 27
-        self.power_switch_pin = 22
+        self.power_switch_pin = 3
         self.last_hostapd_check = 0
         self.last_hostapd_state = False
         GPIO.setmode(GPIO.BCM)
