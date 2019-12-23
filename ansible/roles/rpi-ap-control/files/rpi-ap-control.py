@@ -34,9 +34,11 @@ class RpiApControl:
         self.last_hostapd_state = False
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(self.ap_led_pin, GPIO.OUT)
+        GPIO.setup(self.power_led_pin, GPIO.OUT)
         # GPIO 23 (Pin 16) - LED - 330 ohm - gnd
 
         GPIO.setup(self.ap_switch_pin, GPIO.IN)
+        GPIO.setup(self.power_switch_pin, GPIO.IN)
         # GPIO 24 (Pin 18) - Switch - 3.3 V
         #                  | 10k ohm - gnd
 
