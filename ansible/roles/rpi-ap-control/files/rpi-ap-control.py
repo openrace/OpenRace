@@ -68,6 +68,7 @@ class RpiApControl:
                         GPIO.output(self.power_led_pin, GPIO.LOW)
                         time.sleep(0.1)
 
+                GPIO.output(self.ap_led_pin, GPIO.HIGH)
                 run_command(["shutdown", "now", "-h"], ansible_path)
 
             # check if AP button is pressed
