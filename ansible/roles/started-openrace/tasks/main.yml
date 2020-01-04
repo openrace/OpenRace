@@ -29,6 +29,7 @@
     name: ui
     image: "{{ ui_image }}"
     recreate: yes
+    pull: yes
     restart_policy: "{{ openrace.restart_policy }}"
     networks:
       - name: openrace
@@ -63,6 +64,7 @@
     name: led_control
     image: "{{ led_control_image }}"
     recreate: yes
+    pull: yes
     restart_policy: "{{ openrace.restart_policy }}"
     networks:
       - name: openrace
@@ -87,6 +89,7 @@
     name: race_core
     image: "{{ race_core_image }}"
     recreate: yes
+    pull: yes
     restart_policy: "{{ openrace.restart_policy }}"
     networks:
       - name: openrace
