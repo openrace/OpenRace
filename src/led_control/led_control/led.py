@@ -95,7 +95,7 @@ class LedController:
         logging.info("Sucessfully connected to MQTT server <%s> with result code: %s" % (self.mqtt_server, str(rc)))
 
         #self.client.subscribe("$SYS/#")
-        self.client.subscribe("/d1ws2812/discovery/#")
+        self.client.subscribe("/d1ws2812/#")
         self.client.message_callback_add("/d1ws2812/discovery/#", self.on_discovery_message)
         self.client.message_callback_add("/d1ws2812/voltage/#", self.on_voltage_message)
 
