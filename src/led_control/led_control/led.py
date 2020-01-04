@@ -60,6 +60,7 @@ class LedController:
         self.led_events = []
 
         self.pilots = {}
+        self.strip_cells = {}
 
         # module settings
         self.led_settings = {
@@ -96,6 +97,7 @@ class LedController:
         #self.client.subscribe("$SYS/#")
         self.client.subscribe("/d1ws2812/discovery/#")
         self.client.message_callback_add("/d1ws2812/discovery/#", self.on_discovery_message)
+        self.client.message_callback_add("/d1ws2812/voltage/#", self.on_voltage_message)
 
         self.client.subscribe("/OpenRace/events/#")
         self.client.message_callback_add("/OpenRace/events/request_led_wave", self.on_request_led_wave)
@@ -143,6 +145,27 @@ class LedController:
             strip = self.get_strip(client_mac)
 
         strip.time = time.time()
+
+    def on_voltage_message(self, client, userdata, msg):
+        client_mac = msg.topic.split("/")[-1]
+        client_volt = float(msg.payload.decode("utf-8"))
+
+        if client_mac not in self.strip_cells.keys():
+            # ToDo: Handle the possibility that a strip gets shut down and plugged in with a battery with a different
+            #       cell count. Last will might help with that!
+            cells = int(client_volt / 3.5)
+            logging.info("Calculated cell count for %s is %s" % (client_mac, cells))
+            self.strip_cells[client_mac] = cells
+
+        self.client.publish("/OpenRace/led/%s/voltage" % client_mac, str(client_volt), qos=1, retain=False)
+
+        if client_mac in self.strip_cells.keys():
+            cell_voltage = client_volt / self.strip_cells[client_mac]
+
+            if cell_voltage < 3.6:
+                self.client.publish("/OpenRace/led/%s/voltage_critical" % client_mac, "true", qos=1, retain=False)
+            else:
+                self.client.publish("/OpenRace/led/%s/voltage_critical" % client_mac, "false", qos=1, retain=False)
 
     def on_pilot_passing(self, client, userdata, msg):
         pilot_id = int(msg.topic.split("/")[-1])
