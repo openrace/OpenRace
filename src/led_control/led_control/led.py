@@ -170,7 +170,7 @@ class LedController:
         client_mac = msg.payload.decode("utf-8")
         logging.info("Got last will from strip %s" % client_mac)
 
-        if client_mac not in self.strip_cells.keys():
+        if client_mac in self.strip_cells.keys():
             del self.strip_cells[client_mac]
 
     def on_pilot_passing(self, client, userdata, msg):
