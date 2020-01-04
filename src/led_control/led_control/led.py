@@ -98,7 +98,7 @@ class LedController:
         self.client.subscribe("/d1ws2812/#")
         self.client.message_callback_add("/d1ws2812/discovery/#", self.on_d1ws2812_discovery_message)
         self.client.message_callback_add("/d1ws2812/voltage/#", self.on_d1ws2812_voltage_message)
-        self.client.message_callback_add("/d1ws2812/lastwill", self.on_d1ws2812_lastwill_message)
+        self.client.message_callback_add("/d1ws2812/lastwill/#", self.on_d1ws2812_lastwill_message)
 
         self.client.subscribe("/OpenRace/events/#")
         self.client.message_callback_add("/OpenRace/events/request_led_wave", self.on_request_led_wave)
@@ -167,11 +167,18 @@ class LedController:
                 self.client.publish("/OpenRace/led/%s/voltage_critical" % client_mac, "false", qos=1, retain=True)
 
     def on_d1ws2812_lastwill_message(self, client, userdata, msg):
-        client_mac = msg.payload.decode("utf-8")
-        logging.info("Got last will from strip %s" % client_mac)
+        client_mac = msg.topic.split("/")[-1]
+        payload = msg.payload.decode("utf-8")
 
-        if client_mac in self.strip_cells.keys():
-            del self.strip_cells[client_mac]
+        if len(payload):
+            logging.info("Got last will from strip %s" % client_mac)
+            if client_mac in self.strip_cells.keys():
+                del self.strip_cells[client_mac]
+
+            self.client.publish("/OpenRace/led/%s/currently_offline" % client_mac, "true", qos=1, retain=True)
+        else:
+            logging.info("Got last will removal from strip %s" % client_mac)
+            self.client.publish("/OpenRace/led/%s/currently_offline" % client_mac, "false", qos=1, retain=True)
 
     def on_pilot_passing(self, client, userdata, msg):
         pilot_id = int(msg.topic.split("/")[-1])
