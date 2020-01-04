@@ -9,3 +9,7 @@ $my-theme: mat-light-theme(
     $my-theme-accent,
     $my-theme-warn
 );
+
+$primary: mat-color($my-theme-primary);
+$accent: mat-color($my-theme-accent);
+$warn: mat-color($my-theme-warn);
