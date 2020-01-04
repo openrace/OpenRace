@@ -103,13 +103,15 @@ The currently active race tracker.
 The available milliwatt settings like 25, 200, 600 or 800...
 ### /OpenRace/led/[ID]/category
 **Attention:** ID is the MAC address of the LED strip.
+
+Set LED strip category enum: gate, strips_run_forward, strips_run_backward, start_pod, pilot_chip
+
 ### /OpenRace/led/[ID]/voltage
 The LED controller takes the reported voltage of the d1ws2812 strips and forwards it here.
 ### /OpenRace/led/[ID]/voltage_critical
 The LED controller calculates the cell count and if it reaches critical values it will send (string) "true" or "false".
-
-Set LED strip category enum: gate, strips_run_forward, strips_run_backward, start_pod, pilot_chip
-
+### /OpenRace/led/[ID]/currently_offline
+Will be set to (string) "true" or "false" if the strip currently is offline (retained last will message set).
 ### /OpenRace/led/[ID]/order
 **Attention:** ID is the MAC address of the LED strip.
 
