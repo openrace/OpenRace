@@ -157,15 +157,15 @@ class LedController:
             logging.info("Calculated cell count for %s is %s" % (client_mac, cells))
             self.strip_cells[client_mac] = cells
 
-        self.client.publish("/OpenRace/led/%s/voltage" % client_mac, str(client_volt), qos=1, retain=False)
+        self.client.publish("/OpenRace/led/%s/voltage" % client_mac, str(client_volt), qos=1, retain=True)
 
         if client_mac in self.strip_cells.keys():
             cell_voltage = client_volt / self.strip_cells[client_mac]
 
             if cell_voltage < 3.6:
-                self.client.publish("/OpenRace/led/%s/voltage_critical" % client_mac, "true", qos=1, retain=False)
+                self.client.publish("/OpenRace/led/%s/voltage_critical" % client_mac, "true", qos=1, retain=True)
             else:
-                self.client.publish("/OpenRace/led/%s/voltage_critical" % client_mac, "false", qos=1, retain=False)
+                self.client.publish("/OpenRace/led/%s/voltage_critical" % client_mac, "false", qos=1, retain=True)
 
     def on_pilot_passing(self, client, userdata, msg):
         pilot_id = int(msg.topic.split("/")[-1])
