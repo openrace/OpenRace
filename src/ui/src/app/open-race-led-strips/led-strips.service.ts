@@ -29,6 +29,12 @@ export class LedStripsService {
       case 'order':
         ledStrip.order = +value;
         break;
+      case 'voltage':
+        ledStrip.voltage = value;
+        break;
+      case 'voltage_critical':
+        ledStrip.voltageCritical = (value === 'true');
+        break;
     }
   }
 
@@ -55,7 +61,7 @@ export class LedStripsService {
   private processLedStripMessage(message: QueueMessage) {
     console.log(`Received message ${message.message} Topic ${message.topic}`);
 
-    const topicParts = /\/OpenRace\/led\/([a-fA-F0-9:]*)\/([a-zA-Z0-9]*)/.exec(message.topic);
+    const topicParts = /\/OpenRace\/led\/([a-fA-F0-9:]*)\/([a-zA-Z0-9_]*)/.exec(message.topic);
     if (topicParts != null) {
       this.updateLedStripFromMessage(topicParts[1].toString(), topicParts[2].toString(), message.message);
     }

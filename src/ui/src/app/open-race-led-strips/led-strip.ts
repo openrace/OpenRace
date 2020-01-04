@@ -4,4 +4,6 @@ export class LedStrip {
 
   order: number;
   category: string;
+  voltage: string;
+  voltageCritical: boolean;
 }

@@ -2,10 +2,11 @@
   <h1 fxFlex="grow" class="mat-display-1">LED Strips</h1>
   <div class="led-list" fxLayout="column" fxLayoutGap="1em" cdkDropList (cdkDropListDropped)="drop($event)">
     <div class="led-box" *ngFor="let ledStrip of ledStrips" cdkDrag>
-      <mat-expansion-panel class="mat-elevation-z15">
+      <mat-expansion-panel class="mat-elevation-z15" [class.warning]="ledStrip.voltageCritical">
         <mat-expansion-panel-header>
-          <mat-panel-title>
+          <mat-panel-title fxLayout="row" fxLayoutGap="8px" fxLayoutAlign="start center">
             <h2>LED Strip {{ledStrip.id}}</h2>
+            <div class="mat-caption" *ngIf="ledStrip.voltage">({{ledStrip.voltage}} V)</div>
           </mat-panel-title>
           <mat-panel-description fxLayout="row-reverse" fxLayoutAlign="start center">
             <button type="button" (click)="testFlashLedStrip($event, ledStrip.id);" mat-stroked-button color="accent">
