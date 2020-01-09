@@ -14,6 +14,7 @@
   set_fact:
    ui_image: "openrace/ui:{{ openrace.version }}-{{ openrace_arch }}"
    led_control_image: led_control
+   audio_output_image: audio_output
    race_core_image: race_core
   when: build_images
 
@@ -21,6 +22,7 @@
   set_fact:
    ui_image: "openrace/ui:{{ openrace.version }}-{{ openrace_arch }}"
    led_control_image: "openrace/led_control:{{ openrace.version }}-{{ openrace_arch }}"
+   audio_output_image: "openrace/audio_output:{{ openrace.version }}-{{ openrace_arch }}"
    race_core_image: "openrace/race_core:{{ openrace.version }}-{{ openrace_arch }}"
   when: not build_images
 
@@ -63,6 +65,24 @@
   docker_container:
     name: led_control
     image: "{{ led_control_image }}"
+    recreate: yes
+    pull: yes
+    restart_policy: "{{ openrace.restart_policy }}"
+    networks:
+      - name: openrace
+    volumes:
+      - "/srv/openrace/log:/app/log/:rw"
+    env:
+      MQTT_HOST: mqtt
+      MQTT_USER: openrace
+      MQTT_PASS: PASSWORD
+      DEBUG: "false"
+  become: true
+
+- name: "Create audio_output container from {{ audio_output_image }}"
+  docker_container:
+    name: audio_output
+    image: "{{ audio_output_image }}"
     recreate: yes
     pull: yes
     restart_policy: "{{ openrace.restart_policy }}"

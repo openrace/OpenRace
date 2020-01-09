@@ -1,5 +1,7 @@
 # Use an official Python runtime as a parent image
-FROM python:3-slim as builder
+FROM python:3-slim-buster as builder
+
+RUN wget -q https://ftp-master.debian.org/keys/release-10.asc -O- | sudo apt-key add - && echo "deb http://deb.debian.org/debian buster non-free" | sudo tee -a /etc/apt/sources.list && apt-get update && apt-get install libttspico-utils
 
 RUN mkdir /install
 WORKDIR /install

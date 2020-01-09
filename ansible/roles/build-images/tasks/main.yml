@@ -16,3 +16,12 @@
   become: true
   tags:
      - led
+
+- name: Create audio_output image
+  docker_image:
+    name: audio_output
+    path: "{{ playbook_dir }}/../src/audio_output"
+    force: yes
+  become: true
+  tags:
+     - led

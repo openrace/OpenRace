@@ -9,6 +9,10 @@ import atexit
 import click
 import threading
 import signal
+import hashlib
+import subprocess
+import wave
+import struct
 
 
 level = logging.INFO
@@ -25,9 +29,19 @@ logging.basicConfig(
 
 
 class AudioPlayerThread(object):
+
+    tmp_path = "/tmp"
+
     def __init__(self):
         self.worker_lock = threading.Lock()
+        self.play_queue = []
+        self.running = True
         signal.signal(signal.SIGALRM, self.sig_timeout_handler)
+
+    @staticmethod
+    def hash_text(text):
+        h = hashlib.sha1(text)
+        return h.hexdigest()
 
     def sig_timeout_handler(self, signum, frame):
         self.logger.warning('Lost connection to MPD server')
@@ -43,23 +57,71 @@ class AudioPlayerThread(object):
 
     def terminate(self):
         self.lock()
-        self.plugin.fade_in_progress = False
+        self.running = False
         self.unlock()
-        try:
-            self.client.close()
-            self.client.disconnect()
-        except mpd.ConnectionError:
-            self.logger.debug("Could not disconnect because we are not connected.")
-        except mpd.base.ConnectionError:
-            self.logger.debug("Could not disconnect because we are not connected.")
-        self.logger.debug("Disconnected, worker exititing")
 
+    def say(self, text, render_only=False):
+        hash_text = self.hash_text(text)
+        hash_file = os.path.join(AudioPlayerThread.tmp_path, hash_text, ".wav")
 
-    def say(self, text):
-        pass
+        # check if this text was already created as wave and use it if so
+        if not os.path.exists(hash_file):
+            logging.debug("Generating wave file for: %s" % text)
+            result = subprocess.run([str(x) for x in ["pico2wave", "-w", hash_file, text]], capture_output=True)
+            stderr = result.stderr.decode().split('\n')
+            stdout = result.stdout.decode().split('\n')
+            if stderr:
+                logging.warning(stderr)
+            if stdout:
+                logging.info(stdout)
 
-    def beep(self, frequency, duration):
-        pass
+        if not render_only:
+            self.lock()
+            self.play_queue.append(hash_text)
+            self.unlock()
+
+    def beep(self, frequency, duration, render_only=False):
+        hash_file = os.path.join(AudioPlayerThread.tmp_path, "%s-%s" % (frequency, duration), ".wav")
+
+        # check if this text was already created as wave and use it if so
+        # https://soledadpenades.com/posts/2009/fastest-way-to-generate-wav-files-in-python-using-the-wave-module/
+        if not os.path.exists(hash_file):
+            logging.debug("Generating beep for frequency %s and duration %s" % (frequency, duration))
+            beep_output = wave.open(hash_file, 'w')
+            beep_output.setparams((2, 2, 44100, 0, 'NONE', 'not compressed'))
+
+            values = []
+            for i in range(0, duration):
+                packed_value = struct.pack('h', frequency)
+                values.append(packed_value)
+                values.append(packed_value)
+
+            value_str = ''.join(values)
+            beep_output.writeframes(value_str)
+            beep_output.close()
+
+        if not render_only:
+            self.lock()
+            self.play_queue.append(hash_file)
+            self.unlock()
+
+    def work(self):
+        while self.running:
+            self.lock()
+            if len(self.play_queue):
+                next_item = self.play_queue.pop[0]
+            else:
+                next_item = None
+            self.unlock()
+
+            if next_item:
+                result = subprocess.run([str(x) for x in ["aplay", next_item]], capture_output=True)
+                stderr = result.stderr.decode().split('\n')
+                stdout = result.stdout.decode().split('\n')
+                if stderr:
+                    logging.warning(stderr)
+                if stdout:
+                    logging.debug(stdout)
 
 
 class AudioController(object):
@@ -116,30 +178,13 @@ class AudioController(object):
 
     def on_pilot_passing(self, client, userdata, msg):
         pilot_id = int(msg.topic.split("/")[-1])
-        frequency = self.pilots[pilot_id]
+        lap_time = msg.payload.decode("utf-8")
+        pilot_name = self.pilots[pilot_id]
 
-        logging.debug("Pilot %s with frequency %s passed the gate" % (pilot_id, frequency))
-        # https://github.com/betaflight/betaflight/blob/39ced6bbfefa52a6f605ed6635b7e62105c71672/src/main/io/ledstrip.c
-
-        color = "255;20;147"        # COLOR_DEEP_PINK
-        if frequency <= 5672:
-            color = "255;255;255"   # COLOR_WHITE
-        elif frequency <= 5711:
-            color = "255;0;0"       # COLOR_RED
-        elif frequency <= 5750:
-            color = "255;165;0"     # COLOR_ORANGE
-        elif frequency <= 5789:
-            color = "255;255;0"     # COLOR_YELLOW
-        elif frequency <= 5829:
-            color = "0;255;0"       # COLOR_GREEN
-        elif frequency <= 5867:
-            color = "0;0;255"       # COLOR_BLUE
-        elif frequency <= 5906:
-            color = "238;130;238"   # COLOR_DARK_VIOLET
-
-        self.led_wave(color, "Pilot passing")
-
-        # ToDo: This might also be depending on strip category.
+        logging.debug("Pilot %s with name %s passed the gate with a laptime of %s" % (pilot_id, pilot_name, lap_time))
+        self.audio_worker.say("%s:" % pilot_name)
+        self.audio_worker.say("%s" % lap_time)
+        # Todo: During races: Also call the lap number?
 
     def on_pilot_name(self, client, userdata, msg):
         pilot_id = int(msg.topic.split("/")[-2])
@@ -148,6 +193,7 @@ class AudioController(object):
         if pilot_id not in self.pilots.keys():
             self.pilots[pilot_id] = 0
         self.pilots[pilot_id] = pilot_name
+        self.audio_worker.say("%s:" % pilot_name, True)
         logging.debug("Setting pilot %s name to %s" % (pilot_id, pilot_name))
 
     def on_message(self, client, userdata, msg):
@@ -155,39 +201,28 @@ class AudioController(object):
 
     # mqtt racing methods
     def on_race_start(self, client, userdata, msg):
-        logging.info("Race will start in %s seconds" % float(msg.payload))
-
-        self.audio_worker.lock()
-        self.audio_worker.say("Race will start in %s seconds" % float(msg.payload))
-        self.audio_worker.unlock()
-
-        # Todo: beep low, beep low, beep low, beeeeep high
+        logging.info("The race will start in %s seconds" % float(msg.payload))
 
         self.race_ongoing = True
         self.race_start = time.time() + float(msg.payload)
+
+        self.audio_worker.say("The race will start in %s seconds" % float(msg.payload))
+
+        # Todo: beep low, beep low, beep low, beeeeep high
 
     def on_race_stop(self, client, userdata, msg):
         logging.info("Race stopped after %s seconds" % (self.now - self.race_start))
         self.race_ongoing = False
         self.race_start = 0.0
-
-        self.audio_worker.lock()
         self.audio_worker.say("Race stopped after %s seconds" % (self.now - self.race_start))
-        self.audio_worker.unlock()
 
     def on_last_lap(self, client, userdata, msg):
         logging.info("Last lap! %s" % (self.now - self.race_start))
-
-        self.audio_worker.lock()
         self.audio_worker.say("Last lap!")
-        self.audio_worker.unlock()
 
     def on_freeflight(self, client, userdata, msg):
         logging.info("Starting freeflight mode")
-
-        self.audio_worker.lock()
         self.audio_worker.say("Free flight mode enabled")
-        self.audio_worker.unlock()
 
     def on_settings(self, client, userdata, msg):
         logging.debug("Recieved settings: <%s> <%s>" % (msg.topic, msg.payload))
@@ -200,15 +235,16 @@ class AudioController(object):
     def run(self):
         first_run = True
 
+        # pre render beeps
+        self.audio_worker.beep(450, 200, True)
+        self.audio_worker.beep(800, 400, True)
+
         while True:
             self.now = time.time()
 
             block_loop = False
 
-            # self.led_cleanup() # disabling led cleanup, since it should not be required
-            self.status_update()
-
-            # LED event handling
+            # Audio event handling
             events_to_remove = []
             for event in self.led_events:
                 # check if event is overdue
