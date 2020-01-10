@@ -35,6 +35,8 @@ services:
       - "mqtt"
     volumes:
      - "/srv/openrace/log:/app/log/:rw"
+#    devices:
+#     - "/dev/snd:/dev/snd"
     environment:
       - MQTT_HOST=${MQTT_HOST}
       - MQTT_USER=${MQTT_USER}

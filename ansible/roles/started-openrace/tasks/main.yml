@@ -90,6 +90,8 @@
       - name: openrace
     volumes:
       - "/srv/openrace/log:/app/log/:rw"
+    devices:
+      - "/dev/snd:/dev/snd"
     env:
       MQTT_HOST: mqtt
       MQTT_USER: openrace

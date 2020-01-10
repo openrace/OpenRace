@@ -13,7 +13,7 @@ import hashlib
 import subprocess
 import wave
 import struct
-
+import random
 
 level = logging.INFO
 if os.environ.get("DEBUG", "true").lower() == "true":
@@ -28,11 +28,13 @@ logging.basicConfig(
     level=level)
 
 
-class AudioPlayerThread(object):
+class AudioPlayerThread(threading.Thread):
 
     tmp_path = "/tmp"
 
     def __init__(self):
+        super(AudioPlayerThread, self).__init__()
+        logging.info("Initialized audio player thread")
         self.worker_lock = threading.Lock()
         self.play_queue = []
         self.running = True
@@ -40,7 +42,7 @@ class AudioPlayerThread(object):
 
     @staticmethod
     def hash_text(text):
-        h = hashlib.sha1(text)
+        h = hashlib.sha1(text.encode('utf-8'))
         return h.hexdigest()
 
     def sig_timeout_handler(self, signum, frame):
@@ -59,40 +61,44 @@ class AudioPlayerThread(object):
         self.lock()
         self.running = False
         self.unlock()
+        logging.info("Audio player thread terminating")
 
     def say(self, text, render_only=False):
         hash_text = self.hash_text(text)
-        hash_file = os.path.join(AudioPlayerThread.tmp_path, hash_text, ".wav")
+        hash_file = os.path.join(AudioPlayerThread.tmp_path, "%s.wav" % hash_text)
 
         # check if this text was already created as wave and use it if so
         if not os.path.exists(hash_file):
-            logging.debug("Generating wave file for: %s" % text)
+            logging.debug("Rendering wave file for: %s" % text)
             result = subprocess.run([str(x) for x in ["pico2wave", "-w", hash_file, text]], capture_output=True)
             stderr = result.stderr.decode().split('\n')
             stdout = result.stdout.decode().split('\n')
-            if stderr:
+            if len(stderr[0]):
                 logging.warning(stderr)
-            if stdout:
-                logging.info(stdout)
+            if len(stdout[0]):
+                logging.debug(stdout)
 
         if not render_only:
+            logging.debug("Playing wave file for: %s" % text)
             self.lock()
-            self.play_queue.append(hash_text)
+            self.play_queue.append(hash_file)
             self.unlock()
 
     def beep(self, frequency, duration, render_only=False):
-        hash_file = os.path.join(AudioPlayerThread.tmp_path, "%s-%s" % (frequency, duration), ".wav")
+        hash_file = os.path.join(AudioPlayerThread.tmp_path, "%s-%s.wav" % (frequency, duration))
 
         # check if this text was already created as wave and use it if so
         # https://soledadpenades.com/posts/2009/fastest-way-to-generate-wav-files-in-python-using-the-wave-module/
         if not os.path.exists(hash_file):
-            logging.debug("Generating beep for frequency %s and duration %s" % (frequency, duration))
+            logging.debug("Rendering beep for frequency %s and duration %s" % (frequency, duration))
             beep_output = wave.open(hash_file, 'w')
             beep_output.setparams((2, 2, 44100, 0, 'NONE', 'not compressed'))
 
             values = []
             for i in range(0, duration):
                 packed_value = struct.pack('h', frequency)
+                value = random.randint(-32767, 32767)
+                packed_value = struct.pack('h', int(frequency))
                 values.append(packed_value)
                 values.append(packed_value)
 
@@ -101,26 +107,29 @@ class AudioPlayerThread(object):
             beep_output.close()
 
         if not render_only:
+            logging.debug("Playing beep for frequency %s and duration %s" % (frequency, duration))
             self.lock()
             self.play_queue.append(hash_file)
             self.unlock()
 
-    def work(self):
+    def run(self):
         while self.running:
             self.lock()
             if len(self.play_queue):
-                next_item = self.play_queue.pop[0]
+                next_item = self.play_queue.pop(0)
+                print("next_item", next_item)
             else:
                 next_item = None
             self.unlock()
 
             if next_item:
+                logging.debug("Play file %s" % next_item)
                 result = subprocess.run([str(x) for x in ["aplay", next_item]], capture_output=True)
                 stderr = result.stderr.decode().split('\n')
                 stdout = result.stdout.decode().split('\n')
-                if stderr:
-                    logging.warning(stderr)
-                if stdout:
+                if len(stderr[0]):
+                    logging.debug(stderr)
+                if len(stdout[0]):
                     logging.debug(stdout)
 
 
@@ -134,6 +143,7 @@ class AudioController(object):
         self.race_start = 0.0
 
         self.audio_worker = AudioPlayerThread()
+        self.audio_worker.start()
 
         self.race_ongoing = False
 
@@ -141,7 +151,8 @@ class AudioController(object):
 
         # module settings
         self.audio_settings = {
-            'language': "lang here",
+            'language': "en-US",
+            'round_digits': 1,
         }
 
         atexit.register(self.exit_handler)
@@ -160,9 +171,6 @@ class AudioController(object):
     def on_connect(self, client, userdata, flags, rc):
         logging.info("Sucessfully connected to MQTT server <%s> with result code: %s" % (self.mqtt_server, str(rc)))
 
-        self.client.subscribe("/OpenRace/events/#")
-        self.client.message_callback_add("/OpenRace/events/request_led_wave", self.on_request_led_wave)
-
         self.client.subscribe("/OpenRace/race/#")
         self.client.message_callback_add("/OpenRace/race/stop", self.on_race_stop)
         self.client.message_callback_add("/OpenRace/race/start/#", self.on_race_start)
@@ -178,8 +186,11 @@ class AudioController(object):
 
     def on_pilot_passing(self, client, userdata, msg):
         pilot_id = int(msg.topic.split("/")[-1])
-        lap_time = msg.payload.decode("utf-8")
-        pilot_name = self.pilots[pilot_id]
+        lap_time = round(float(msg.payload.decode("utf-8")), self.audio_settings['round_digits'])
+        if pilot_id in self.pilots.keys():
+            pilot_name = self.pilots[pilot_id]
+        else:
+            pilot_name = "Pilot %s" % pilot_id
 
         logging.debug("Pilot %s with name %s passed the gate with a laptime of %s" % (pilot_id, pilot_name, lap_time))
         self.audio_worker.say("%s:" % pilot_name)
@@ -230,14 +241,17 @@ class AudioController(object):
         if msg.topic == '/OpenRace/settings/audio_control/language':
             logging.info("Setting language to %s" % msg.payload.decode("utf-8"))
             self.audio_settings['language'] = msg.payload.decode("utf-8")
+        elif msg.topic == '/OpenRace/settings/audio_control/round_digits':
+            logging.info("Setting round_digits to %s" % msg.payload.decode("utf-8"))
+            self.audio_settings['round_digits'] = msg.payload.decode("utf-8")
 
     # internal helper methods
     def run(self):
         first_run = True
 
         # pre render beeps
-        self.audio_worker.beep(450, 200, True)
-        self.audio_worker.beep(800, 400, True)
+        # self.audio_worker.beep(450, 200, True)
+        # self.audio_worker.beep(800, 400, True)
 
         while True:
             self.now = time.time()
@@ -245,18 +259,18 @@ class AudioController(object):
             block_loop = False
 
             # Audio event handling
-            events_to_remove = []
-            for event in self.led_events:
-                # check if event is overdue
-                if event.check():
-                    events_to_remove.append(event)
-                    self.client.publish("/d1ws2812/%s" % event.target, event.payload, qos=1)
-                    logging.debug("LED effect <%s> on <%s>: %s" % (event.payload, event.target, event.comment))
-                elif event.check(self.mqtt_loop_block):
-                    block_loop = True
-
-            for event in events_to_remove:
-                self.led_events.remove(event)
+            # events_to_remove = []
+            # for event in self.led_events:
+            #     # check if event is overdue
+            #     if event.check():
+            #         events_to_remove.append(event)
+            #         self.client.publish("/d1ws2812/%s" % event.target, event.payload, qos=1)
+            #         logging.debug("LED effect <%s> on <%s>: %s" % (event.payload, event.target, event.comment))
+            #     elif event.check(self.mqtt_loop_block):
+            #         block_loop = True
+            #
+            # for event in events_to_remove:
+            #     self.led_events.remove(event)
 
             if not block_loop:
                 self.client.loop()
@@ -266,6 +280,8 @@ class AudioController(object):
                 # retained setting from somewhere else or a earlier run
                 self.client.publish("/OpenRace/settings/audio_output/language",
                                     self.audio_settings['language'], qos=1, retain=True)
+                self.client.publish("/OpenRace/settings/audio_output/round_digits",
+                                    self.audio_settings['round_digits'], qos=1, retain=True)
 
             first_run = False
 
@@ -281,11 +297,11 @@ class AudioController(object):
 def main():
     logging.info("starting up")
 
-    lc = AudioController(os.environ.get('MQTT_HOST', "mqtt"),
+    ac = AudioController(os.environ.get('MQTT_HOST', "mqtt"),
                          os.environ.get('MQTT_USER', "openrace"),
                          os.environ.get('MQTT_PASS', "PASSWORD"))
-    lc.mqtt_connect()
-    lc.run()
+    ac.mqtt_connect()
+    ac.run()
 
 
 if __name__ == '__main__':
