@@ -35,6 +35,22 @@ services:
       - "mqtt"
     volumes:
      - "/srv/openrace/log:/app/log/:rw"
+#    devices:
+#     - "/dev/snd:/dev/snd"
+    environment:
+      - MQTT_HOST=${MQTT_HOST}
+      - MQTT_USER=${MQTT_USER}
+      - MQTT_PASS=${MQTT_PASS}
+      - DEBUG=${DEBUG}
+
+  audio_output:
+    restart: always
+    build:
+      context: "audio_output/"
+    depends_on:
+      - "mqtt"
+    volumes:
+     - "/srv/openrace/log:/app/log/:rw"
     environment:
       - MQTT_HOST=${MQTT_HOST}
       - MQTT_USER=${MQTT_USER}

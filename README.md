@@ -93,6 +93,8 @@ Race settings like for the race_core.
 Status information mostly from the race tracker
 ### /OpenRace/settings/led_control/[start_go_effect, start_countdown_effect, stop_effect, lastlap_effect, passing_wave_delay, wave_color, gate_effect, run_forward_effect, run_backward_effect]
 Race settings like for the led_controller.
+### /OpenRace/settings/audio_output/[language, round_digits]
+Language chosen for the TTS engine.
 ### /OpenRace/provide/
 This topic is for providing information between components.
 #### /OpenRace/provide/led_strip_categories
