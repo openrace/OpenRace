@@ -4,7 +4,7 @@ set -e
 
 IMAGE_VERSION="1.0.2"
 
-for SERVICE in ui race_core led_control audio_output
+for SERVICE in race_core led_control audio_output ui
 do
     cat ../src/${SERVICE}/Dockerfile | sed '/as base/ s/FROM /FROM amd64\//g' | docker build -f - -t openrace/${SERVICE}:${IMAGE_VERSION}-amd64 ../src/${SERVICE}/
     docker push openrace/${SERVICE}:${IMAGE_VERSION}-amd64
