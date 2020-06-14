@@ -21,5 +21,5 @@ jobs:
         docker buildx build \
             --platform linux/amd64,linux/arm/v7 \
             --output "type=image,push=false" \
-            --file ./src/audio_output/Dockerfile ./test     
+            --file ./src/audio_output/Dockerfile ./src/audio_output     
 
