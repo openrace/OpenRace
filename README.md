@@ -144,6 +144,7 @@ Please keep in mind, that some settings are set to development defaults like the
 ## Pushing cross-platform images
 To support both amd64 and arm32v7 we create both images. The
 generation is scripted in `tools/publish_docker_images.sh`. 
+* [Docker Buildx](https://docs.docker.com/buildx/working-with-buildx/) is used to create images across platforms
 * Logging in to DockerHub beforehand to publish images with `docker login`
 
 ### Windows dev environment
