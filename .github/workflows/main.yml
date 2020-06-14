@@ -11,9 +11,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: Set up Docker Buildx      
+      uses: crazy-max/ghaction-docker-buildx@v1      
+      with:        
+        version: latest
     - uses: actions/checkout@v1
     - name: Build docker images
       run: |
-        docker login --username ${{ secrets.dockerhub_builduser_username }} --password ${{ secrets.dockerhub_builduser_password }}
-        cd ./tools
-        ./publish_docker_images.sh
+        docker buildx build \
+            --platform linux/amd64,linux/arm/v7 \
+            --output "type=image,push=false" \
+            --file ./src/audio_output/Dockerfile ./test     
+
