@@ -1,4 +1,5 @@
 # OpenRace
+![Publish Docker Images](https://github.com/openrace/OpenRace/workflows/Publish%20Docker%20Images/badge.svg?branch=master)
 
 OpenRace is a dockerized open source solution to run FPV races. It makes use of MQTT and Python and supports the
 immersion RC LapRF tracker as well as fancy RGB LED effects for gates.
