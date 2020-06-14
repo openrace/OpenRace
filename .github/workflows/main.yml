@@ -7,15 +7,15 @@ on:
 
 jobs:
   push-docker-images:
-
     runs-on: ubuntu-latest
 
     steps:
-    - name: Set up Docker Buildx      
+    - uses: actions/checkout@v1
+    - name: Set up Docker Buildx
       uses: crazy-max/ghaction-docker-buildx@v1      
       with:        
         version: latest
-    - uses: actions/checkout@v1
+
     - name: Build docker images
       run: |
         docker login --username ${{ secrets.dockerhub_builduser_username }} --password ${{ secrets.dockerhub_builduser_password }}
