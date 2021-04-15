@@ -7,7 +7,7 @@ WORKDIR /install
 COPY requirements.txt /requirements.txt
 
 # Install any needed packages specified in requirements.txt
-RUN pip install --trusted-host pypi.python.org --install-option="--prefix=/install" -r /requirements.txt
+RUN pip install --trusted-host pypi.python.org --target /install -r /requirements.txt
 
 # IMPORTANT: naming 'as base' is used by cross-platform image publication
 FROM python:3-alpine as base
